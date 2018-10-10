@@ -1,0 +1,21 @@
+{
+  "name": "data-service",
+  "version": "0.0.0",
+  "description": "Data service for Global Electrification Platform",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developmentseed/gep-data-service.git"
+  },
+  "author": {
+    "name": "Development Seed",
+    "url": "https://developmentseed.org"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/developmentseed/project-seed/issues"
+  },
+  "engines": {
+    "node": "8.x"
+  }
+}
