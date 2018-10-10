@@ -17,5 +17,11 @@
   },
   "engines": {
     "node": "8.x"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "hapi": "^17.6.0"
   }
 }
