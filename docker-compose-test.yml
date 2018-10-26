@@ -1,0 +1,10 @@
+version: '2'
+services:
+  postgresql:
+    image: mdillon/postgis:9.6-alpine
+    ports:
+      - "15433:5432"
+    environment:
+      POSTGRES_USER: gep-data-service-test
+    volumes:
+      - ./data/postgresql-test:/var/lib/postgresql/data

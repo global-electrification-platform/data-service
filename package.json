@@ -19,7 +19,9 @@
     "node": "8.x"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "init-test-db": "docker-compose -f docker-compose-test.yml up -d",
+    "stop-test-db": "docker-compose -f docker-compose-test.yml down"
   },
   "dependencies": {
     "hapi": "^17.6.0"
