@@ -6,17 +6,9 @@ Data service web server for Global Electrification Platform.
 
 ### Testing
 
-Start and populate testing database:
+Start and populate database for tests:
 
   yarn init-test-db
-
-Start and populate testing database:
-
-  yarn migrate-test-db
-
-Run tests:
-
-  yarn test
 
 ## License
 
