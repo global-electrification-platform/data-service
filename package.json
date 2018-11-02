@@ -25,7 +25,8 @@
     "migrate-test-db": "export NODE_ENV=test; sleep 20; until node_modules/.bin/knex migrate:latest; do echo \"Database is not ready, will retry in 5 seconds...\"; sleep 10; done",
     "seed-test-db": "NODE_ENV=test node_modules/.bin/knex seed:run",
     "stop-test-db": "docker-compose -f docker-compose-test.yml down",
-    "test": "NODE_ENV=test mocha test/test-*"
+    "test": "NODE_ENV=test mocha test/test-*",
+    "lint": "node_modules/.bin/eslint app/ test/ --ext .js"
   },
   "dependencies": {
     "boom": "^7.2.1",
@@ -39,5 +40,13 @@
     "pg": "^7.6.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.8.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
   }
 }

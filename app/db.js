@@ -1,5 +1,5 @@
-const config = require("config");
+const config = require('config');
 
-const knexConfig = config.get("knex");
+const knexConfig = config.get('knex');
 
-module.exports = require("knex")(knexConfig);
+module.exports = require('knex')(knexConfig);
