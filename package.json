@@ -25,7 +25,7 @@
     "migrate-test-db": "export NODE_ENV=test; sleep 20; until node_modules/.bin/knex migrate:latest; do echo \"Database is not ready, will retry in 5 seconds...\"; sleep 10; done",
     "seed-test-db": "NODE_ENV=test node_modules/.bin/knex seed:run",
     "stop-test-db": "docker-compose -f docker-compose-test.yml down",
-    "test": "mocha test/test-*"
+    "test": "NODE_ENV=test mocha test/test-*"
   },
   "dependencies": {
     "boom": "^7.2.1",
