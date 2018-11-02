@@ -1,3 +1,4 @@
+const boom = require("boom");
 const Hapi = require("hapi");
 const db = require("./db");
 
@@ -25,8 +26,15 @@ server.route({
   method: "GET",
   path: "/countries",
   handler: async function(request, h) {
-    const countries = await db.select("*").from("countries").orderBy('name');
-    return { countries };
+    try {
+      const countries = await db
+        .select("*")
+        .from("countries")
+        .orderBy("name");
+      return { countries };
+    } catch (error) {
+      return boom.badImplementation(error);
+    }
   }
 });
 
