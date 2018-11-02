@@ -4,7 +4,7 @@ Data service web server for Global Electrification Platform.
 
 ## Development 
 
-Node.js 8+ and Docker are required. Clone this repository locally and install dependencies with `yarn`. 
+Node.js and Docker are required. Clone this repository locally and install dependencies with `yarn`. 
 
 ### Testing
 
