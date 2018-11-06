@@ -6,8 +6,7 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex('countries').insert([
         { id: 'mw', name: 'Malawi' },
-        { id: 'cg', name: 'Congo' },
-        { id: 'bj', name: 'Benin' }
+        { id: 'cg', name: 'Congo' }
       ]);
     });
 };

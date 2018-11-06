@@ -35,16 +35,12 @@ describe('root', function () {
           const { countries } = res;
 
           // Countries should be ordered by name
-          assert.lengthOf(countries, 3);
+          assert.lengthOf(countries, 2);
           assert.deepEqual(countries[0], {
-            id: 'bj',
-            name: 'Benin'
-          });
-          assert.deepEqual(countries[1], {
             id: 'cg',
             name: 'Congo'
           });
-          assert.deepEqual(countries[2], {
+          assert.deepEqual(countries[1], {
             id: 'mw',
             name: 'Malawi'
           });
