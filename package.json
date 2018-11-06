@@ -32,7 +32,7 @@
     "seed-test-db": "NODE_ENV=test node_modules/.bin/knex seed:run",
     "stop-test-db": "docker-compose -f docker-compose-test.yml down",
     "test": "NODE_ENV=test mocha test/test-*",
-    "lint": "node_modules/.bin/eslint app/ test/ --ext .js"
+    "lint": "node_modules/.bin/eslint app/ test/ seeds/ migrations/ --ext .js"
   },
   "dependencies": {
     "boom": "^7.2.1",
