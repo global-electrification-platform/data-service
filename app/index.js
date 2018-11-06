@@ -1,6 +1,7 @@
 const boom = require('boom');
 const Hapi = require('hapi');
 const db = require('./db');
+const Joi = require('joi');
 
 const server = Hapi.server({
   port: 3000,
@@ -19,6 +20,48 @@ server.route({
   path: '/',
   handler: function (request, h) {
     return 'GEP Data Service';
+  }
+});
+
+server.route({
+  method: 'GET',
+  path: '/countries/{id}',
+  options: {
+    validate: {
+      params: {
+        id: Joi.string().length(2)
+      }
+    }
+  },
+  handler: async function (request, h) {
+    try {
+      const id = request.params.id.toLowerCase();
+      return await db
+        .select('*')
+        .from('countries')
+        .where('id', id)
+        .first()
+        .then(async country => {
+          if (!country) {
+            return boom.notFound('Country code not found.');
+          } else {
+            country.models = await db
+              .select(
+                'id',
+                'attribution',
+                'description',
+                'name',
+                'version',
+                db.raw("to_char(updated_at, 'YYYY-MM-DD') as updated_at")
+              )
+              .from('models')
+              .where('id', 'like', `${id}-%`);
+            return country;
+          }
+        });
+    } catch (error) {
+      return boom.badImplementation(error);
+    }
   }
 });
 
