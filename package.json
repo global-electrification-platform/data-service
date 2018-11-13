@@ -16,7 +16,7 @@
     "url": "https://github.com/developmentseed/project-seed/issues"
   },
   "engines": {
-    "node": ">=8.12.0"
+    "node": "8.11.3"
   },
   "scripts": {
     "start": "node index.js",
