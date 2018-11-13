@@ -1,0 +1,74 @@
+id: 'mw-1'
+name: 'Malawi OnSSET v1.0'
+updated_at: '2018-10-12'
+version: 'v1.0'
+attribution:
+  author: 'KTH'
+  url: 'http:/kth.se'
+description:
+  'Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.'
+levers:
+  - id: 0
+    label: Grid Generation Cost
+    options:
+      - id: 0
+        value: 0.01
+      - id: 1
+        value: 0.05
+      - id: 2
+        value: 0.08
+  - id: 1
+    label: Diesel Price
+    options:
+      - id: 0
+        value: 0.50
+      - id: 1
+        value: 0.80
+      - id: 2
+        value: 1.00
+  - id: 2
+    label: First Year Target
+    options:
+      - id: 0
+        value: 50%
+      - id: 1
+        value: 70%
+filters:
+  - id: 0
+    label: Population
+    type: range
+    range:
+      - 0
+      - 5000
+  - id: 1
+    label: Technology Type
+    type: options
+    range:
+      - grid
+      - stand-alone-diesel
+      - stand-alone-photovoltaic
+      - mini-grid
+map:
+  layers:
+    - id: 0
+      label: HV power lines
+      url: http://www.wms.maps/hv-lines
+    - id: 1
+      label: Road Networks
+      url: http://www.wms.maps/road-networks
+    - id: 1
+      label: Substations
+      url: http://www.wms.maps/substations
+  legend:
+    - id: 0
+      color: #32292f
+      label: Grid
+    - id: 1
+      color: #575366
+      label: Stand Alone Diesel
+    - id: 2
+      color: #6e7dab
+      label: Stand Alone Photovoltaic
+    - id: 3
+      color: #5762d5
+      label: Mini Grid

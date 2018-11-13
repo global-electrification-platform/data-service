@@ -37,6 +37,7 @@
   "dependencies": {
     "boom": "^7.2.1",
     "config": "^2.0.1",
+    "fast-csv": "^2.4.1",
     "hapi": "^17.6.0",
     "js-yaml": "^3.12.0",
     "knex": "^0.15.2",
