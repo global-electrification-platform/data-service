@@ -3,7 +3,7 @@ const { join } = require('path');
 const { load } = require('js-yaml');
 
 exports.seed = function (knex) {
-  const countriesPath = join(__dirname, '..', 'samples', 'countries.yml');
+  const countriesPath = join(__dirname, '..', 'fixtures', 'countries.yml');
   const countriesYaml = readFileSync(countriesPath, 'utf-8');
   const countries = load(countriesYaml).countries;
   // Deletes ALL existing entries

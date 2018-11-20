@@ -2,7 +2,7 @@ const { readdirSync } = require('fs');
 const { join } = require('path');
 const csv = require('fast-csv');
 
-const areasDirPath = join(__dirname, '..', 'samples', 'areas');
+const areasDirPath = join(__dirname, '..', 'fixtures', 'areas');
 
 async function readAreasFile (knex, areaFileName) {
   const areaFilePath = join(areasDirPath, areaFileName);
@@ -21,7 +21,6 @@ async function readAreasFile (knex, areaFileName) {
         entries.push(entry);
       })
       .on('end', async () => {
-        // console.log(entries);
         // Insert to the database
         await knex('areas')
           .insert(entries)

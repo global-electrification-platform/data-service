@@ -2,7 +2,7 @@ const { readdirSync } = require('fs');
 const { join } = require('path');
 const csv = require('fast-csv');
 
-const scenariosDirPath = join(__dirname, '..', 'samples', 'scenarios');
+const scenariosDirPath = join(__dirname, '..', 'fixtures', 'scenarios');
 
 async function readScenariosFile (knex, scenarioFileName) {
   const [scenarioId] = scenarioFileName.split('.');

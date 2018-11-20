@@ -10,7 +10,7 @@ const server = Hapi.server({
 
 const init = async () => {
   await server.start();
-  console.log(`Server running at: ${server.info.uri}`);
+  console.log(`Server running at: ${server.info.uri}`); // eslint-disable-line
 };
 
 // ROUTES
@@ -47,9 +47,12 @@ server.route({
           } else {
             country.models = await db
               .select(
-                'id',
                 'attribution',
                 'description',
+                'filters',
+                'id',
+                'levers',
+                'map',
                 'name',
                 'version',
                 db.raw("to_char(updated_at, 'YYYY-MM-DD') as updated_at")
@@ -82,7 +85,7 @@ server.route({
 });
 
 process.on('unhandledRejection', err => {
-  console.log(err);
+  console.log(err); // eslint-disable-line
   process.exit(1);
 });
 

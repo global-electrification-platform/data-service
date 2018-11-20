@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 
 exports.seed = function (knex) {
   const models = [];
-  const modelsPath = path.join(__dirname, '..', 'samples', 'models');
+  const modelsPath = path.join(__dirname, '..', 'fixtures', 'models');
   const modelFilenames = readdirSync(modelsPath);
 
   // Load models from samples directory

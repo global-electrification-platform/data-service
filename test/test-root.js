@@ -1,6 +1,11 @@
+const path = require('path');
+const fs = require('fs-extra');
+const yaml = require('js-yaml');
 const supertest = require('supertest');
 
 const server = require('../app');
+
+const fixturesPath = path.join(__dirname, '..', 'fixtures');
 
 describe('all tests', function () {
   describe('endpoint /', function () {
@@ -20,6 +25,10 @@ describe('all tests', function () {
             {
               id: 'cg',
               name: 'Congo'
+            },
+            {
+              id: 'ke',
+              name: 'Kenya'
             },
             {
               id: 'mw',
@@ -48,60 +57,33 @@ describe('all tests', function () {
     });
 
     it('GET /countries/cg returns status 200, with country models', async function () {
+      const cg1ModelPath = path.join(fixturesPath, 'models', 'cg-1.yml');
+      let cg1Model = await fs.readFile(cg1ModelPath);
+      cg1Model = yaml.load(cg1Model);
       return supertest(server.listener)
         .get('/countries/cg')
         .expect(200, {
           id: 'cg',
           name: 'Congo',
-          models: [
-            {
-              id: 'cg-1',
-              attribution: {
-                author: 'KTH',
-                url: 'http:/kth.se'
-              },
-              description:
-                'Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.',
-              name: 'Congo OnSSET v1.0',
-              updated_at: '2018-10-12',
-              version: 'v1.0'
-            },
-            {
-              id: 'cg-2',
-              attribution: {
-                author: 'KTH',
-                url: 'http:/kth.se'
-              },
-              description:
-                'Nulla ullamco cupidatat nisi esse magna occaecat cupidatat occaecat proident in nisi. Dolore tempor eu aliquip nulla officia incididunt duis dolore laboris voluptate proident fugiat sunt. Laboris excepteur Lorem id laboris magna reprehenderit. Duis officia mollit nostrud labore voluptate ullamco ea non aliquip proident id proident sint. Lorem aute nisi cupidatat ullamco ea laborum fugiat id est.',
-              name: 'Congo OnSSET v1.2',
-              updated_at: '2018-10-25',
-              version: 'v1.2'
-            }
-          ]
+          models: [cg1Model]
         });
     });
 
-    it('GET /countries/MW (upppercase) returns status 200, with country models', async function () {
+    it('GET /countries/MW (uppercase) returns status 200, with country models', async function () {
+      const mw1ModelPath = path.join(fixturesPath, 'models', 'mw-1.yml');
+      let mw1Model = await fs.readFile(mw1ModelPath);
+      mw1Model = yaml.load(mw1Model);
+
+      const mw2ModelPath = path.join(fixturesPath, 'models', 'mw-2.yml');
+      let mw2Model = await fs.readFile(mw2ModelPath);
+      mw2Model = yaml.load(mw2Model);
+
       return supertest(server.listener)
         .get('/countries/MW')
         .expect(200, {
           id: 'mw',
           name: 'Malawi',
-          models: [
-            {
-              id: 'mw-1',
-              attribution: {
-                author: 'KTH',
-                url: 'http:/kth.se'
-              },
-              description:
-                'Amet qui ea do adipisicing deserunt culpa. Ullamco dolor irure ea ut culpa reprehenderit reprehenderit sunt ad aute proident. Elit do Lorem culpa excepteur do consequat incididunt esse fugiat aute velit velit sint. Velit dolor magna occaecat nisi exercitation voluptate nostrud sit. Culpa sit id dolor proident et ea sunt mollit proident laboris cillum ullamco aute.',
-              version: 'v1.0',
-              name: 'Malawi OnSSET v1.0',
-              updated_at: '2018-10-21'
-            }
-          ]
+          models: [mw1Model, mw2Model]
         });
     });
   });
