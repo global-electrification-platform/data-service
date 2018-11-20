@@ -118,6 +118,7 @@ server.route({
       let features = await db
         .select('areaId as id', 'leastElectrificationCostTechnology')
         .where('scenarioId', id)
+        .orderBy('areaId')
         .from('scenarios');
 
       return { id, features, summary };

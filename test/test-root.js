@@ -131,8 +131,16 @@ async function scenarioResults (id) {
         results.summary.newCapacity += parseFloat(entry.NewCapacity);
       })
       .on('end', async () => {
-        results.summary.electrifiedPopulation = _.round(results.summary.electrifiedPopulation, 2);
-        results.summary.investmentCost = _.round(results.summary.investmentCost, 2);
+        results.features = _.sortBy(results.features, 'id');
+
+        results.summary.electrifiedPopulation = _.round(
+          results.summary.electrifiedPopulation,
+          2
+        );
+        results.summary.investmentCost = _.round(
+          results.summary.investmentCost,
+          2
+        );
         results.summary.newCapacity = _.round(results.summary.newCapacity, 2);
         resolve(results);
       })
