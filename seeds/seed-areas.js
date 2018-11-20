@@ -23,8 +23,9 @@ async function readAreasFile (knex, areaFileName) {
       .on('end', async () => {
         // Insert to the database
         await knex('areas')
-          .insert(entries)
-          .then(resolve);
+          .insert(entries);
+
+        resolve();
       })
       .on('error', reject);
   });
