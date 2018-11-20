@@ -16,10 +16,18 @@ async function readScenariosFile (knex, scenarioFileName) {
       .on('data', results => {
         // Convert columns to object properties
         const entry = {
-          scenario_id: scenarioId,
-          area_id: results.area_id
+          scenarioId: scenarioId,
+          areaId: results.areaId,
+          leastElectrificationCostTechnology: results.MinimumTech,
+          investmentCost: parseFloat(results.InvestmentCost),
+          newCapacity: parseFloat(results.NewCapacity),
+          electrifiedPopulation: parseFloat(results.ElecPop)
         };
-        delete results.area_id;
+        delete results.areaId;
+        delete results.MinimumTech;
+        delete results.InvestmentCost;
+        delete results.NewCapacity;
+        delete results.ElecPop;
         entry.results = results;
         entries.push(entry);
       })

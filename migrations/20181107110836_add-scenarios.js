@@ -1,13 +1,17 @@
 exports.up = function (knex) {
   return knex.schema.createTable('scenarios', function (t) {
     // properties
-    t.string('scenario_id');
-    t.string('area_id');
+    t.string('scenarioId');
+    t.string('areaId');
+    t.string('leastElectrificationCostTechnology');
+    t.decimal('investmentCost', null);
+    t.decimal('newCapacity', null);
+    t.decimal('electrifiedPopulation', null);
     t.jsonb('results');
 
     // indexes and constraints
-    t.index('scenario_id');
-    t.unique(['scenario_id', 'area_id']);
+    t.index('scenarioId');
+    t.unique(['scenarioId', 'areaId']);
   });
 };
 

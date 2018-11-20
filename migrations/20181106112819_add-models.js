@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable('models', function (table) {
     table.string('id').primary();
-    table.date('updated_at');
+    table.date('updatedAt');
     table.json('attribution');
     table.specificType('levers', 'json ARRAY');
     table.specificType('filters', 'json ARRAY');

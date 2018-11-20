@@ -55,7 +55,7 @@ server.route({
                 'map',
                 'name',
                 'version',
-                db.raw("to_char(updated_at, 'YYYY-MM-DD') as updated_at")
+                db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
               )
               .from('models')
               .where('id', 'like', `${id}-%`);
