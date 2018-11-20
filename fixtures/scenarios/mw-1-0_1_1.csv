@@ -1,4 +1,4 @@
-area_id,population,least_cost_electrification_technology,new_connections,investiment_required,capacity_added
+areaId,population,MinimumTech,ElecPop,InvestmentCost,NewCapacity
 mw1,536,mini-grid,61.64,54736.32,4561.36
 mw2,4667,solar,291.6875,93923.375,9042.3125
 mw3,1321,Mini-grid,105.68,94689.28,7503.28
