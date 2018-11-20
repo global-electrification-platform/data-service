@@ -1,6 +1,8 @@
+const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
+const csv = require('fast-csv');
 const supertest = require('supertest');
 
 const server = require('../app');
@@ -87,8 +89,53 @@ describe('all tests', function () {
         });
     });
   });
+
+  describe('/scenarios endpoint', function () {
+    it('GET /scenarios/mw-1-0_0_0 returns feature types and summary', async function () {
+      const scenarioId = 'mw-1-0_0_0';
+      const results = await scenarioResults(scenarioId);
+
+      return supertest(server.listener)
+        .get(`/scenarios/${scenarioId}`)
+        .expect(200, results);
+    });
+  });
 });
 
 after(() => {
   server.stop();
 });
+
+async function scenarioResults (id) {
+  const scenarioPath = path.join(fixturesPath, 'scenarios', `${id}.csv`);
+  const results = {
+    id,
+    features: [],
+    summary: {
+      electrifiedPopulation: 0,
+      investmentCost: 0,
+      newCapacity: 0
+    }
+  };
+  return new Promise(function (resolve, reject) {
+    csv
+      .fromPath(scenarioPath, { headers: true })
+      .on('data', entry => {
+        results.features.push({
+          id: entry.areaId,
+          leastElectrificationCostTechnology: entry.MinimumTech
+        });
+
+        results.summary.electrifiedPopulation += parseFloat(entry.ElecPop);
+        results.summary.investmentCost += parseFloat(entry.InvestmentCost);
+        results.summary.newCapacity += parseFloat(entry.NewCapacity);
+      })
+      .on('end', async () => {
+        results.summary.electrifiedPopulation = _.round(results.summary.electrifiedPopulation, 2);
+        results.summary.investmentCost = _.round(results.summary.investmentCost, 2);
+        results.summary.newCapacity = _.round(results.summary.newCapacity, 2);
+        resolve(results);
+      })
+      .on('error', reject);
+  });
+}
