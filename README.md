@@ -7,7 +7,6 @@ Data service web server for Global Electrification Platform.
 To set up a development environment install the following on your system:
 
 - [nvm](https://github.com/creationix/nvm)
-- [Yarn](https://yarnpkg.com/)
 - [Docker](https://www.docker.com/)
 
 Clone this repository locally and activate target Node.js version:
@@ -16,41 +15,41 @@ Clone this repository locally and activate target Node.js version:
 nvm install
 ```
 
-Install module dependencies:
+Install Node.js dependencies:
 
 ```
-yarn install
+npm install
 ```
 
 ### Development
 
 Init development database:
 
-    yarn init-dev-db
+    npm init-dev-db
 
 Start development server with changes monitoring:
 
-    yarn dev
+    npm dev
 
 Access the service at [localhost:3000](http://localhost:3000)
 
 Stop development database:
 
-    yarn stop-dev-db
+    npm stop-dev-db
 
 ### Testing
 
 Start test database:
 
-    yarn init-test-db
+    npm init-test-db
 
 Run tests:
 
-    yarn test
+    npm test
 
 Stop database container:
 
-    yarn stop-test-db
+    npm stop-test-db
 
 
 ## License
