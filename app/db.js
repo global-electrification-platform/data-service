@@ -1,5 +1,5 @@
 const config = require('config');
 
-const knexConfig = config.get('knex');
+const knexConfig = process.env.PG_CONNECTION_STRING || config.get('knex');
 
 module.exports = require('knex')(knexConfig);
