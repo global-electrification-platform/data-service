@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const qs = require('qs');
 const boom = require('boom');
 const Hapi = require('hapi');
 const db = require('./db');
@@ -98,6 +99,53 @@ server.route({
   handler: async function (request, h) {
     try {
       const id = request.params.id.toLowerCase();
+      let filters;
+
+      // Parse query string if available
+      let { query } = request;
+      if (query) {
+        query = qs.parse(query);
+
+        // Validate and parse filters
+        filters = query.filters;
+        if (filters) {
+          // Filters must be in an Array
+          if (!Array.isArray(filters)) {
+            throw new SyntaxError('Filters must be an Array.');
+          }
+
+          // Validate range values
+          filters.forEach(filter => {
+            if (filter.range) {
+              // Parse values to float
+              filter.range = filter.range.map(number => {
+                return parseFloat(number);
+              });
+
+              // Check type
+              filter.range.forEach(number => {
+                if (typeof number !== 'number') {
+                  throw new SyntaxError('Range values must be numbers.');
+                }
+              });
+            }
+          });
+        }
+      }
+
+      const whereBuilder = builder => {
+        builder.where('scenarioId', id);
+
+        if (filters) {
+          filters.forEach(filter => {
+            if (filter.range) {
+              builder.whereBetween(filter.id, filter.range);
+            } else if (filter.options) {
+              builder.whereIn(filter.id, filter.options);
+            }
+          });
+        }
+      };
 
       // Get summary
       const summary = await db
@@ -107,7 +155,7 @@ server.route({
           )
         )
         .first()
-        .where('scenarioId', id)
+        .where(whereBuilder)
         .from('scenarios');
 
       summary.investmentCost = _.round(summary.investmentCost, 2);
@@ -116,13 +164,16 @@ server.route({
 
       // Get features
       let features = await db
-        .select('areaId as id', 'leastElectrificationCostTechnology')
-        .where('scenarioId', id)
+        .select('areaId as id', 'electrificationTech')
+        .where(whereBuilder)
         .orderBy('areaId')
         .from('scenarios');
 
       return { id, features, summary };
     } catch (error) {
+      if (error instanceof SyntaxError) {
+        return boom.badRequest(error);
+      }
       return boom.badImplementation(error);
     }
   }

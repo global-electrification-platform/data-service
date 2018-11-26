@@ -34,13 +34,15 @@ levers:
       - id: 1
         value: 70%
 filters:
-  - id: 0
+  - index: 0
+    id: electrifiedPopulation
     label: Population
     type: range
     range:
-      - 0
+      - 500
       - 5000
-  - id: 1
+  - index: 1
+    id: leastElectrificationCostTechnology
     label: Technology Type
     type: options
     range:

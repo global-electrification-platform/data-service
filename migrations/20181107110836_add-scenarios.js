@@ -3,7 +3,7 @@ exports.up = function (knex) {
     // properties
     t.string('scenarioId');
     t.string('areaId');
-    t.string('leastElectrificationCostTechnology');
+    t.string('electrificationTech');
     t.decimal('investmentCost', null);
     t.decimal('newCapacity', null);
     t.decimal('electrifiedPopulation', null);
