@@ -10,11 +10,6 @@ const server = Hapi.server({
   host: 'localhost'
 });
 
-const init = async () => {
-  await server.start();
-  console.log(`Server running at: ${server.info.uri}`); // eslint-disable-line
-};
-
 // ROUTES
 
 server.route({
@@ -183,7 +178,5 @@ process.on('unhandledRejection', err => {
   console.log(err); // eslint-disable-line
   process.exit(1);
 });
-
-init();
 
 module.exports = server;
