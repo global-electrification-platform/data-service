@@ -22,6 +22,22 @@ server.route({
 
 server.route({
   method: 'GET',
+  path: '/countries',
+  handler: async function (request, h) {
+    try {
+      const countries = await db
+        .select('*')
+        .from('countries')
+        .orderBy('name');
+      return { countries };
+    } catch (error) {
+      return boom.badImplementation(error);
+    }
+  }
+});
+
+server.route({
+  method: 'GET',
   path: '/countries/{id}',
   options: {
     validate: {
@@ -67,14 +83,32 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/countries',
+  path: '/models/{id}',
   handler: async function (request, h) {
     try {
-      const countries = await db
-        .select('*')
-        .from('countries')
-        .orderBy('name');
-      return { countries };
+      const id = request.params.id.toLowerCase();
+      return await db
+        .select(
+          'attribution',
+          'description',
+          'filters',
+          'id',
+          'levers',
+          'map',
+          'name',
+          'version',
+          db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
+        )
+        .from('models')
+        .where('id', id)
+        .first()
+        .then(async model => {
+          if (!model) {
+            return boom.notFound('Model id not found.');
+          } else {
+            return model;
+          }
+        });
     } catch (error) {
       return boom.badImplementation(error);
     }

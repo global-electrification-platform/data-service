@@ -14,6 +14,7 @@ describe('GEP Data Service', function () {
   require('./test-root.js');
   require('./test-countries.js');
   require('./test-scenarios.js');
+  require('./test-models.js');
 
   after(async function () {
     await server.stop();
