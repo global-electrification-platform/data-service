@@ -7,7 +7,10 @@ const Joi = require('joi');
 
 const server = Hapi.server({
   port: process.env.PORT || 3000,
-  host: 'localhost'
+  host: 'localhost',
+  routes: {
+    cors: true
+  }
 });
 
 // ROUTES
