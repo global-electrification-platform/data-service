@@ -25,6 +25,24 @@ server.route({
 
 server.route({
   method: 'GET',
+  path: '/stats',
+  handler: async function (request, h) {
+    const [totCountries, totModels] = await Promise.all([
+      db.count().from('countries').first(),
+      db.count().from('models').first()
+    ]);
+
+    return {
+      totals: {
+        countries: totCountries.count,
+        models: totModels.count
+      }
+    };
+  }
+});
+
+server.route({
+  method: 'GET',
   path: '/countries',
   handler: async function (request, h) {
     try {
