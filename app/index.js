@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const qs = require('qs');
 const boom = require('boom');
 const Hapi = require('hapi');
 const db = require('./db');
@@ -6,13 +7,11 @@ const Joi = require('joi');
 
 const server = Hapi.server({
   port: process.env.PORT || 3000,
-  host: 'localhost'
+  host: 'localhost',
+  routes: {
+    cors: true
+  }
 });
-
-const init = async () => {
-  await server.start();
-  console.log(`Server running at: ${server.info.uri}`); // eslint-disable-line
-};
 
 // ROUTES
 
@@ -21,6 +20,22 @@ server.route({
   path: '/',
   handler: function (request, h) {
     return 'GEP Data Service';
+  }
+});
+
+server.route({
+  method: 'GET',
+  path: '/countries',
+  handler: async function (request, h) {
+    try {
+      const countries = await db
+        .select('*')
+        .from('countries')
+        .orderBy('name');
+      return { countries };
+    } catch (error) {
+      return boom.badImplementation(error);
+    }
   }
 });
 
@@ -71,14 +86,27 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/countries',
+  path: '/models/{id}',
   handler: async function (request, h) {
     try {
-      const countries = await db
-        .select('*')
-        .from('countries')
-        .orderBy('name');
-      return { countries };
+      const id = request.params.id.toLowerCase();
+      const model = await db
+        .select(
+          'attribution',
+          'description',
+          'filters',
+          'id',
+          'levers',
+          'map',
+          'name',
+          'version',
+          db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
+        )
+        .from('models')
+        .where('id', id)
+        .first();
+
+      return model || boom.notFound('Model id not found.');
     } catch (error) {
       return boom.badImplementation(error);
     }
@@ -98,6 +126,53 @@ server.route({
   handler: async function (request, h) {
     try {
       const id = request.params.id.toLowerCase();
+      let filters;
+
+      // Parse query string if available
+      let { query } = request;
+      if (query) {
+        query = qs.parse(query);
+
+        // Validate and parse filters
+        filters = query.filters;
+        if (filters) {
+          // Filters must be in an Array
+          if (!Array.isArray(filters)) {
+            throw new SyntaxError('Filters must be an Array.');
+          }
+
+          // Validate range values
+          filters.forEach(filter => {
+            if (filter.range) {
+              // Parse values to float
+              filter.range = filter.range.map(number => {
+                return parseFloat(number);
+              });
+
+              // Check type
+              filter.range.forEach(number => {
+                if (isNaN(number) || typeof number !== 'number') {
+                  throw new SyntaxError('Range values must be numbers.');
+                }
+              });
+            }
+          });
+        }
+      }
+
+      const whereBuilder = builder => {
+        builder.where('scenarioId', id);
+
+        if (filters) {
+          filters.forEach(filter => {
+            if (filter.range) {
+              builder.whereBetween(filter.id, filter.range);
+            } else if (filter.options) {
+              builder.whereIn(filter.id, filter.options);
+            }
+          });
+        }
+      };
 
       // Get summary
       const summary = await db
@@ -107,7 +182,7 @@ server.route({
           )
         )
         .first()
-        .where('scenarioId', id)
+        .where(whereBuilder)
         .from('scenarios');
 
       summary.investmentCost = _.round(summary.investmentCost, 2);
@@ -116,13 +191,16 @@ server.route({
 
       // Get features
       let features = await db
-        .select('areaId as id', 'leastElectrificationCostTechnology')
-        .where('scenarioId', id)
+        .select('areaId as id', 'electrificationTech')
+        .where(whereBuilder)
         .orderBy('areaId')
         .from('scenarios');
 
       return { id, features, summary };
     } catch (error) {
+      if (error instanceof SyntaxError) {
+        return boom.badRequest(error);
+      }
       return boom.badImplementation(error);
     }
   }
@@ -132,7 +210,5 @@ process.on('unhandledRejection', err => {
   console.log(err); // eslint-disable-line
   process.exit(1);
 });
-
-init();
 
 module.exports = server;
