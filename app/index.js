@@ -70,32 +70,31 @@ server.route({
   handler: async function (request, h) {
     try {
       const id = request.params.id.toLowerCase();
-      return await db
+      const country = await db
         .select('*')
         .from('countries')
         .where('id', id)
-        .first()
-        .then(async country => {
-          if (!country) {
-            return boom.notFound('Country code not found.');
-          } else {
-            country.models = await db
-              .select(
-                'attribution',
-                'description',
-                'filters',
-                'id',
-                'levers',
-                'map',
-                'name',
-                'version',
-                db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
-              )
-              .from('models')
-              .where('id', 'like', `${id}-%`);
-            return country;
-          }
-        });
+        .first();
+
+      if (!country) {
+        return boom.notFound('Country code not found.');
+      } else {
+        country.models = await db
+          .select(
+            'attribution',
+            'description',
+            'filters',
+            'id',
+            'levers',
+            'map',
+            'name',
+            'version',
+            db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
+          )
+          .from('models')
+          .where('id', 'like', `${id}-%`);
+        return country;
+      }
     } catch (error) {
       return boom.badImplementation(error);
     }
