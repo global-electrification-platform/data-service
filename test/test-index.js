@@ -12,6 +12,7 @@ describe('GEP Data Service', function () {
   });
 
   require('./test-root.js');
+  require('./test-stats.js');
   require('./test-countries.js');
   require('./test-scenarios.js');
   require('./test-models.js');
