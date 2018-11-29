@@ -90,7 +90,7 @@ server.route({
   handler: async function (request, h) {
     try {
       const id = request.params.id.toLowerCase();
-      return await db
+      const model = await db
         .select(
           'attribution',
           'description',
@@ -104,14 +104,9 @@ server.route({
         )
         .from('models')
         .where('id', id)
-        .first()
-        .then(async model => {
-          if (!model) {
-            return boom.notFound('Model id not found.');
-          } else {
-            return model;
-          }
-        });
+        .first();
+
+      return model || boom.notFound('Model id not found.');
     } catch (error) {
       return boom.badImplementation(error);
     }
@@ -156,7 +151,7 @@ server.route({
 
               // Check type
               filter.range.forEach(number => {
-                if (typeof number !== 'number') {
+                if (isNaN(number) || typeof number !== 'number') {
                   throw new SyntaxError('Range values must be numbers.');
                 }
               });
