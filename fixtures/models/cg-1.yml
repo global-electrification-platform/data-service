@@ -2,6 +2,7 @@ id: 'cg-1'
 name: 'Congo OnSSET v1.0'
 updatedAt: '2018-09-03'
 version: 'v1.0'
+country: cg
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
