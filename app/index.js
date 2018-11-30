@@ -83,6 +83,7 @@ server.route({
           .select(
             'attribution',
             'description',
+            'country',
             'filters',
             'id',
             'levers',
@@ -111,6 +112,7 @@ server.route({
         .select(
           'attribution',
           'description',
+          'country',
           'filters',
           'id',
           'levers',

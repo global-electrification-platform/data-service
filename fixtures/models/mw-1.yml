@@ -2,6 +2,7 @@ id: 'mw-1'
 name: 'Malawi OnSSET v1.0'
 updatedAt: '2018-10-12'
 version: 'v1.0'
+country: mw
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
