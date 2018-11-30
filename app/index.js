@@ -34,8 +34,8 @@ server.route({
 
     return {
       totals: {
-        countries: totCountries.count,
-        models: totModels.count
+        countries: parseInt(totCountries.count),
+        models: parseInt(totModels.count)
       }
     };
   }
