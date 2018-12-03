@@ -29,7 +29,7 @@ server.route({
   handler: async function (request, h) {
     const [totCountries, totModels] = await Promise.all([
       db.count().from('countries').first(),
-      db.count().from('models').first()
+      db.countDistinct('type').from('models').first()
     ]);
 
     return {
