@@ -29,7 +29,7 @@ server.route({
   handler: async function (request, h) {
     const [totCountries, totModels] = await Promise.all([
       db.count().from('countries').first(),
-      db.count().from('models').first()
+      db.countDistinct('type').from('models').first()
     ]);
 
     return {
@@ -82,14 +82,15 @@ server.route({
         country.models = await db
           .select(
             'attribution',
-            'description',
             'country',
+            'description',
             'filters',
             'id',
             'levers',
             'map',
             'name',
             'version',
+            'type',
             db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
           )
           .from('models')
@@ -111,13 +112,14 @@ server.route({
       const model = await db
         .select(
           'attribution',
-          'description',
           'country',
+          'description',
           'filters',
           'id',
           'levers',
           'map',
           'name',
+          'type',
           'version',
           db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
         )

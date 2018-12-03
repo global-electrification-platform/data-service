@@ -13,7 +13,7 @@ describe('Endpoint: /stats', function () {
     const response = {
       totals: {
         countries: 3,
-        models: 4
+        models: 2
       }
     };
 
