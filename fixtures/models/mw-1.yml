@@ -36,22 +36,76 @@ levers:
       - id: 1
         value: 70%
 filters:
-  - index: 0
-    id: electrifiedPopulation
-    label: Population
+  - id: 0
+    property: clusterPopulation
+    label: Cluster Population
     type: range
     range:
-      - 500
-      - 5000
-  - index: 1
-    id: leastElectrificationCostTechnology
-    label: Technology Type
-    type: options
+      min: 1
+      max: 1830000
+  - id: 1
+    property: clusterArea
+    label: Cluster Area
+    type: range
     range:
-      - grid
-      - stand-alone-diesel
-      - stand-alone-photovoltaic
-      - mini-grid
+      min: 0.00036
+      max: 590
+  - id: 2
+    property: electrificationTechnology
+    label: Electrification Techonology
+    type: options
+    options:
+      - id: 0
+        value: 1
+        label: Grid extension
+      - id: 1
+        value: 2
+        label: Stand-alone - Diesel
+      - id: 2
+        value: 3
+        label: Stand-alone - Photovoltaic
+      - id: 3
+        value: 4
+        label: Mini-grid - Diesel
+      - id: 4
+        value: 5
+        label: Mini-grid - Photovoltaic
+      - id: 5
+        value: 6
+        label: Mini-grid - Wind
+      - id: 6
+        value: 7
+        label: Mini-grid - Hydro
+  - id: 3
+    property: timeStep
+    label: Time Step
+    type: options
+    options:
+      - id: 0
+        value: 2023
+      - id: 1
+        value: 2030
+  - id: 4
+    property: distanceFromNetwork
+    label: Distance from existing grid (km)
+    type: range
+    range:
+      min: 0.002
+      max: 70
+  - id: 5
+    property: distanceFromNetwork
+    label: Distance from existing road network (km)
+    type: range
+    range:
+      min: 0.0003
+      max: 66
+  - id: 6
+    property: investmentCostPerCapita
+    label: Investiment Cost Per Capita (USD)
+    type: range
+    range:
+      min: 40
+      max: 5000
 map:
   layers:
     - id: 0
