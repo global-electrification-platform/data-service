@@ -40,16 +40,34 @@ filters:
     label: Population
     type: range
     range:
-      - 0
-      - 5000
+      min: 0
+      max: 5000
   - id: 1
-    label: Technology Type
+    property: electrificationTechnology
+    label: Electrification Techonology
     type: options
-    range:
-      - grid
-      - stand-alone-diesel
-      - stand-alone-photovoltaic
-      - mini-grid
+    options:
+      - id: 0
+        value: 1
+        label: Grid extension
+      - id: 1
+        value: 2
+        label: Stand-alone - Diesel
+      - id: 2
+        value: 3
+        label: Stand-alone - Photovoltaic
+      - id: 3
+        value: 4
+        label: Mini-grid - Diesel
+      - id: 4
+        value: 5
+        label: Mini-grid - Photovoltaic
+      - id: 5
+        value: 6
+        label: Mini-grid - Wind
+      - id: 6
+        value: 7
+        label: Mini-grid - Hydro
 map:
   layers:
     - id: 0
