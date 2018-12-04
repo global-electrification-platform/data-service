@@ -28,8 +28,14 @@ server.route({
   path: '/stats',
   handler: async function (request, h) {
     const [totCountries, totModels] = await Promise.all([
-      db.count().from('countries').first(),
-      db.countDistinct('type').from('models').first()
+      db
+        .count()
+        .from('countries')
+        .first(),
+      db
+        .countDistinct('type')
+        .from('models')
+        .first()
     ]);
 
     return {
@@ -187,9 +193,20 @@ server.route({
         if (filters) {
           filters.forEach(filter => {
             if (filter.range) {
-              builder.whereBetween(filter.id, filter.range);
+              const [min, max] = filter.range;
+              builder.whereRaw(
+                `("filterValues"->>'${
+                  filter.id
+                }')::numeric >= ${min} and ("filterValues"->>'${
+                  filter.id
+                }')::numeric <= ${max}`
+              );
             } else if (filter.options) {
-              builder.whereIn(filter.id, filter.options);
+              builder.whereRaw(
+                `("filterValues"->>'${
+                  filter.id
+                }')=any(array['${filter.options.join("','")}'])`
+              );
             }
           });
         }
