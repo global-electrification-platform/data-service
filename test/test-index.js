@@ -1,10 +1,9 @@
 const path = require('path');
 const server = require('../app');
-const fixturesPath = path.join(__dirname, '..', 'fixtures');
 
 // Export globals
 global.server = server;
-global.fixturesPath = fixturesPath;
+global.fixturesPath = path.join(__dirname, '..', 'seeds', 'fixtures');
 
 describe('GEP Data Service', function () {
   before(async function () {
