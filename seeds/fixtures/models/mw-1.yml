@@ -37,22 +37,22 @@ levers:
         value: 70%
 filters:
   - id: 0
-    property: clusterPopulation
-    label: Cluster Population
+    property: Pop
+    label: Area Population
     type: range
     range:
       min: 1
       max: 1830000
   - id: 1
-    property: clusterArea
-    label: Cluster Area
+    property: GridCellArea
+    label: Area Size (square km)
     type: range
     range:
       min: 0.00036
       max: 590
   - id: 2
-    property: electrificationTechnology
-    label: Electrification Techonology
+    property: FinalElecCode2030
+    label: Electrification Techonology (2030)
     type: options
     options:
       - id: 0
@@ -77,30 +77,21 @@ filters:
         value: 7
         label: Mini-grid - Hydro
   - id: 3
-    property: timeStep
-    label: Time Step
-    type: options
-    options:
-      - id: 0
-        value: 2023
-      - id: 1
-        value: 2030
-  - id: 4
-    property: distanceFromNetwork
+    property: SubstationDist
     label: Distance from existing grid (km)
     type: range
     range:
       min: 0.002
       max: 70
-  - id: 5
-    property: distanceFromNetwork
+  - id: 4
+    property: RoadDist
     label: Distance from existing road network (km)
     type: range
     range:
       min: 0.0003
       max: 66
-  - id: 6
-    property: investmentCostPerCapita
+  - id: 5
+    property: InfrastructureCapitaCost2030
     label: Investiment Cost Per Capita (USD)
     type: range
     range:

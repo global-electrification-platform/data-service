@@ -37,13 +37,14 @@ levers:
         value: 70%
 filters:
   - id: 0
+    property: Pop
     label: Population
     type: range
     range:
       min: 0
       max: 5000
   - id: 1
-    property: electrificationTechnology
+    property: FinalElecCode2030
     label: Electrification Techonology
     type: options
     options:
