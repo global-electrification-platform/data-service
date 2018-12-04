@@ -1,20 +1,20 @@
-id: 'cg-1'
-name: 'Congo OnSSET v1.0'
-updatedAt: '2018-09-03'
+id: 'mw-1'
+name: 'Malawi OnSSET v1.0'
+updatedAt: '2018-10-12'
 version: 'v1.0'
 type: onsset
-country: cg
+country: mw
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
 description:
-  'Deserunt magna ad sit duis commodo irure dolor sint qui tempor. Deserunt et sint nostrud duis voluptate irure pariatur amet anim nostrud fugiat cupidatat. Tempor ipsum nulla sunt tempor cupidatat ipsum quis ut aliqua do ut anim ullamco. Cupidatat elit quis mollit cupidatat amet labore consequat est consectetur elit sint labore exercitation. Officia fugiat commodo do ullamco et est.'
+  'Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.'
 levers:
   - id: 0
     label: Grid Generation Cost
     options:
       - id: 0
-        value: 0.20
+        value: 0.01
       - id: 1
         value: 0.05
       - id: 2
@@ -37,14 +37,22 @@ levers:
         value: 70%
 filters:
   - id: 0
-    label: Population
+    property: Pop
+    label: Area Population
     type: range
     range:
-      min: 0
-      max: 5000
+      min: 1
+      max: 1830000
   - id: 1
-    property: electrificationTechnology
-    label: Electrification Techonology
+    property: GridCellArea
+    label: Area Size (square km)
+    type: range
+    range:
+      min: 0.00036
+      max: 590
+  - id: 2
+    property: FinalElecCode2030
+    label: Electrification Techonology (2030)
     type: options
     options:
       - id: 0
@@ -68,6 +76,27 @@ filters:
       - id: 6
         value: 7
         label: Mini-grid - Hydro
+  - id: 3
+    property: SubstationDist
+    label: Distance from existing grid (km)
+    type: range
+    range:
+      min: 0.002
+      max: 70
+  - id: 4
+    property: RoadDist
+    label: Distance from existing road network (km)
+    type: range
+    range:
+      min: 0.0003
+      max: 66
+  - id: 5
+    property: InfrastructureCapitaCost2030
+    label: Investiment Cost Per Capita (USD)
+    type: range
+    range:
+      min: 40
+      max: 5000
 map:
   layers:
     - id: 0

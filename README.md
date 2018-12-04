@@ -25,31 +25,31 @@ npm install
 
 Init development database:
 
-    npm init-dev-db
+    npm run init-dev-db
 
 Start development server with changes monitoring:
 
-    npm dev
+    npm run dev
 
 Access the service at [localhost:3000](http://localhost:3000)
 
 Stop development database:
 
-    npm stop-dev-db
+    npm run stop-dev-db
 
 ### Testing
 
 Start test database:
 
-    npm init-test-db
+    npm run init-test-db
 
 Run tests:
 
-    npm test
+    npm run test
 
 Stop database container:
 
-    npm stop-test-db
+    npm run stop-test-db
 
 
 ## License

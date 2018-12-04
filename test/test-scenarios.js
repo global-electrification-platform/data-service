@@ -22,27 +22,27 @@ describe('Endpoint: /scenarios', function () {
     // Test mal-formed filters parameters
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query({ filters: { electrifiedPopulation: 500 } })
+      .query({ filters: { SubstationDist: 500 } })
       .expect(400);
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query({
-        filters: { electrifiedPopulation: [1000, 100] }
+        filters: { SubstationDist: [1000, 100] }
       })
       .expect(400);
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query({
-        filters: [{ id: 'electrifiedPopulation', range: ['a', 100] }]
+        filters: [{ id: 'SubstationDist', range: ['a', 100] }]
       })
       .expect(400);
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query({
-        filters: [{ id: 'electrifiedPopulation', range: [100, 'b'] }]
+        filters: [{ id: 'SubstationDist', range: [100, 'b'] }]
       })
       .expect(400);
   });
@@ -50,7 +50,7 @@ describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0 with well formed range filter', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
-      filters: [{ id: 'electrifiedPopulation', range: [30, 50] }]
+      filters: [{ id: 'SubstationDist', range: [30, 50] }]
     };
     const scenarioResults = await calculateScenarioSummary(
       scenarioId,
@@ -67,7 +67,7 @@ describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
-      filters: [{ id: 'electrificationTech', options: ['sa-diesel'] }]
+      filters: [{ id: 'FinalElecCode2030', options: ['1'] }]
     };
     const scenarioResults = await calculateScenarioSummary(
       scenarioId,
@@ -84,7 +84,7 @@ describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
-      filters: [{ id: 'electrificationTech', options: ['sa-pv', 'grid'] }]
+      filters: [{ id: 'FinalElecCode2030', options: ['2', '3'] }]
     };
     const scenarioResults = await calculateScenarioSummary(
       scenarioId,
@@ -102,7 +102,7 @@ describe('Endpoint: /scenarios', function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
       filters: [
-        { id: 'electrificationTech', options: ['sa-pv', 'grid'] },
+        { id: 'FinalElecCode2030', options: ['3', '4'] },
         { id: 'electrifiedPopulation', options: [30, 50] }
       ]
     };
@@ -131,22 +131,14 @@ async function calculateScenarioSummary (id, filters) {
     }
   };
 
-  const techs = [
-    'grid',
-    'sa-diesel',
-    'sa-pv',
-    'mg-diesel',
-    'mg-pv',
-    'mg-wind',
-    'mg-hydro'
-  ];
   return new Promise(function (resolve, reject) {
     csv
       .fromPath(scenarioPath, { headers: true, delimiter: ';' })
       .on('data', entry => {
         results.features.push({
+          ...entry,
           id: entry.ID,
-          electrificationTech: techs[entry.FinalElecCode2030],
+          electrificationTech: entry.FinalElecCode2030,
           electrifiedPopulation: parseFloat(entry.Pop),
           investmentCost: parseFloat(entry.InvestmentCost2030),
           newCapacity: parseFloat(entry.NewCapacity2030)

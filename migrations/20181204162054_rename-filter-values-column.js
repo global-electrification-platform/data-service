@@ -1,11 +1,11 @@
 exports.up = function (knex) {
   return knex.schema.table('scenarios', function (t) {
-    t.renameColumn('leastElectrificationCostTechnology', 'electrificationTech');
+    t.renameColumn('results', 'filterValues');
   });
 };
 
 exports.down = function (knex) {
   return knex.schema.table('scenarios', function (t) {
-    t.renameColumn('electrificationTech', 'leastElectrificationCostTechnology');
+    t.renameColumn('filterValues', 'results');
   });
 };
