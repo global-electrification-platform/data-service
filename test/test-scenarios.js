@@ -1,4 +1,4 @@
-const qs = require('qs');
+const { stringify } = require('qs');
 const _ = require('lodash');
 const path = require('path');
 const csv = require('fast-csv');
@@ -19,56 +19,51 @@ describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0 with malformed range filter return error', async function () {
     const scenarioId = 'mw-1-0_0_0';
 
-    // Test mal-formed filters parameters
+    // Not an Array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query({ filters: { SubstationDist: 500 } })
+      .query(stringify({ filters: { SubstationDist: 500 } }))
       .expect(400);
 
+    // Range without a key
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query({
-        filters: { SubstationDist: [1000, 100] }
-      })
+      .query(
+        stringify({
+          filters: [{ notKey: 'SubstationDist', min: 1000 }]
+        })
+      )
       .expect(400);
 
+    // Range without min or max values
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query({
-        filters: [{ id: 'SubstationDist', range: ['a', 100] }]
-      })
-      .expect(400);
-
-    await supertest(server.listener)
-      .get(`/scenarios/${scenarioId}`)
-      .query({
-        filters: [{ id: 'SubstationDist', range: [100, 'b'] }]
-      })
+      .query(
+        stringify({
+          filters: [{ key: 'SubstationDist', otherValue: 100 }]
+        })
+      )
       .expect(400);
   });
 
-  it('GET /scenarios/mw-1-0_0_0 with well formed range filter', async function () {
+  it('GET /scenarios/mw-1-0_0_0 with filtering by a minimun value', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const query = {
-      filters: [{ id: 'SubstationDist', range: [30, 50] }]
-    };
-    const scenarioResults = await calculateScenarioSummary(
-      scenarioId,
-      query.filters
-    );
+    const filters = [{ key: 'SubstationDist', min: 95, max: 110 }];
+    const scenarioResults = await calculateScenarioSummary(scenarioId, filters);
 
     // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(qs.stringify(query))
+      .query(stringify({ filters }))
       .expect(200, scenarioResults);
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
-      filters: [{ id: 'FinalElecCode2030', options: ['1'] }]
+      filters: [{ key: 'FinalElecCode2030', options: ['1'] }]
     };
+
     const scenarioResults = await calculateScenarioSummary(
       scenarioId,
       query.filters
@@ -77,14 +72,14 @@ describe('Endpoint: /scenarios', function () {
     // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(qs.stringify(query))
+      .query(stringify(query))
       .expect(200, scenarioResults);
   });
 
-  it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
+  it('GET /scenarios/mw-1-0_0_0, filtering by two options', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
-      filters: [{ id: 'FinalElecCode2030', options: ['2', '3'] }]
+      filters: [{ key: 'FinalElecCode2030', options: ['2', '3'] }]
     };
     const scenarioResults = await calculateScenarioSummary(
       scenarioId,
@@ -94,7 +89,7 @@ describe('Endpoint: /scenarios', function () {
     // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(qs.stringify(query))
+      .query(stringify(query))
       .expect(200, scenarioResults);
   });
 
@@ -102,8 +97,8 @@ describe('Endpoint: /scenarios', function () {
     const scenarioId = 'mw-1-0_0_0';
     const query = {
       filters: [
-        { id: 'FinalElecCode2030', options: ['3', '4'] },
-        { id: 'electrifiedPopulation', options: [30, 50] }
+        { key: 'FinalElecCode2030', options: ['1', '5'] },
+        { key: 'Pop', min: 30, max: 150 }
       ]
     };
     const scenarioResults = await calculateScenarioSummary(
@@ -114,7 +109,7 @@ describe('Endpoint: /scenarios', function () {
     // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(qs.stringify(query))
+      .query(stringify(query))
       .expect(200, scenarioResults);
   });
 });
@@ -145,17 +140,29 @@ async function calculateScenarioSummary (id, filters) {
         });
       })
       .on('end', async () => {
-        // Apply filters
+        // Apply filters if defined
         if (filters) {
           filters.forEach(filter => {
             results.features = _.filter(results.features, entry => {
-              const value = entry[filter.id];
-              const { range, options } = filter;
-              if (range) {
-                return _.inRange(value, range[0], range[1]);
-              } else {
-                return options.includes(value);
+              const value = entry[filter.key];
+              const { min, max, options } = filter;
+
+              if (typeof min !== 'undefined' && parseFloat(value) < min) {
+                return false;
               }
+
+              if (typeof max !== 'undefined' && parseFloat(value) > max) {
+                return false;
+              }
+
+              if (
+                typeof options !== 'undefined' &&
+                !options.includes(value.toString())
+              ) {
+                return false;
+              }
+
+              return true;
             });
           });
         }

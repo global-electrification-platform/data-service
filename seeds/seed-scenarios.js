@@ -24,7 +24,7 @@ exports.seed = async function (knex, Promise) {
     const modelId = getModelId(scenarioId);
     const model = await loadModelFromFile(modelId);
     return model.filters.map(filter => {
-      return { property: filter.property, type: filter.type };
+      return { key: filter.key, type: filter.type };
     });
   }
 
@@ -54,12 +54,12 @@ exports.seed = async function (knex, Promise) {
 
           // Ingest values to be filtered
           for (const filter of filters) {
-            entry.filterValues[filter.property] = record[filter.property];
+            entry.filterValues[filter.key] = record[filter.key];
 
             // Convert to number if filter is type of range
             if (filter.type === 'range') {
-              entry.filterValues[filter.property] = parseFloat(
-                entry.filterValues[filter.property]
+              entry.filterValues[filter.key] = parseFloat(
+                entry.filterValues[filter.key]
               );
             }
           }
