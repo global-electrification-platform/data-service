@@ -196,22 +196,25 @@ server.route({
             const { key, min, max, options } = filter;
 
             if (typeof min !== 'undefined') {
-              builder.whereRaw(
-                `("filterValues"->>'${key}')::numeric >= ${parseFloat(min)}`
-              );
+              builder.whereRaw(`("filterValues"->>?)::numeric >= ?`, [
+                key,
+                parseFloat(min)
+              ]);
             }
 
             if (typeof max !== 'undefined') {
-              builder.whereRaw(
-                `("filterValues"->>'${key}')::numeric <= ${parseFloat(max)}`
-              );
+              builder.whereRaw(`("filterValues"->>?)::numeric <= ?`, [
+                key,
+                parseFloat(max)
+              ]);
             }
 
             if (typeof options !== 'undefined') {
               builder.whereRaw(
-                `("filterValues"->>'${key}'::text)=any(array['${options.join(
-                  "','"
-                )}'])`
+                `("filterValues"->>?::text) in (${options
+                  .map(_ => '?')
+                  .join(',')})`,
+                [key, ...options]
               );
             }
           });
