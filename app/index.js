@@ -170,18 +170,19 @@ server.route({
 
           // Validate range values
           filters.forEach(filter => {
-            if (filter.range) {
-              // Parse values to float
-              filter.range = filter.range.map(number => {
-                return parseFloat(number);
-              });
+            // A filter key must be defined
+            if (typeof filter.key === 'undefined') {
+              throw new SyntaxError('Filter must include "key".');
+            }
 
-              // Check type
-              filter.range.forEach(number => {
-                if (isNaN(number) || typeof number !== 'number') {
-                  throw new SyntaxError('Range values must be numbers.');
-                }
-              });
+            if (
+              typeof filter.min === 'undefined' &&
+              typeof filter.max === 'undefined' &&
+              typeof filter.options === 'undefined'
+            ) {
+              throw new SyntaxError(
+                'Filter must include a valid value parameter name: "min", "max" or "options").'
+              );
             }
           });
         }
@@ -192,20 +193,28 @@ server.route({
 
         if (filters) {
           filters.forEach(filter => {
-            if (filter.range) {
-              const [min, max] = filter.range;
+            const { key, min, max, options } = filter;
+
+            if (typeof min !== 'undefined') {
+              builder.whereRaw(`("filterValues"->>?)::numeric >= ?`, [
+                key,
+                parseFloat(min)
+              ]);
+            }
+
+            if (typeof max !== 'undefined') {
+              builder.whereRaw(`("filterValues"->>?)::numeric <= ?`, [
+                key,
+                parseFloat(max)
+              ]);
+            }
+
+            if (Array.isArray(options) && options.length > 0) {
               builder.whereRaw(
-                `("filterValues"->>'${
-                  filter.id
-                }')::numeric >= ${min} and ("filterValues"->>'${
-                  filter.id
-                }')::numeric <= ${max}`
-              );
-            } else if (filter.options) {
-              builder.whereRaw(
-                `("filterValues"->>'${
-                  filter.id
-                }')=any(array['${filter.options.join("','")}'])`
+                `("filterValues"->>?::text) in (${options
+                  .map(_ => '?')
+                  .join(',')})`,
+                [key, ...options]
               );
             }
           });
@@ -234,7 +243,16 @@ server.route({
         .orderBy('areaId')
         .from('scenarios');
 
-      return { id, features, summary };
+      // Organize features into layers by electrification tech
+      const layers = {};
+      for (const feature of features) {
+        if (typeof layers[feature.electrificationTech] === 'undefined') {
+          layers[feature.electrificationTech] = [];
+        }
+        layers[feature.electrificationTech].push(feature.id);
+      }
+
+      return { id, layers, summary };
     } catch (error) {
       if (error instanceof SyntaxError) {
         return boom.badRequest(error);
