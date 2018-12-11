@@ -116,9 +116,10 @@ describe('Endpoint: /scenarios', function () {
 
 async function calculateScenarioSummary (id, filters) {
   const scenarioPath = path.join(fixturesPath, 'scenarios', `${id}.csv`);
+  let features = [];
   const results = {
     id,
-    features: [],
+    layers: {},
     summary: {
       electrifiedPopulation: 0,
       investmentCost: 0,
@@ -130,7 +131,7 @@ async function calculateScenarioSummary (id, filters) {
     csv
       .fromPath(scenarioPath, { headers: true, delimiter: ';' })
       .on('data', entry => {
-        results.features.push({
+        features.push({
           ...entry,
           id: entry.ID,
           electrificationTech: entry.FinalElecCode2030,
@@ -143,7 +144,7 @@ async function calculateScenarioSummary (id, filters) {
         // Apply filters if defined
         if (filters) {
           filters.forEach(filter => {
-            results.features = _.filter(results.features, entry => {
+            features = _.filter(features, entry => {
               const value = entry[filter.key];
               const { min, max, options } = filter;
 
@@ -175,7 +176,7 @@ async function calculateScenarioSummary (id, filters) {
         };
 
         // Aggregate key properties
-        results.features.forEach(f => {
+        features.forEach(f => {
           results.summary.electrifiedPopulation += f.electrifiedPopulation;
           results.summary.investmentCost += f.investmentCost;
           results.summary.newCapacity += f.newCapacity;
@@ -191,13 +192,12 @@ async function calculateScenarioSummary (id, filters) {
           newCapacity: _.round(results.summary.newCapacity, 2)
         };
 
-        // Only keep tech property for features
-        results.features = results.features.map(f => {
-          return { id: f.id, electrificationTech: f.electrificationTech };
-        });
-
-        // Sort features by id
-        results.features = _.sortBy(results.features, 'id');
+        for (const feature of features) {
+          if (typeof results.layers[feature.electrificationTech] === 'undefined') {
+            results.layers[feature.electrificationTech] = [];
+          }
+          results.layers[feature.electrificationTech].push(feature.id);
+        }
 
         resolve(results);
       })

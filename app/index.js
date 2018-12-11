@@ -240,7 +240,16 @@ server.route({
         .orderBy('areaId')
         .from('scenarios');
 
-      return { id, features, summary };
+      // Organize features into layers by electrification tech
+      const layers = {};
+      for (const feature of features) {
+        if (typeof layers[feature.electrificationTech] === 'undefined') {
+          layers[feature.electrificationTech] = [];
+        }
+        layers[feature.electrificationTech].push(feature.id);
+      }
+
+      return { id, layers, summary };
     } catch (error) {
       if (error instanceof SyntaxError) {
         return boom.badRequest(error);
