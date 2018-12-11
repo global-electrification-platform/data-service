@@ -238,21 +238,20 @@ server.route({
 
       // Get features
       let features = await db
-        .select('areaId as id', 'electrificationTech')
+        .select('featureId as id', 'electrificationTech')
         .where(whereBuilder)
-        .orderBy('areaId')
+        .orderBy('featureId')
         .from('scenarios');
 
       // Organize features into layers by electrification tech
-      const layers = {};
+      let featureTypes = [];
       for (const feature of features) {
-        if (typeof layers[feature.electrificationTech] === 'undefined') {
-          layers[feature.electrificationTech] = [];
-        }
-        layers[feature.electrificationTech].push(feature.id);
+        featureTypes[feature.id] = feature.electrificationTech;
       }
 
-      return { id, layers, summary };
+      featureTypes = featureTypes.toString();
+
+      return { id, featureTypes, summary };
     } catch (error) {
       if (error instanceof SyntaxError) {
         return boom.badRequest(error);

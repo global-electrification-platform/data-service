@@ -119,7 +119,7 @@ async function calculateScenarioSummary (id, filters) {
   let features = [];
   const results = {
     id,
-    layers: {},
+    featureTypes: [],
     summary: {
       electrifiedPopulation: 0,
       investmentCost: 0,
@@ -134,7 +134,7 @@ async function calculateScenarioSummary (id, filters) {
         features.push({
           ...entry,
           id: entry.ID,
-          electrificationTech: entry.FinalElecCode2030,
+          electrificationTech: parseInt(entry.FinalElecCode2030),
           electrifiedPopulation: parseFloat(entry.Pop),
           investmentCost: parseFloat(entry.InvestmentCost2030),
           newCapacity: parseFloat(entry.NewCapacity2030)
@@ -193,11 +193,10 @@ async function calculateScenarioSummary (id, filters) {
         };
 
         for (const feature of features) {
-          if (typeof results.layers[feature.electrificationTech] === 'undefined') {
-            results.layers[feature.electrificationTech] = [];
-          }
-          results.layers[feature.electrificationTech].push(feature.id);
+          results.featureTypes[feature.id] = feature.electrificationTech;
         }
+
+        results.featureTypes = results.featureTypes.toString();
 
         resolve(results);
       })

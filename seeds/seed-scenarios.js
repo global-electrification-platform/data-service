@@ -44,7 +44,7 @@ exports.seed = async function (knex, Promise) {
           // Convert columns to object properties
           const entry = {
             scenarioId: scenarioId,
-            areaId: record.ID,
+            featureId: parseInt(record.ID),
             electrificationTech: record.FinalElecCode2030,
             investmentCost: parseFloat(record.InvestmentCost2030),
             newCapacity: parseFloat(record.NewCapacity2030),
