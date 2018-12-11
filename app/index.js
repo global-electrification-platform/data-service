@@ -209,7 +209,7 @@ server.route({
               ]);
             }
 
-            if (typeof options !== 'undefined') {
+            if (Array.isArray(options) && options.length > 0) {
               builder.whereRaw(
                 `("filterValues"->>?::text) in (${options
                   .map(_ => '?')
