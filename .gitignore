@@ -1,6 +1,5 @@
 node_modules
 data
-ingest
 config/production*
 .resources
 .DS_Store
