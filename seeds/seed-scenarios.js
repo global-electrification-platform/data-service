@@ -40,10 +40,9 @@ exports.seed = async function (knex, Promise) {
     // Read CSV File
     return new Promise(function (resolve, reject) {
       const records = [];
-
       csv
         .fromPath(scenarioFilePath, { headers: true, delimiter: ',' })
-        .on('data', async record => {
+        .on('data', record => {
           if (record.ID.indexOf('-') > -1) {
             record.ID = record.ID.split('-')[1];
           }
@@ -74,9 +73,13 @@ exports.seed = async function (knex, Promise) {
           records.push(entry);
         })
         .on('end', async () => {
-          await knex.batchInsert('scenarios', records);
-          console.timeEnd(`Scenario ${scenarioId} imported in`); // eslint-disable-line
-          resolve();
+          try {
+            await knex.batchInsert('scenarios', records);
+            console.timeEnd(`Scenario ${scenarioId} imported in`); // eslint-disable-line
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
         })
         .on('error', reject);
     });
