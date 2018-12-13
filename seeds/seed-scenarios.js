@@ -42,8 +42,7 @@ exports.seed = async function (knex, Promise) {
       const records = [];
 
       csv
-        .fromPath(scenarioFilePath, { headers: true, delimiter: ';' })
-        .on('data', record => {
+        .fromPath(scenarioFilePath, { headers: true, delimiter: ',' })
         .on('data', async record => {
           if (record.ID.indexOf('-') > -1) {
             record.ID = record.ID.split('-')[1];

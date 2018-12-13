@@ -129,7 +129,7 @@ async function calculateScenarioSummary (id, filters) {
 
   return new Promise(function (resolve, reject) {
     csv
-      .fromPath(scenarioPath, { headers: true, delimiter: ';' })
+      .fromPath(scenarioPath, { headers: true, delimiter: ',' })
       .on('data', entry => {
         features.push({
           ...entry,
