@@ -30,22 +30,28 @@ exports.seed = async function (knex, Promise) {
 
   async function readScenariosFile (scenarioFileName) {
     const [scenarioId] = scenarioFileName.split('.');
+
+    console.time(`Scenario ${scenarioId} imported in`);  // eslint-disable-line
+
     const scenarioFilePath = join(scenariosPath, scenarioFileName);
 
     const filters = await getFilters(scenarioId);
 
     // Read CSV File
     return new Promise(function (resolve, reject) {
-      const entries = [];
-
+      const records = [];
       csv
-        .fromPath(scenarioFilePath, { headers: true, delimiter: ';' })
+        .fromPath(scenarioFilePath, { headers: true, delimiter: ',' })
         .on('data', record => {
+          if (record.ID.indexOf('-') > -1) {
+            record.ID = record.ID.split('-')[1];
+          }
+
           // Convert columns to object properties
           const entry = {
             scenarioId: scenarioId,
-            areaId: record.ID,
-            electrificationTech: record.FinalElecCode2030,
+            featureId: parseInt(record.ID),
+            electrificationTech: parseInt(record.FinalElecCode2030),
             investmentCost: parseFloat(record.InvestmentCost2030),
             newCapacity: parseFloat(record.NewCapacity2030),
             electrifiedPopulation: parseFloat(record.Pop),
@@ -64,19 +70,32 @@ exports.seed = async function (knex, Promise) {
             }
           }
 
-          entries.push(entry);
+          records.push(entry);
         })
         .on('end', async () => {
-          // Insert to the database
-          await knex('scenarios')
-            .insert(entries)
-            .then(resolve);
+          try {
+            await knex.batchInsert('scenarios', records);
+            console.timeEnd(`Scenario ${scenarioId} imported in`); // eslint-disable-line
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
         })
         .on('error', reject);
     });
   }
 
+  // Clean scenarios table
   await knex('scenarios').del();
-  const scenarioFiles = await readdir(scenariosPath);
-  return Promise.all(scenarioFiles.map(file => readScenariosFile(file)));
+
+  // Get file names
+  let scenarioFiles = await readdir(scenariosPath);
+
+  // Ignore non-csv files
+  scenarioFiles = scenarioFiles.filter(f => f.indexOf('csv') > -1);
+
+  // Import files in series
+  for (const file of scenarioFiles) {
+    await readScenariosFile(file);
+  }
 };
