@@ -142,6 +142,39 @@ server.route({
 
 server.route({
   method: 'GET',
+  path: '/scenarios/{sid}/features/{fid}',
+  options: {
+    validate: {
+      params: {
+        sid: Joi.string(),
+        fid: Joi.number()
+      }
+    }
+  },
+  handler: async function (request, h) {
+    try {
+      const sid = request.params.sid.toLowerCase();
+      const fid = request.params.fid;
+      const feature = await db
+        .select(
+          'investmentCost',
+          'newCapacity',
+          'electrifiedPopulation'
+        )
+        .from('scenarios')
+        .where('scenarioId', sid)
+        .where('featureId', fid)
+        .first();
+
+      return feature || boom.notFound('Feature not found.');
+    } catch (error) {
+      return boom.badImplementation(error);
+    }
+  }
+});
+
+server.route({
+  method: 'GET',
   path: '/scenarios/{id}',
   options: {
     validate: {
