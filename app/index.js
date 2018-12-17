@@ -156,11 +156,7 @@ server.route({
       const sid = request.params.sid.toLowerCase();
       const fid = request.params.fid;
       const feature = await db
-        .select(
-          'investmentCost',
-          'newCapacity',
-          'electrifiedPopulation'
-        )
+        .select('investmentCost', 'newCapacity', 'electrifiedPopulation')
         .from('scenarios')
         .where('scenarioId', sid)
         .where('featureId', fid)
@@ -271,20 +267,42 @@ server.route({
 
       // Get features
       let features = await db
-        .select('featureId as id', 'electrificationTech')
+        .select(
+          'featureId as id',
+          'electrificationTech',
+          'investmentCost',
+          'newCapacity',
+          'electrifiedPopulation'
+        )
         .where(whereBuilder)
         .orderBy('featureId')
         .from('scenarios');
 
-      // Organize features into layers by electrification tech
+      const summaryByType = {
+        electrifiedPopulation: {},
+        investmentCost: {},
+        newCapacity: {}
+      };
+
+      // Organize features into layers and calculate summary by type
       let featureTypes = [];
-      for (const feature of features) {
-        featureTypes[feature.id] = feature.electrificationTech;
+      for (const f of features) {
+        featureTypes[f.id] = f.electrificationTech;
+
+        summaryByType.electrifiedPopulation[f.electrificationTech] =
+          (summaryByType.electrifiedPopulation[f.electrificationTech] || 0) +
+          parseFloat(f.electrifiedPopulation);
+        summaryByType.investmentCost[f.electrificationTech] =
+          (summaryByType.investmentCost[f.electrificationTech] || 0) +
+          parseFloat(f.investmentCost);
+        summaryByType.newCapacity[f.electrificationTech] =
+          (summaryByType.newCapacity[f.electrificationTech] || 0) +
+          parseFloat(f.newCapacity);
       }
 
       featureTypes = featureTypes.toString();
 
-      return { id, featureTypes, summary };
+      return { id, featureTypes, summary, summaryByType };
     } catch (error) {
       if (error instanceof SyntaxError) {
         return boom.badRequest(error);

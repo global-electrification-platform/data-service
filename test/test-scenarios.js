@@ -175,11 +175,29 @@ async function calculateScenarioSummary (id, filters) {
           newCapacity: 0
         };
 
+        // Init summary by type
+        results.summaryByType = {
+          electrifiedPopulation: {},
+          investmentCost: {},
+          newCapacity: {}
+        };
+
         // Aggregate key properties
         features.forEach(f => {
           results.summary.electrifiedPopulation += f.electrifiedPopulation;
           results.summary.investmentCost += f.investmentCost;
           results.summary.newCapacity += f.newCapacity;
+
+          results.summaryByType.electrifiedPopulation[f.electrificationTech] =
+            (results.summaryByType.electrifiedPopulation[
+              f.electrificationTech
+            ] || 0) + f.electrifiedPopulation;
+          results.summaryByType.investmentCost[f.electrificationTech] =
+            (results.summaryByType.investmentCost[f.electrificationTech] || 0) +
+            f.investmentCost;
+          results.summaryByType.newCapacity[f.electrificationTech] =
+            (results.summaryByType.newCapacity[f.electrificationTech] || 0) +
+            f.newCapacity;
         });
 
         // Round summary
