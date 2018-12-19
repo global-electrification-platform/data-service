@@ -106,6 +106,8 @@ map:
       label: Africa - Electricity Transmission and Distribution (tilejson)
       type: 'vector'
       url: 'https://energydata-tiles-bk.s3.amazonaws.com/tiles/19f22355-d631-4b25-a3a3-7a2bfe776720-137f3be9-3cb5-49d0-8d02-5f266f4ce455/data.tilejson'
+      description: The most complete and up-to-date open map of Africa's electricity grid network. The data that comes from OpenStreetMap and World Bank project archives.
+      source: energydata.info
       vectorLayers:
         - data_layer
     # - id: africa2
@@ -115,12 +117,14 @@ map:
     #     - https://energydata-tiles-bk.s3.amazonaws.com/tiles/19f22355-d631-4b25-a3a3-7a2bfe776720-137f3be9-3cb5-49d0-8d02-5f266f4ce455/{z}/{x}/{y}.pbf
     #   vectorLayers:
     #     - data_layer
-    - id: census
-      label: Sensus
+    - id: wind-potential
+      label: Wind Potential (2015)
       type: 'vector'
-      url: mapbox://mapbox.us_census_states_2015
+      url: 'https://energydata-tiles-bk.s3.amazonaws.com/tiles/faaec345-c386-4cd7-832f-e70443fd2fa2-77d89202-a356-4dee-86c2-c9e2880fab46/data.tilejson'
+      description: This spatial vector dataset shows areas of identified high quality potential for wind development divided into large contiguous areas called 'zones'.
+      source: energydata.info
       vectorLayers:
-        - states
+        - data_layer
     - id: oam
       label: Openaerialmap
       type: 'raster'
