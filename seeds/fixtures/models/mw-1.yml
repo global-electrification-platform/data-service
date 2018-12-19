@@ -12,6 +12,7 @@ description:
 levers:
   - id: 0
     label: Grid Generation Cost
+    description: Laboris velit cupidatat aliquip nisi consectetur deserunt tempor nisi magna. Reprehenderit tempor voluptate amet dolore aute anim qui aute est. Aute aliqua labore mollit culpa aliquip consequat ex. Quis laboris et minim dolore dolore aliquip. Proident mollit Lorem aliquip pariatur. Cupidatat minim pariatur fugiat officia elit.
     options:
       - id: 0
         value: 0.01
@@ -21,6 +22,7 @@ levers:
         value: 0.08
   - id: 1
     label: Diesel Price
+    description: Cupidatat non cillum Lorem officia cupidatat. Deserunt et incididunt in incididunt excepteur dolor fugiat do. Exercitation anim ullamco sit consectetur deserunt adipisicing anim fugiat cillum duis culpa ea et duis.
     options:
       - id: 0
         value: 0.50
@@ -30,6 +32,7 @@ levers:
         value: 1.00
   - id: 2
     label: First Year Target
+    description: Tempor culpa sit occaecat minim sint esse eu. Aliqua officia ullamco non consequat. Excepteur tempor pariatur incididunt mollit aliqua cupidatat ipsum ea aute dolore cillum. Eu sint proident proident enim ad voluptate reprehenderit amet cillum eu excepteur non elit.
     options:
       - id: 0
         value: 50%
