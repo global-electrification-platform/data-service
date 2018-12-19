@@ -104,6 +104,7 @@ map:
   layers:
     - id: mapbox_satellite
       label: Mapbox Satellite
+      description: Satellite imagery provided by Mapbox from commercial providers, NASA, and USGS.
       type: 'raster'
       tiles:
         - https://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token=pk.eyJ1IjoiZGV2c2VlZCIsImEiOiJjam9vamtjc2ExaHl2M3FxYW0yeTNjeHprIn0.EGNe0UbYK1gEQSB9Bs9YYw
