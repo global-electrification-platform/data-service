@@ -8,7 +8,6 @@ const scenariosPath = join(__dirname, 'fixtures', 'scenarios');
 const modelsPath = join(__dirname, 'fixtures', 'models');
 
 exports.seed = async function (knex, Promise) {
-  return Promise.resolve();
   function getModelId (scenarioId) {
     return scenarioId.substring(0, scenarioId.lastIndexOf('-'));
   }
