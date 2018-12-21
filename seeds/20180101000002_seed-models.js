@@ -7,15 +7,18 @@ const modelsPath = path.join(__dirname, 'fixtures', 'models');
 exports.seed = async function (knex) {
   const modelFilenames = await readdir(modelsPath);
   // Load models from samples directory
-  let models = await Promise.all(modelFilenames.map(async m => {
-    const yamlModel = await readFile(path.join(modelsPath, m), 'utf-8');
-    return yaml.load(yamlModel);
-  }));
+  let models = await Promise.all(
+    modelFilenames
+      .filter(f => f.endsWith('.yml'))
+      .map(async m => {
+        const yamlModel = await readFile(path.join(modelsPath, m), 'utf-8');
+        return yaml.load(yamlModel);
+      })
+  );
 
   // Perform database tasks
   if (models.length > 0) {
-    await knex('models')
-      .del();
+    await knex('models').del();
 
     // Modify the models, adding the filter data computed from scenario vals.
     for (let model of models) {
@@ -25,10 +28,14 @@ exports.seed = async function (knex) {
       for (let filter of model.filters) {
         if (filter.type === 'range') {
           if (!filter.key) {
-            console.log(`No (key) found for filter of model [${id}]... skipping`); // eslint-disable-line
+            // eslint-disable-next-line
+            console.log(
+              `No (key) found for filter of model [${id}]... skipping`
+            );
             continue;
           }
-          const res = await knex.raw(`
+          const res = await knex.raw(
+            `
             SELECT
               MIN(CAST(
                 "filterValues" ->> :propetry AS FLOAT
@@ -38,13 +45,20 @@ exports.seed = async function (knex) {
               )) as max
             FROM scenarios
             WHERE "modelId" = :modelId
-          `, { propetry: filter.key, modelId: id });
+          `,
+            { propetry: filter.key, modelId: id }
+          );
 
           // Modify the filter.
           const { min, max } = res.rows[0];
 
           if (min === null || max === null) {
-            console.log(`Invalid (min) and/or (max) for filter [${filter.key}] of model [${id}]... skipping`); // eslint-disable-line
+            // eslint-disable-next-line
+            console.log(
+              `Invalid (min) and/or (max) for filter [${
+                filter.key
+              }] of model [${id}]... skipping`
+            ); // eslint-disable-line
             continue;
           }
 
@@ -58,7 +72,12 @@ exports.seed = async function (knex) {
         } else if (filter.type === 'options') {
           filters = filters.concat({ ...filter });
         } else {
-          console.log(`Invalid type [${filter.type}] for filter [${filter.key}] of model [${id}]... skipping`); // eslint-disable-line
+          // eslint-disable-next-line
+          console.log(
+            `Invalid type [${filter.type}] for filter [${
+              filter.key
+            }] of model [${id}]... skipping`
+          ); // eslint-disable-line
         }
       }
 
