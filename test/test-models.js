@@ -21,6 +21,14 @@ describe('endpoint /models/{id}', function () {
     let mw1Model = await fs.readFile(mw1ModelPath);
     mw1Model = yaml.load(mw1Model);
 
+    // On import to the database the range min max are calculated.
+    // Add them to the model for comparison.
+    mw1Model.filters[0].range = { min: 0, max: 31528 };
+    mw1Model.filters[1].range = { min: 0, max: 8 };
+    mw1Model.filters[3].range = { min: 31, max: 122 };
+    mw1Model.filters[4].range = { min: 0, max: 14 };
+    mw1Model.filters[5].range = { min: 0, max: 462 };
+
     return supertest(server.listener)
       .get('/models/mw-1')
       .expect(200, mw1Model);

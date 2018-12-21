@@ -43,16 +43,16 @@ filters:
     key: Pop
     label: Area Population
     type: range
-    range:
-      min: 3
-      max: 31528
+    # range:
+    #   min: 3
+    #   max: 31528
   - id: 1
     key: GridCellArea
     label: Area Size (square km)
     type: range
-    range:
-      min: 0.008
-      max: 7.256
+    # range:
+    #   min: 0.008
+    #   max: 7.256
   - id: 2
     key: FinalElecCode2030
     label: Electrification Techonology (2030)
@@ -83,23 +83,23 @@ filters:
     key: SubstationDist
     label: Distance from existing grid (km)
     type: range
-    range:
-      min: 79
-      max: 115
+    # range:
+    #   min: 79
+    #   max: 115
   - id: 4
     key: RoadDist
     label: Distance from existing road network (km)
     type: range
-    range:
-      min: 0.01141
-      max: 10.1854
+    # range:
+    #   min: 0.01141
+    #   max: 10.1854
   - id: 5
     key: InfrastructureCapitaCost2030
     label: Investiment Cost Per Capita (USD)
     type: range
-    range:
-      min: 0
-      max: 462
+    # range:
+    #   min: 0
+    #   max: 462
 map:
   layers:
     - id: mapbox_satellite

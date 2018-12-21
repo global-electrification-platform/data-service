@@ -36,6 +36,7 @@ exports.seed = async function (knex, Promise) {
     const scenarioFilePath = join(scenariosPath, scenarioFileName);
 
     const filters = await getFilters(scenarioId);
+    const modelId = getModelId(scenarioId);
 
     // Read CSV File
     return new Promise(function (resolve, reject) {
@@ -49,6 +50,7 @@ exports.seed = async function (knex, Promise) {
 
           // Convert columns to object properties
           const entry = {
+            modelId: modelId,
             scenarioId: scenarioId,
             featureId: parseInt(record.ID),
             electrificationTech: parseInt(record.FinalElecCode2030),
