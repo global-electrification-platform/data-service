@@ -1,0 +1,73 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: developmentseed/circleci:node8.4-python2.7
+
+    # Database for the tests
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+            POSTGRES_PASSWORD: gep-data-service-test
+            POSTGRES_USER: gep-data-service-test
+            POSTGRES_DB: gep-data-service-test
+
+    working_directory: ~/repo
+
+    environment:
+        # Needed to load the correct config
+        NODE_ENV: circle
+        PRODUCTION_BRANCH: master
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: Set up the test db
+          command: node node_modules/.bin/knex migrate:latest
+
+      - run:
+          name: Seed db
+          command: node node_modules/.bin/knex seed:run
+
+      - run:
+          name: Lint
+          command: npm run lint
+
+      - run:
+          name: Run tests
+          command: node node_modules/mocha/bin/mocha test/test-index.js
+
+      # - run:
+      #     name: Building site
+      #     command: |
+      #       if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
+      #         yarn build           
+      #       else
+      #         echo "Skip building site"
+      #       fi
+
+      # - run:
+      #     name: Deploy to Surge
+      #     command: |
+      #       if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
+      #         cp ./dist/index.html ./dist/200.html
+      #         ./node_modules/surge/lib/cli.js --project ./dist --domain gep-explorer.surge.sh
+      #       else
+      #         echo "Not the branch you're looking for, skipping deploy"
+      #       fi

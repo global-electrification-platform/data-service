@@ -189,9 +189,10 @@ async function calculateScenarioSummary (id, filters) {
           results.summary.newCapacity += f.newCapacity;
 
           results.summaryByType.electrifiedPopulation[f.electrificationTech] =
-            (results.summaryByType.electrifiedPopulation[
-              f.electrificationTech
-            ] || 0) + f.electrifiedPopulation;
+            (
+              results.summaryByType.electrifiedPopulation[f.electrificationTech] ||
+              0
+            ) + f.electrifiedPopulation;
           results.summaryByType.investmentCost[f.electrificationTech] =
             (results.summaryByType.investmentCost[f.electrificationTech] || 0) +
             f.investmentCost;
