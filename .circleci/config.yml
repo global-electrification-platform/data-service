@@ -61,6 +61,7 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
                 eb deploy $EB_DEPLOY_ENV
+                PG_CONNECTION_STRING=$PRODUCTION_DB_CONN node node_modules/.bin/knex migrate:latest
             else
               echo "Not the branch you're looking for, skipping deploy"
             fi
