@@ -1,0 +1,8 @@
+knex:
+  client: "pg"
+  connection:
+    host: "localhost"
+    database: "gep-data-service-test"
+    user: "gep-data-service-test"
+    password: "gep-data-service-test"
+    port: 5432

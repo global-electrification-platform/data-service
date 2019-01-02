@@ -1,0 +1,95 @@
+id: 'mw-2'
+name: 'Malawi Network Planner v1.0'
+updatedAt: '2018-10-14'
+version: 'v1.0'
+type: net-planner
+country: mw
+attribution:
+  author: 'KTH'
+  url: 'http:/kth.se'
+description:
+  'Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.'
+levers:
+  - id: 0
+    label: Grid Generation Cost
+    options:
+      - id: 0
+        value: 0.01
+      - id: 1
+        value: 0.05
+      - id: 2
+        value: 0.08
+  - id: 1
+    label: Diesel Price
+    options:
+      - id: 0
+        value: 0.50
+      - id: 1
+        value: 0.80
+      - id: 2
+        value: 1.00
+  - id: 2
+    label: First Year Target
+    options:
+      - id: 0
+        value: 50%
+      - id: 1
+        value: 70%
+filters:
+  - id: 0
+    key: Pop
+    label: Population
+    type: range
+    range:
+      min: 0
+      max: 5000
+  - id: 1
+    key: FinalElecCode2030
+    label: Electrification Techonology
+    type: options
+    options:
+      - id: 0
+        value: 1
+        label: Grid extension
+      - id: 1
+        value: 2
+        label: Stand-alone - Diesel
+      - id: 2
+        value: 3
+        label: Stand-alone - Photovoltaic
+      - id: 3
+        value: 4
+        label: Mini-grid - Diesel
+      - id: 4
+        value: 5
+        label: Mini-grid - Photovoltaic
+      - id: 5
+        value: 6
+        label: Mini-grid - Wind
+      - id: 6
+        value: 7
+        label: Mini-grid - Hydro
+map:
+  layers:
+    - id: 0
+      label: HV power lines
+      url: http://www.wms.maps/hv-lines
+    - id: 1
+      label: Road Networks
+      url: http://www.wms.maps/road-networks
+    - id: 1
+      label: Substations
+      url: http://www.wms.maps/substations
+  legend:
+    - id: 0
+      color: #32292f
+      label: Grid
+    - id: 1
+      color: #575366
+      label: Stand Alone Diesel
+    - id: 2
+      color: #6e7dab
+      label: Stand Alone Photovoltaic
+    - id: 3
+      color: #5762d5
+      label: Mini Grid
