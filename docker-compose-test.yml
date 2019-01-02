@@ -5,6 +5,8 @@ services:
     ports:
       - "15433:5432"
     environment:
+      POSTGRES_PASSWORD: gep-data-service-test
       POSTGRES_USER: gep-data-service-test
-    volumes:
-      - ./data/postgresql-test:/var/lib/postgresql/data
+      POSTGRES_DB: gep-data-service-test
+    # volumes:
+    #   - ./data/postgresql-test:/var/lib/postgresql/data

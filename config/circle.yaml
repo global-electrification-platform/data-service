@@ -5,4 +5,4 @@ knex:
     database: "gep-data-service-test"
     user: "gep-data-service-test"
     password: "gep-data-service-test"
-    port: 15433
+    port: 5432
