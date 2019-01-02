@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/developmentseed/project-seed/issues"
+    "url": "https://github.com/developmentseed/gep-data-service/issues"
   },
   "engines": {
     "node": ">=8.12.0"
