@@ -16,12 +16,15 @@ jobs:
     environment:
         # Needed to load the correct config
         NODE_ENV: circle
+        EB_DEPLOY_ENV: gep-data-service
         PRODUCTION_BRANCH: master
 
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+    
+      - run: pip install awsebcli --upgrade --user
 
       # Download and cache dependencies
       - restore_cache:
@@ -53,21 +56,11 @@ jobs:
           name: Run tests
           command: node node_modules/mocha/bin/mocha test/test-index.js
 
-      # - run:
-      #     name: Building site
-      #     command: |
-      #       if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
-      #         yarn build           
-      #       else
-      #         echo "Skip building site"
-      #       fi
-
-      # - run:
-      #     name: Deploy to Surge
-      #     command: |
-      #       if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
-      #         cp ./dist/index.html ./dist/200.html
-      #         ./node_modules/surge/lib/cli.js --project ./dist --domain gep-explorer.surge.sh
-      #       else
-      #         echo "Not the branch you're looking for, skipping deploy"
-      #       fi
+      - run:
+          name: Deploy to aws
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
+                eb deploy $EB_DEPLOY_ENV
+            else
+              echo "Not the branch you're looking for, skipping deploy"
+            fi
