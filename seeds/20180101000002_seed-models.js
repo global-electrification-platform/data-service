@@ -41,15 +41,15 @@ exports.seed = async function (knex) {
             `
             SELECT
               MIN(CAST(
-                "filterValues" ->> :propetry AS FLOAT
+                "filterValues" ->> :property AS FLOAT
               )) as min,
               MAX(CAST (
-                "filterValues" ->> :propetry AS FLOAT
+                "filterValues" ->> :property AS FLOAT
               )) as max
             FROM scenarios
             WHERE "modelId" = :modelId
           `,
-            { propetry: filter.key, modelId: id }
+            { property: filter.key, modelId: id }
           );
 
           // Modify the filter.
