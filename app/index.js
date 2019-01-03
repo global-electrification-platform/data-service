@@ -120,6 +120,7 @@ server.route({
           'attribution',
           'country',
           'description',
+          'timesteps',
           'filters',
           'id',
           'levers',

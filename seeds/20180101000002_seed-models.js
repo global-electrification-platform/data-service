@@ -23,9 +23,12 @@ exports.seed = async function (knex) {
     // Modify the models, adding the filter data computed from scenario vals.
     for (let model of models) {
       const id = model.id;
+      const hasTimesteps = model.timesteps && model.timesteps.length;
+
       // Filters to keep.
       let filters = [];
       for (let filter of model.filters) {
+        filter.timestep = hasTimesteps ? filter.timestep === true : false;
         if (filter.type === 'range') {
           if (!filter.key) {
             // eslint-disable-next-line
