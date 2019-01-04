@@ -59,8 +59,9 @@ filters:
     #   min: 0.008
     #   max: 7.256
   - id: 2
-    key: FinalElecCode2030
-    label: Electrification Techonology (2030)
+    key: FinalElecCode
+    label: Electrification Techonology
+    timestep: true
     type: options
     options:
       - id: 0
