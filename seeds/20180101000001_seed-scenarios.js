@@ -116,9 +116,9 @@ exports.seed = async function (knex, Promise) {
           }, []);
 
           if (errors.length) {
-            console.log(errors.join('\n'));
-            console.log('');
-            console.log('Seed process failed!');
+            console.log(errors.join('\n'));  // eslint-disable-line
+            console.log('');  // eslint-disable-line
+            console.log('Seed process failed!');  // eslint-disable-line
             process.exit(1);
           }
 

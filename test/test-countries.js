@@ -1,9 +1,8 @@
 const supertest = require('supertest');
 const fs = require('fs-extra');
-const yaml = require('js-yaml');
 const path = require('path');
 
-/* global server,fixturesPath */
+/* global server */
 
 describe('Endpoint /countries', function () {
   it('GET /countries returns status 200 and countries', async function () {
