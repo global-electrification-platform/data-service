@@ -91,6 +91,7 @@ server.route({
             'country',
             'description',
             'filters',
+            'timesteps',
             'id',
             'levers',
             'map',
@@ -120,6 +121,7 @@ server.route({
           'attribution',
           'country',
           'description',
+          'timesteps',
           'filters',
           'id',
           'levers',
@@ -148,6 +150,9 @@ server.route({
       params: {
         sid: Joi.string(),
         fid: Joi.number()
+      },
+      query: {
+        year: Joi.number()
       }
     }
   },
@@ -155,8 +160,41 @@ server.route({
     try {
       const sid = request.params.sid.toLowerCase();
       const fid = request.params.fid;
+
+      let year = request.query.year;
+
+      // Get information about the model
+      const modelId = sid.substring(0, sid.lastIndexOf('-'));
+      const model = await db('models')
+        .select('filters', 'timesteps')
+        .where('id', modelId)
+        .first();
+
+      // If there's no model, means that the id is not correct.
+      // Assume not found.
+      if (!model) return boom.notFound('Model not found.');
+
+      // Validate timestep model
+      if (model.timesteps) {
+        // Set final year if none is passed
+        year = year || model.timesteps[model.timesteps.length - 1];
+
+        if (model.timesteps.indexOf(year) === -1) {
+          throw new SyntaxError(
+            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
+          );
+        }
+      } else {
+        // Disregard year
+        year = '';
+      }
+
       const feature = await db
-        .select('investmentCost', 'newCapacity', 'electrifiedPopulation')
+        .select(
+          db.raw(`summary->>'${'InvestmentCost' + year}' as "investmentCost"`),
+          db.raw(`summary->>'${'NewCapacity' + year}' as "newCapacity"`),
+          db.raw(`summary->>'${'Pop' + year}' as "electrifiedPopulation"`)
+        )
         .from('scenarios')
         .where('scenarioId', sid)
         .where('featureId', fid)
@@ -164,6 +202,9 @@ server.route({
 
       return feature || boom.notFound('Feature not found.');
     } catch (error) {
+      if (error instanceof SyntaxError) {
+        return boom.badRequest(error);
+      }
       return boom.badImplementation(error);
     }
   }
@@ -179,15 +220,17 @@ server.route({
       }
     }
   },
-  handler: async function (request, h) {
+  handler: async function (request) {
     try {
       const id = request.params.id.toLowerCase();
       let filters;
 
       // Parse query string if available
       let { query } = request;
+      let year = null;
       if (query) {
         query = qs.parse(query);
+        year = parseInt(query.year) || null;
 
         // Validate and parse filters
         filters = query.filters;
@@ -217,12 +260,38 @@ server.route({
         }
       }
 
+      // Get information about the model
+      const modelId = id.substring(0, id.lastIndexOf('-'));
+      const model = await db('models')
+        .select('filters', 'timesteps')
+        .where('id', modelId)
+        .first();
+
+      // Validate timestep model
+      if (model.timesteps) {
+        // Set the year to the 1st value if null
+        year = year || model.timesteps[0];
+        if (model.timesteps.indexOf(year) === -1) {
+          throw new SyntaxError(
+            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
+          );
+        }
+      } else {
+        // Disregard year
+        year = '';
+      }
+
       const whereBuilder = builder => {
         builder.where('scenarioId', id);
 
         if (filters) {
           filters.forEach(filter => {
-            const { key, min, max, options } = filter;
+            const { min, max, options } = filter;
+            let { key } = filter;
+
+            const filterDef = model.filters.find(f => f.key === key);
+            // Update key if is a timestep filter
+            key = filterDef.timestep ? key + year : key;
 
             if (typeof min !== 'undefined') {
               builder.whereRaw(`("filterValues"->>?)::numeric >= ?`, [
@@ -250,12 +319,27 @@ server.route({
         }
       };
 
+      const summaryKeys = {
+        electrificationTech: 'FinalElecCode' + year,
+        investmentCost: 'InvestmentCost' + year,
+        newCapacity: 'NewCapacity' + year,
+        electrifiedPopulation: 'Pop' + year
+      };
+
       // Get summary
       const summary = await db
         .select(
-          db.raw(
-            'sum("investmentCost") as "investmentCost", sum("newCapacity") as "newCapacity", sum("electrifiedPopulation") as "electrifiedPopulation"'
-          )
+          db.raw(`
+            SUM(CAST(
+              summary->>'${summaryKeys.investmentCost}' as FLOAT
+            )) as "investmentCost",
+            SUM(CAST(
+              summary->>'${summaryKeys.newCapacity}' as FLOAT
+            )) as "newCapacity",
+            SUM(CAST(
+              summary->>'${summaryKeys.electrifiedPopulation}' as FLOAT
+            )) as "electrifiedPopulation"
+          `)
         )
         .first()
         .where(whereBuilder)
@@ -266,13 +350,13 @@ server.route({
       summary.electrifiedPopulation = _.round(summary.electrifiedPopulation, 2);
 
       // Get features
-      let features = await db
+      const features = await db
         .select(
           'featureId as id',
-          'electrificationTech',
-          'investmentCost',
-          'newCapacity',
-          'electrifiedPopulation'
+          db.raw(`summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`),
+          db.raw(`summary->>'${summaryKeys.investmentCost}' as "investmentCost"`),
+          db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
+          db.raw(`summary->>'${summaryKeys.electrifiedPopulation}' as "electrifiedPopulation"`)
         )
         .where(whereBuilder)
         .orderBy('featureId')

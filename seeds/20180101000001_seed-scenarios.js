@@ -21,11 +21,15 @@ exports.seed = async function (knex, Promise) {
   }
 
   async function getFilters (scenarioId) {
-    const modelId = getModelId(scenarioId);
-    const model = await loadModelFromFile(modelId);
+    const model = await getModel(scenarioId);
     return model.filters.map(filter => {
-      return { key: filter.key, type: filter.type };
+      return { key: filter.key, type: filter.type, timestep: filter.timestep };
     });
+  }
+
+  async function getModel (scenarioId) {
+    const modelId = getModelId(scenarioId);
+    return loadModelFromFile(modelId);
   }
 
   async function readScenariosFile (scenarioFileName) {
@@ -36,7 +40,18 @@ exports.seed = async function (knex, Promise) {
     const scenarioFilePath = join(scenariosPath, scenarioFileName);
 
     const filters = await getFilters(scenarioId);
+    const model = await getModel(scenarioId);
     const modelId = getModelId(scenarioId);
+
+    const timesteps = model.timesteps || [];
+
+    const getFilterValueFromRecord = (record, filter, key) => {
+      if (filter.type === 'range') {
+        return parseFloat(record[key]);
+      } else {
+        return record[key];
+      }
+    };
 
     // Read CSV File
     return new Promise(function (resolve, reject) {
@@ -48,28 +63,82 @@ exports.seed = async function (knex, Promise) {
             record.ID = record.ID.split('-')[1];
           }
 
-          // Convert columns to object properties
+          // Filter values to get depend on the model's timesteps, if available.
+          let errors = [];
+          const filtersWithTimestepKeys = filters.reduce((acc, filter) => {
+            if (filter.timestep && timesteps.length) {
+              return acc.concat(timesteps.map(t => {
+                const k = filter.key + t;
+                if (!record[k]) {
+                  errors.push(`Timestep filter key [${k}] for filter [${filter.key}] of model [${modelId}] not found in scenario [${scenarioId}]`);
+                }
+                return {
+                  ...filter,
+                  key: k,
+                  _key: filter.key
+                };
+              }));
+            } else {
+              if (!record[filter.key]) {
+                errors.push(`Filter key [${filter.key}] of model [${modelId}] not found in scenario [${scenarioId}]`);
+              }
+              return acc.concat(filter);
+            }
+          }, []);
+
+          // Calc summary value based on timesteps.
+          const summaryKeys = [
+            { key: 'FinalElecCode', parser: parseInt },
+            { key: 'InvestmentCost', parser: parseFloat },
+            { key: 'NewCapacity', parser: parseFloat },
+            { key: 'Pop', parser: parseFloat }
+          ];
+
+          const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
+            if (timesteps.length) {
+              return acc.concat(timesteps.map(t => {
+                const k = summ.key + t;
+                if (!record[k]) {
+                  errors.push(`Summary key [${k}] of model [${modelId}] not found in scenario [${scenarioId}]`);
+                }
+                return {
+                  ...summ,
+                  key: k,
+                  _key: summ.key
+                };
+              }));
+            } else {
+              if (!record[summ.key]) {
+                errors.push(`Summary key [${summ.key}] of model [${modelId}] not found in scenario [${scenarioId}]`);
+              }
+              return acc.concat(summ);
+            }
+          }, []);
+
+          if (errors.length) {
+            console.log(errors.join('\n'));  // eslint-disable-line
+            console.log('');  // eslint-disable-line
+            console.log('Seed process failed!');  // eslint-disable-line
+            process.exit(1);
+          }
+
+          // Prepare data for database.
           const entry = {
             modelId: modelId,
             scenarioId: scenarioId,
             featureId: parseInt(record.ID),
-            electrificationTech: parseInt(record.FinalElecCode2030),
-            investmentCost: parseFloat(record.InvestmentCost2030),
-            newCapacity: parseFloat(record.NewCapacity2030),
-            electrifiedPopulation: parseFloat(record.Pop),
+            summary: {},
             filterValues: {}
           };
 
-          // Ingest values to be filtered
-          for (const filter of filters) {
-            entry.filterValues[filter.key] = record[filter.key];
+          // Add summary.
+          for (const { key, parser } of summaryWithTimestepKeys) {
+            entry.summary[key] = parser(record[key]);
+          }
 
-            // Convert to number if filter is type of range
-            if (filter.type === 'range') {
-              entry.filterValues[filter.key] = parseFloat(
-                entry.filterValues[filter.key]
-              );
-            }
+          // Add filters.
+          for (const filter of filtersWithTimestepKeys) {
+            entry.filterValues[filter.key] = getFilterValueFromRecord(record, filter, filter.key);
           }
 
           records.push(entry);
@@ -94,7 +163,7 @@ exports.seed = async function (knex, Promise) {
   let scenarioFiles = await readdir(scenariosPath);
 
   // Ignore non-csv files
-  scenarioFiles = scenarioFiles.filter(f => f.indexOf('csv') > -1);
+  scenarioFiles = scenarioFiles.filter(f => f.endsWith('.csv'));
 
   // Import files in series
   for (const file of scenarioFiles) {

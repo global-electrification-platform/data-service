@@ -4,6 +4,9 @@ updatedAt: '2018-10-12'
 version: 'v1.0'
 type: onsset
 country: mw
+timesteps:
+  - 2023
+  - 2030
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
@@ -42,6 +45,7 @@ filters:
   - id: 0
     key: Pop
     label: Area Population
+    timestep: false
     type: range
     # range:
     #   min: 3
@@ -49,13 +53,15 @@ filters:
   - id: 1
     key: GridCellArea
     label: Area Size (square km)
+    timestep: false
     type: range
     # range:
     #   min: 0.008
     #   max: 7.256
   - id: 2
-    key: FinalElecCode2030
-    label: Electrification Techonology (2030)
+    key: FinalElecCode
+    label: Electrification Techonology
+    timestep: true
     type: options
     options:
       - id: 0
@@ -82,6 +88,7 @@ filters:
   - id: 3
     key: SubstationDist
     label: Distance from existing grid (km)
+    timestep: false
     type: range
     # range:
     #   min: 79
@@ -89,6 +96,7 @@ filters:
   - id: 4
     key: RoadDist
     label: Distance from existing road network (km)
+    timestep: false
     type: range
     # range:
     #   min: 0.01141

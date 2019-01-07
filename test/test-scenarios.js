@@ -1,19 +1,61 @@
 const { stringify } = require('qs');
-const _ = require('lodash');
+const fs = require('fs-extra');
 const path = require('path');
-const csv = require('fast-csv');
 const supertest = require('supertest');
 
-/* global server,fixturesPath */
+/* global server */
 
 describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0 returns feature types and summary', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const results = await calculateScenarioSummary(scenarioId);
+    const results = await fs.readJson(
+      path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0.json')
+    );
 
     return supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .expect(200, results);
+  });
+
+  it('GET /scenarios/mw-1-0_0_0 returns feature types and summary for given year', async function () {
+    const scenarioId = 'mw-1-0_0_0';
+    const results = await fs.readJson(
+      path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-2030.json')
+    );
+
+    return supertest(server.listener)
+      .get(`/scenarios/${scenarioId}`)
+      .query(stringify({ year: 2030 }))
+      .expect(200, results);
+  });
+
+  it('GET /scenarios/mw-1-0_0_0 with malformed year return default', async function () {
+    const scenarioId = 'mw-1-0_0_0';
+    const results = await fs.readJson(
+      path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0.json')
+    );
+
+    await supertest(server.listener)
+      .get(`/scenarios/${scenarioId}`)
+      .query(
+        stringify({
+          year: 'not-a-year'
+        })
+      )
+      .expect(200, results);
+  });
+
+  it('GET /scenarios/mw-1-0_0_0 with non-existent year return error', async function () {
+    const scenarioId = 'mw-1-0_0_0';
+
+    await supertest(server.listener)
+      .get(`/scenarios/${scenarioId}`)
+      .query(
+        stringify({
+          year: 1900 // not available
+        })
+      )
+      .expect(400);
   });
 
   it('GET /scenarios/mw-1-0_0_0 with malformed range filter return error', async function () {
@@ -46,179 +88,74 @@ describe('Endpoint: /scenarios', function () {
       .expect(400);
   });
 
-  it('GET /scenarios/mw-1-0_0_0 with filtering by a minimun value', async function () {
+  it('GET /scenarios/mw-1-0_0_0 with filtering by a minimum value', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const filters = [{ key: 'SubstationDist', min: 95, max: 110 }];
-    const scenarioResults = await calculateScenarioSummary(scenarioId, filters);
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-substationdist.json'
+      )
+    );
 
-    // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(stringify({ filters }))
-      .expect(200, scenarioResults);
+      .query(stringify({ filters, year: 2030 }))
+      .expect(200, results);
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const query = {
-      filters: [{ key: 'FinalElecCode2030', options: ['1'] }]
-    };
-
-    const scenarioResults = await calculateScenarioSummary(
-      scenarioId,
-      query.filters
+    const filters = [{ key: 'FinalElecCode', options: ['1'] }];
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-finalelecode-1.json'
+      )
     );
 
-    // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(stringify(query))
-      .expect(200, scenarioResults);
+      .query(stringify({ filters, year: 2030 }))
+      .expect(200, results);
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by two options', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const query = {
-      filters: [{ key: 'FinalElecCode2030', options: ['2', '3'] }]
-    };
-    const scenarioResults = await calculateScenarioSummary(
-      scenarioId,
-      query.filters
+    const filters = [{ key: 'FinalElecCode', options: ['2', '3'] }];
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-finalelecode-2-3.json'
+      )
     );
 
-    // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(stringify(query))
-      .expect(200, scenarioResults);
+      .query(stringify({ filters, year: 2030 }))
+      .expect(200, results);
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by options AND range', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const query = {
-      filters: [
-        { key: 'FinalElecCode2030', options: ['1', '5'] },
-        { key: 'Pop', min: 30, max: 150 }
-      ]
-    };
-    const scenarioResults = await calculateScenarioSummary(
-      scenarioId,
-      query.filters
+    const filters = [
+      { key: 'FinalElecCode', options: ['1', '5'] },
+      { key: 'Pop', min: 30, max: 150 }
+    ];
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-finalelecode-1-5-pop.json'
+      )
     );
 
-    // Filter range is not an array
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .query(stringify(query))
-      .expect(200, scenarioResults);
+      .query(stringify({ filters, year: 2030 }))
+      .expect(200, results);
   });
 });
-
-async function calculateScenarioSummary (id, filters) {
-  const scenarioPath = path.join(fixturesPath, 'scenarios', `${id}.csv`);
-  let features = [];
-  const results = {
-    id,
-    featureTypes: [],
-    summary: {
-      electrifiedPopulation: 0,
-      investmentCost: 0,
-      newCapacity: 0
-    }
-  };
-
-  return new Promise(function (resolve, reject) {
-    csv
-      .fromPath(scenarioPath, { headers: true, delimiter: ',' })
-      .on('data', entry => {
-        features.push({
-          ...entry,
-          id: entry.ID,
-          electrificationTech: parseInt(entry.FinalElecCode2030),
-          electrifiedPopulation: parseFloat(entry.Pop),
-          investmentCost: parseFloat(entry.InvestmentCost2030),
-          newCapacity: parseFloat(entry.NewCapacity2030)
-        });
-      })
-      .on('end', async () => {
-        // Apply filters if defined
-        if (filters) {
-          filters.forEach(filter => {
-            features = _.filter(features, entry => {
-              const value = entry[filter.key];
-              const { min, max, options } = filter;
-
-              if (typeof min !== 'undefined' && parseFloat(value) < min) {
-                return false;
-              }
-
-              if (typeof max !== 'undefined' && parseFloat(value) > max) {
-                return false;
-              }
-
-              if (
-                typeof options !== 'undefined' &&
-                !options.includes(value.toString())
-              ) {
-                return false;
-              }
-
-              return true;
-            });
-          });
-        }
-
-        // Init summary
-        results.summary = {
-          electrifiedPopulation: 0,
-          investmentCost: 0,
-          newCapacity: 0
-        };
-
-        // Init summary by type
-        results.summaryByType = {
-          electrifiedPopulation: {},
-          investmentCost: {},
-          newCapacity: {}
-        };
-
-        // Aggregate key properties
-        features.forEach(f => {
-          results.summary.electrifiedPopulation += f.electrifiedPopulation;
-          results.summary.investmentCost += f.investmentCost;
-          results.summary.newCapacity += f.newCapacity;
-
-          results.summaryByType.electrifiedPopulation[f.electrificationTech] =
-            (
-              results.summaryByType.electrifiedPopulation[f.electrificationTech] ||
-              0
-            ) + f.electrifiedPopulation;
-          results.summaryByType.investmentCost[f.electrificationTech] =
-            (results.summaryByType.investmentCost[f.electrificationTech] || 0) +
-            f.investmentCost;
-          results.summaryByType.newCapacity[f.electrificationTech] =
-            (results.summaryByType.newCapacity[f.electrificationTech] || 0) +
-            f.newCapacity;
-        });
-
-        // Round summary
-        results.summary = {
-          electrifiedPopulation: _.round(
-            results.summary.electrifiedPopulation,
-            2
-          ),
-          investmentCost: _.round(results.summary.investmentCost, 2),
-          newCapacity: _.round(results.summary.newCapacity, 2)
-        };
-
-        for (const feature of features) {
-          results.featureTypes[feature.id] = feature.electrificationTech;
-        }
-
-        results.featureTypes = results.featureTypes.toString();
-
-        resolve(results);
-      })
-      .on('error', reject);
-  });
-}
