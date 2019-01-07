@@ -26,9 +26,9 @@ describe('Endpoint: /scenarios/{sid}/features/{fid}', function () {
     const featureId = 168913;
 
     const result = {
-      investmentCost: '10433.28412',
-      newCapacity: '0',
-      electrifiedPopulation: '80.56886028'
+      investmentCost: '8932.993563',
+      newCapacity: '2.470467501',
+      electrifiedPopulation: '99.6808255'
     };
 
     return supertest(server.listener)
