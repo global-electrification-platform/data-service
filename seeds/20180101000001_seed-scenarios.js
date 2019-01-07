@@ -163,7 +163,7 @@ exports.seed = async function (knex, Promise) {
   let scenarioFiles = await readdir(scenariosPath);
 
   // Ignore non-csv files
-  scenarioFiles = scenarioFiles.filter(f => f.indexOf('csv') > -1);
+  scenarioFiles = scenarioFiles.filter(f => f.endsWith('.csv'));
 
   // Import files in series
   for (const file of scenarioFiles) {
