@@ -172,7 +172,7 @@ server.route({
 
       // If there's no model, means that the id is not correct.
       // Assume not found.
-      if (!model) return boom.notFound('Feature not found.');
+      if (!model) return boom.notFound('Model not found.');
 
       // Validate timestep model
       if (model.timesteps) {
@@ -219,7 +219,7 @@ server.route({
       }
     }
   },
-  handler: async function (request, h) {
+  handler: async function (request) {
     try {
       const id = request.params.id.toLowerCase();
       let filters;
@@ -370,7 +370,6 @@ server.route({
       // Organize features into layers and calculate summary by type
       let featureTypes = [];
       for (const f of features) {
-        if (f.electrificationTech === '99') continue;
         featureTypes[f.id] = f.electrificationTech;
 
         summaryByType.electrifiedPopulation[f.electrificationTech] =

@@ -8,7 +8,9 @@ const supertest = require('supertest');
 describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0 returns feature types and summary', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0.json'));
+    const results = await fs.readJson(
+      path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0.json')
+    );
 
     return supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
@@ -17,7 +19,9 @@ describe('Endpoint: /scenarios', function () {
 
   it('GET /scenarios/mw-1-0_0_0 returns feature types and summary for given year', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-2030.json'));
+    const results = await fs.readJson(
+      path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-2030.json')
+    );
 
     return supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
@@ -27,7 +31,9 @@ describe('Endpoint: /scenarios', function () {
 
   it('GET /scenarios/mw-1-0_0_0 with malformed year return default', async function () {
     const scenarioId = 'mw-1-0_0_0';
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0.json'));
+    const results = await fs.readJson(
+      path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0.json')
+    );
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
@@ -39,7 +45,7 @@ describe('Endpoint: /scenarios', function () {
       .expect(200, results);
   });
 
-  it('GET /scenarios/mw-1-0_0_0 with non-existen year return error', async function () {
+  it('GET /scenarios/mw-1-0_0_0 with non-existent year return error', async function () {
     const scenarioId = 'mw-1-0_0_0';
 
     await supertest(server.listener)
@@ -82,10 +88,16 @@ describe('Endpoint: /scenarios', function () {
       .expect(400);
   });
 
-  it('GET /scenarios/mw-1-0_0_0 with filtering by a minimun value', async function () {
+  it('GET /scenarios/mw-1-0_0_0 with filtering by a minimum value', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const filters = [{ key: 'SubstationDist', min: 95, max: 110 }];
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-substationdist.json'));
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-substationdist.json'
+      )
+    );
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
@@ -96,7 +108,13 @@ describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const filters = [{ key: 'FinalElecCode', options: ['1'] }];
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-finalelecode-1.json'));
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-finalelecode-1.json'
+      )
+    );
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
@@ -107,7 +125,13 @@ describe('Endpoint: /scenarios', function () {
   it('GET /scenarios/mw-1-0_0_0, filtering by two options', async function () {
     const scenarioId = 'mw-1-0_0_0';
     const filters = [{ key: 'FinalElecCode', options: ['2', '3'] }];
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-finalelecode-2-3.json'));
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-finalelecode-2-3.json'
+      )
+    );
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
@@ -121,7 +145,13 @@ describe('Endpoint: /scenarios', function () {
       { key: 'FinalElecCode', options: ['1', '5'] },
       { key: 'Pop', min: 30, max: 150 }
     ];
-    const results = await fs.readJson(path.join(__dirname, 'expected-scenarios', 'mw-1-0_0_0-finalelecode-1-5-pop.json'));
+    const results = await fs.readJson(
+      path.join(
+        __dirname,
+        'expected-scenarios',
+        'mw-1-0_0_0-finalelecode-1-5-pop.json'
+      )
+    );
 
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
