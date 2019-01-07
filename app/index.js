@@ -177,7 +177,8 @@ server.route({
       // Validate timestep model
       if (model.timesteps) {
         // Set final year if none is passed
-        year = year || model.timesteps.slice(-1)[0];
+        year = year || model.timesteps[model.timesteps.length - 1];
+
         if (model.timesteps.indexOf(year) === -1) {
           throw new SyntaxError(
             `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
