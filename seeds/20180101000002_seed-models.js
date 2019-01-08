@@ -1,7 +1,10 @@
 const { readFile, readdir } = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
+const get = require('lodash.get');
+const set = require('lodash.set');
 
+const { reconcileTechLayers } = require('../app/tech-layers-config');
 const modelsPath = path.join(__dirname, 'fixtures', 'models');
 
 exports.seed = async function (knex) {
@@ -85,6 +88,10 @@ exports.seed = async function (knex) {
       }
 
       model.filters = filters;
+
+      // Map tech layers
+      const techLayers = get(model, 'map.techLayersConfig', []);
+      set(model, 'map.techLayersConfig', reconcileTechLayers(techLayers));
     }
 
     // Inserts seed entries

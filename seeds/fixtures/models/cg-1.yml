@@ -88,16 +88,3 @@ map:
     - id: 1
       label: Substations
       url: http://www.wms.maps/substations
-  legend:
-    - id: 0
-      color: #32292f
-      label: Grid
-    - id: 1
-      color: #575366
-      label: Stand Alone Diesel
-    - id: 2
-      color: #6e7dab
-      label: Stand Alone Photovoltaic
-    - id: 3
-      color: #5762d5
-      label: Mini Grid
