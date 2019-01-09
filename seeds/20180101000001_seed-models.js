@@ -5,6 +5,7 @@ const get = require('lodash.get');
 const set = require('lodash.set');
 
 const { reconcileTechLayers } = require('../app/tech-layers-config');
+
 const modelsPath = path.join(__dirname, 'fixtures', 'models');
 
 exports.seed = async function (knex) {
