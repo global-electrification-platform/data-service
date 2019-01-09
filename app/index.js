@@ -181,7 +181,9 @@ server.route({
 
         if (model.timesteps.indexOf(year) === -1) {
           throw new SyntaxError(
-            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
+            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(
+              ', '
+            )}]`
           );
         }
       } else {
@@ -273,7 +275,9 @@ server.route({
         year = year || model.timesteps[0];
         if (model.timesteps.indexOf(year) === -1) {
           throw new SyntaxError(
-            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
+            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(
+              ', '
+            )}]`
           );
         }
       } else {
@@ -289,7 +293,11 @@ server.route({
       };
 
       const whereBuilder = builder => {
-        builder.where('scenarioId', id).whereRaw(`summary->>'${summaryKeys.electrificationTech}' is not null`);
+        builder
+          .where('scenarioId', id)
+          .whereRaw(
+            `summary->>'${summaryKeys.electrificationTech}' is not null`
+          );
 
         if (filters) {
           filters.forEach(filter => {
@@ -326,8 +334,6 @@ server.route({
         }
       };
 
-
-
       // Get summary
       const summary = await db
         .select(
@@ -355,10 +361,20 @@ server.route({
       const features = await db
         .select(
           'featureId as id',
-          db.raw(`summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`),
-          db.raw(`summary->>'${summaryKeys.investmentCost}' as "investmentCost"`),
+          db.raw(
+            `summary->>'${
+              summaryKeys.electrificationTech
+            }' as "electrificationTech"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
+          ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
-          db.raw(`summary->>'${summaryKeys.electrifiedPopulation}' as "electrifiedPopulation"`)
+          db.raw(
+            `summary->>'${
+              summaryKeys.electrifiedPopulation
+            }' as "electrifiedPopulation"`
+          )
         )
         .where(whereBuilder)
         .orderBy('featureId')
