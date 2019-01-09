@@ -5,7 +5,9 @@ const csv = require('fast-csv');
 const yaml = require('js-yaml');
 const path = require('path');
 
-const sourceDataDir = process.env.SOURCE_DATA_DIR || join(__dirname, '..', config.get('sourceDataDir'));
+const sourceDataDir =
+  process.env.SOURCE_DATA_DIR ||
+  join(__dirname, '..', config.get('sourceDataDir'));
 const modelsDir = join(sourceDataDir, 'models');
 const scenariosDir = join(sourceDataDir, 'scenarios');
 
@@ -55,6 +57,43 @@ exports.seed = async function (knex, Promise) {
       }
     };
 
+    // Filter values to get depend on the model's timesteps, if available.
+    const filtersWithTimestepKeys = filters.reduce((acc, filter) => {
+      if (filter.timestep && timesteps.length) {
+        return acc.concat(
+          timesteps.map(year => ({
+            ...filter,
+            key: filter.key + year,
+            _key: filter.key
+          }))
+        );
+      } else {
+        return acc.concat(filter);
+      }
+    }, []);
+
+    // Calc summary value based on timesteps.
+    const summaryKeys = [
+      { key: 'FinalElecCode', parser: parseInt },
+      { key: 'InvestmentCost', parser: parseFloat },
+      { key: 'NewCapacity', parser: parseFloat },
+      { key: 'Pop', parser: parseFloat }
+    ];
+
+    const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
+      if (timesteps.length) {
+        return acc.concat(
+          timesteps.map(t => ({
+            ...summ,
+            key: summ.key + t,
+            _key: summ.key
+          }))
+        );
+      } else {
+        return acc.concat(summ);
+      }
+    }, []);
+
     // Read CSV File
     return new Promise(function (resolve, reject) {
       const records = [];
@@ -63,78 +102,6 @@ exports.seed = async function (knex, Promise) {
         .on('data', record => {
           if (record.ID.indexOf('-') > -1) {
             record.ID = record.ID.split('-')[1];
-          }
-
-          // Filter values to get depend on the model's timesteps, if available.
-          let errors = [];
-          const filtersWithTimestepKeys = filters.reduce((acc, filter) => {
-            if (filter.timestep && timesteps.length) {
-              return acc.concat(
-                timesteps.map(year => {
-                  const k = filter.key + year;
-                  if (!record[k]) {
-                    errors.push(
-                      `Timestep filter key [${k}] for filter [${
-                        filter.key
-                      }] of model [${modelId}] not found in scenario [${scenarioId}]`
-                    );
-                  }
-                  return {
-                    ...filter,
-                    key: k,
-                    _key: filter.key
-                  };
-                })
-              );
-            } else {
-              if (!record[filter.key]) {
-                errors.push(
-                  `Filter key [${
-                    filter.key
-                  }] of model [${modelId}] not found in scenario [${scenarioId}]`
-                );
-              }
-              return acc.concat(filter);
-            }
-          }, []);
-
-          // Calc summary value based on timesteps.
-          const summaryKeys = [
-            { key: 'FinalElecCode', parser: parseInt },
-            { key: 'InvestmentCost', parser: parseFloat },
-            { key: 'NewCapacity', parser: parseFloat },
-            { key: 'Pop', parser: parseFloat }
-          ];
-
-          const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
-            if (timesteps.length) {
-              return acc.concat(
-                timesteps.map(t => {
-                  const k = summ.key + t;
-                  return {
-                    ...summ,
-                    key: k,
-                    _key: summ.key
-                  };
-                })
-              );
-            } else {
-              if (!record[summ.key]) {
-                errors.push(
-                  `Summary key [${
-                    summ.key
-                  }] of model [${modelId}] not found in scenario [${scenarioId}]`
-                );
-              }
-              return acc.concat(summ);
-            }
-          }, []);
-
-          if (errors.length) {
-            console.log(errors.join('\n')); // eslint-disable-line
-            console.log(''); // eslint-disable-line
-            console.log('Seed process failed!'); // eslint-disable-line
-            process.exit(1);
           }
 
           // Prepare data for database.
