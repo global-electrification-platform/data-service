@@ -1,11 +1,14 @@
+const config = require('config');
 const { readFile, readdir } = require('fs-extra');
 const { join } = require('path');
 const csv = require('fast-csv');
 const yaml = require('js-yaml');
 const path = require('path');
 
-const scenariosPath = join(__dirname, 'fixtures', 'scenarios');
-const modelsPath = join(__dirname, 'fixtures', 'models');
+const sourceDataDir = join(__dirname, '..', config.get('sourceDataDir'));
+
+const modelsDir = join(sourceDataDir, 'models');
+const scenariosDir = join(sourceDataDir, 'scenarios');
 
 exports.seed = async function (knex, Promise) {
   function getModelId (scenarioId) {
@@ -14,7 +17,7 @@ exports.seed = async function (knex, Promise) {
 
   async function loadModelFromFile (modelId) {
     const modelYaml = await readFile(
-      path.join(modelsPath, `${modelId}.yml`),
+      path.join(modelsDir, `${modelId}.yml`),
       'utf-8'
     );
     return yaml.load(modelYaml);
@@ -37,7 +40,7 @@ exports.seed = async function (knex, Promise) {
 
     console.time(`Scenario ${scenarioId} imported in`);  // eslint-disable-line
 
-    const scenarioFilePath = join(scenariosPath, scenarioFileName);
+    const scenarioFilePath = join(scenariosDir, scenarioFileName);
 
     const filters = await getFilters(scenarioId);
     const model = await getModel(scenarioId);
@@ -160,7 +163,7 @@ exports.seed = async function (knex, Promise) {
   await knex('scenarios').del();
 
   // Get file names
-  let scenarioFiles = await readdir(scenariosPath);
+  let scenarioFiles = await readdir(scenariosDir);
 
   // Ignore non-csv files
   scenarioFiles = scenarioFiles.filter(f => f.endsWith('.csv'));

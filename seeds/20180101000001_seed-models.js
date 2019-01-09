@@ -1,21 +1,22 @@
+const config = require('config');
 const { readFile, readdir } = require('fs-extra');
-const path = require('path');
+const { join } = require('path');
 const yaml = require('js-yaml');
 const get = require('lodash.get');
 const set = require('lodash.set');
-
 const { reconcileTechLayers } = require('../app/tech-layers-config');
 
-const modelsPath = path.join(__dirname, 'fixtures', 'models');
+const sourceDataDir = join(__dirname, '..', config.get('sourceDataDir'));
+const modelsDir = join(sourceDataDir, 'models');
 
 exports.seed = async function (knex) {
-  const modelFilenames = await readdir(modelsPath);
+  const modelFilenames = await readdir(modelsDir);
   // Load models from samples directory
   let models = await Promise.all(
     modelFilenames
       .filter(f => f.endsWith('.yml'))
       .map(async m => {
-        const yamlModel = await readFile(path.join(modelsPath, m), 'utf-8');
+        const yamlModel = await readFile(join(modelsDir, m), 'utf-8');
         return yaml.load(yamlModel);
       })
   );
