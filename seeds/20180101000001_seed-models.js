@@ -6,7 +6,7 @@ const get = require('lodash.get');
 const set = require('lodash.set');
 const { reconcileTechLayers } = require('../app/tech-layers-config');
 
-const sourceDataDir = join(__dirname, '..', config.get('sourceDataDir'));
+const sourceDataDir = process.env.SOURCE_DATA_DIR || join(__dirname, '..', config.get('sourceDataDir'));
 const modelsDir = join(sourceDataDir, 'models');
 
 exports.seed = async function (knex) {

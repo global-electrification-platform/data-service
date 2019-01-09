@@ -5,8 +5,7 @@ const csv = require('fast-csv');
 const yaml = require('js-yaml');
 const path = require('path');
 
-const sourceDataDir = join(__dirname, '..', config.get('sourceDataDir'));
-
+const sourceDataDir = process.env.SOURCE_DATA_DIR || join(__dirname, '..', config.get('sourceDataDir'));
 const modelsDir = join(sourceDataDir, 'models');
 const scenariosDir = join(sourceDataDir, 'scenarios');
 
