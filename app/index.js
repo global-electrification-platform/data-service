@@ -281,8 +281,15 @@ server.route({
         year = '';
       }
 
+      const summaryKeys = {
+        electrificationTech: 'FinalElecCode' + year,
+        investmentCost: 'InvestmentCost' + year,
+        newCapacity: 'NewCapacity' + year,
+        electrifiedPopulation: 'Pop' + year
+      };
+
       const whereBuilder = builder => {
-        builder.where('scenarioId', id);
+        builder.where('scenarioId', id).whereRaw(`summary->>'${summaryKeys.electrificationTech}' is not null`);
 
         if (filters) {
           filters.forEach(filter => {
@@ -319,26 +326,21 @@ server.route({
         }
       };
 
-      const summaryKeys = {
-        electrificationTech: 'FinalElecCode' + year,
-        investmentCost: 'InvestmentCost' + year,
-        newCapacity: 'NewCapacity' + year,
-        electrifiedPopulation: 'Pop' + year
-      };
+
 
       // Get summary
       const summary = await db
         .select(
           db.raw(`
-            SUM(CAST(
-              summary->>'${summaryKeys.investmentCost}' as FLOAT
-            )) as "investmentCost",
-            SUM(CAST(
-              summary->>'${summaryKeys.newCapacity}' as FLOAT
-            )) as "newCapacity",
-            SUM(CAST(
-              summary->>'${summaryKeys.electrifiedPopulation}' as FLOAT
-            )) as "electrifiedPopulation"
+            SUM(
+              (summary->>'${summaryKeys.investmentCost}')::numeric 
+            ) as "investmentCost",
+            SUM(
+              (summary->>'${summaryKeys.newCapacity}')::numeric 
+            ) as "newCapacity",
+            SUM(
+              (summary->>'${summaryKeys.electrifiedPopulation}')::numeric 
+            ) as "electrifiedPopulation"
           `)
         )
         .first()
