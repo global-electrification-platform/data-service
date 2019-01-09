@@ -181,7 +181,9 @@ server.route({
 
         if (model.timesteps.indexOf(year) === -1) {
           throw new SyntaxError(
-            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
+            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(
+              ', '
+            )}]`
           );
         }
       } else {
@@ -273,7 +275,9 @@ server.route({
         year = year || model.timesteps[0];
         if (model.timesteps.indexOf(year) === -1) {
           throw new SyntaxError(
-            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(', ')}]`
+            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(
+              ', '
+            )}]`
           );
         }
       } else {
@@ -281,8 +285,19 @@ server.route({
         year = '';
       }
 
+      const summaryKeys = {
+        electrificationTech: 'FinalElecCode' + year,
+        investmentCost: 'InvestmentCost' + year,
+        newCapacity: 'NewCapacity' + year,
+        electrifiedPopulation: 'Pop' + year
+      };
+
       const whereBuilder = builder => {
-        builder.where('scenarioId', id);
+        builder
+          .where('scenarioId', id)
+          .whereRaw(
+            `summary->>'${summaryKeys.electrificationTech}' is not null`
+          );
 
         if (filters) {
           filters.forEach(filter => {
@@ -319,26 +334,19 @@ server.route({
         }
       };
 
-      const summaryKeys = {
-        electrificationTech: 'FinalElecCode' + year,
-        investmentCost: 'InvestmentCost' + year,
-        newCapacity: 'NewCapacity' + year,
-        electrifiedPopulation: 'Pop' + year
-      };
-
       // Get summary
       const summary = await db
         .select(
           db.raw(`
-            SUM(CAST(
-              summary->>'${summaryKeys.investmentCost}' as FLOAT
-            )) as "investmentCost",
-            SUM(CAST(
-              summary->>'${summaryKeys.newCapacity}' as FLOAT
-            )) as "newCapacity",
-            SUM(CAST(
-              summary->>'${summaryKeys.electrifiedPopulation}' as FLOAT
-            )) as "electrifiedPopulation"
+            SUM(
+              (summary->>'${summaryKeys.investmentCost}')::numeric 
+            ) as "investmentCost",
+            SUM(
+              (summary->>'${summaryKeys.newCapacity}')::numeric 
+            ) as "newCapacity",
+            SUM(
+              (summary->>'${summaryKeys.electrifiedPopulation}')::numeric 
+            ) as "electrifiedPopulation"
           `)
         )
         .first()
@@ -353,10 +361,20 @@ server.route({
       const features = await db
         .select(
           'featureId as id',
-          db.raw(`summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`),
-          db.raw(`summary->>'${summaryKeys.investmentCost}' as "investmentCost"`),
+          db.raw(
+            `summary->>'${
+              summaryKeys.electrificationTech
+            }' as "electrificationTech"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
+          ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
-          db.raw(`summary->>'${summaryKeys.electrifiedPopulation}' as "electrifiedPopulation"`)
+          db.raw(
+            `summary->>'${
+              summaryKeys.electrifiedPopulation
+            }' as "electrifiedPopulation"`
+          )
         )
         .where(whereBuilder)
         .orderBy('featureId')
