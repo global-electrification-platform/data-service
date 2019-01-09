@@ -38,7 +38,7 @@ exports.seed = async function (knex, Promise) {
   async function readScenariosFile (scenarioFileName) {
     const [scenarioId] = scenarioFileName.split('.');
 
-    console.time(`Scenario ${scenarioId} imported in`);  // eslint-disable-line
+    console.time(`Scenario ${scenarioId} imported in`); // eslint-disable-line
 
     const scenarioFilePath = join(scenariosDir, scenarioFileName);
 
@@ -70,20 +70,30 @@ exports.seed = async function (knex, Promise) {
           let errors = [];
           const filtersWithTimestepKeys = filters.reduce((acc, filter) => {
             if (filter.timestep && timesteps.length) {
-              return acc.concat(timesteps.map(t => {
-                const k = filter.key + t;
-                if (!record[k]) {
-                  errors.push(`Timestep filter key [${k}] for filter [${filter.key}] of model [${modelId}] not found in scenario [${scenarioId}]`);
-                }
-                return {
-                  ...filter,
-                  key: k,
-                  _key: filter.key
-                };
-              }));
+              return acc.concat(
+                timesteps.map(t => {
+                  const k = filter.key + t;
+                  if (!record[k]) {
+                    errors.push(
+                      `Timestep filter key [${k}] for filter [${
+                        filter.key
+                      }] of model [${modelId}] not found in scenario [${scenarioId}]`
+                    );
+                  }
+                  return {
+                    ...filter,
+                    key: k,
+                    _key: filter.key
+                  };
+                })
+              );
             } else {
               if (!record[filter.key]) {
-                errors.push(`Filter key [${filter.key}] of model [${modelId}] not found in scenario [${scenarioId}]`);
+                errors.push(
+                  `Filter key [${
+                    filter.key
+                  }] of model [${modelId}] not found in scenario [${scenarioId}]`
+                );
               }
               return acc.concat(filter);
             }
@@ -99,29 +109,37 @@ exports.seed = async function (knex, Promise) {
 
           const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
             if (timesteps.length) {
-              return acc.concat(timesteps.map(t => {
-                const k = summ.key + t;
-                if (!record[k]) {
-                  errors.push(`Summary key [${k}] of model [${modelId}] not found in scenario [${scenarioId}]`);
-                }
-                return {
-                  ...summ,
-                  key: k,
-                  _key: summ.key
-                };
-              }));
+              return acc.concat(
+                timesteps.map(t => {
+                  const k = summ.key + t;
+                  if (!record[k]) {
+                    errors.push(
+                      `Summary key [${k}] of model [${modelId}] not found in scenario [${scenarioId}]`
+                    );
+                  }
+                  return {
+                    ...summ,
+                    key: k,
+                    _key: summ.key
+                  };
+                })
+              );
             } else {
               if (!record[summ.key]) {
-                errors.push(`Summary key [${summ.key}] of model [${modelId}] not found in scenario [${scenarioId}]`);
+                errors.push(
+                  `Summary key [${
+                    summ.key
+                  }] of model [${modelId}] not found in scenario [${scenarioId}]`
+                );
               }
               return acc.concat(summ);
             }
           }, []);
 
           if (errors.length) {
-            console.log(errors.join('\n'));  // eslint-disable-line
-            console.log('');  // eslint-disable-line
-            console.log('Seed process failed!');  // eslint-disable-line
+            console.log(errors.join('\n')); // eslint-disable-line
+            console.log(''); // eslint-disable-line
+            console.log('Seed process failed!'); // eslint-disable-line
             process.exit(1);
           }
 
@@ -141,7 +159,11 @@ exports.seed = async function (knex, Promise) {
 
           // Add filters.
           for (const filter of filtersWithTimestepKeys) {
-            entry.filterValues[filter.key] = getFilterValueFromRecord(record, filter, filter.key);
+            entry.filterValues[filter.key] = getFilterValueFromRecord(
+              record,
+              filter,
+              filter.key
+            );
           }
 
           records.push(entry);
