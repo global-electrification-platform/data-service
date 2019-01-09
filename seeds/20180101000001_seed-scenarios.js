@@ -1,11 +1,15 @@
+const config = require('config');
 const { readFile, readdir } = require('fs-extra');
 const { join } = require('path');
 const csv = require('fast-csv');
 const yaml = require('js-yaml');
 const path = require('path');
 
-const scenariosPath = join(__dirname, 'fixtures', 'scenarios');
-const modelsPath = join(__dirname, 'fixtures', 'models');
+const sourceDataDir =
+  process.env.SOURCE_DATA_DIR ||
+  join(__dirname, '..', config.get('sourceDataDir'));
+const modelsDir = join(sourceDataDir, 'models');
+const scenariosDir = join(sourceDataDir, 'scenarios');
 
 exports.seed = async function (knex, Promise) {
   function getModelId (scenarioId) {
@@ -14,29 +18,81 @@ exports.seed = async function (knex, Promise) {
 
   async function loadModelFromFile (modelId) {
     const modelYaml = await readFile(
-      path.join(modelsPath, `${modelId}.yml`),
+      path.join(modelsDir, `${modelId}.yml`),
       'utf-8'
     );
     return yaml.load(modelYaml);
   }
 
   async function getFilters (scenarioId) {
-    const modelId = getModelId(scenarioId);
-    const model = await loadModelFromFile(modelId);
+    const model = await getModel(scenarioId);
     return model.filters.map(filter => {
-      return { key: filter.key, type: filter.type };
+      return { key: filter.key, type: filter.type, timestep: filter.timestep };
     });
+  }
+
+  async function getModel (scenarioId) {
+    const modelId = getModelId(scenarioId);
+    return loadModelFromFile(modelId);
   }
 
   async function readScenariosFile (scenarioFileName) {
     const [scenarioId] = scenarioFileName.split('.');
 
-    console.time(`Scenario ${scenarioId} imported in`);  // eslint-disable-line
+    console.time(`Scenario ${scenarioId} imported in`); // eslint-disable-line
 
-    const scenarioFilePath = join(scenariosPath, scenarioFileName);
+    const scenarioFilePath = join(scenariosDir, scenarioFileName);
 
     const filters = await getFilters(scenarioId);
+    const model = await getModel(scenarioId);
     const modelId = getModelId(scenarioId);
+
+    const timesteps = model.timesteps || [];
+
+    const getFilterValueFromRecord = (record, filter, key) => {
+      if (filter.type === 'range') {
+        return parseFloat(record[key]);
+      } else {
+        return record[key];
+      }
+    };
+
+    // Filter values to get depend on the model's timesteps, if available.
+    const filtersWithTimestepKeys = filters.reduce((acc, filter) => {
+      if (filter.timestep && timesteps.length) {
+        return acc.concat(
+          timesteps.map(year => ({
+            ...filter,
+            key: filter.key + year,
+            _key: filter.key
+          }))
+        );
+      } else {
+        return acc.concat(filter);
+      }
+    }, []);
+
+    // Calc summary value based on timesteps.
+    const summaryKeys = [
+      { key: 'FinalElecCode', parser: parseInt },
+      { key: 'InvestmentCost', parser: parseFloat },
+      { key: 'NewCapacity', parser: parseFloat },
+      { key: 'Pop', parser: parseFloat }
+    ];
+
+    const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
+      if (timesteps.length) {
+        return acc.concat(
+          timesteps.map(t => ({
+            ...summ,
+            key: summ.key + t,
+            _key: summ.key
+          }))
+        );
+      } else {
+        return acc.concat(summ);
+      }
+    }, []);
 
     // Read CSV File
     return new Promise(function (resolve, reject) {
@@ -48,28 +104,27 @@ exports.seed = async function (knex, Promise) {
             record.ID = record.ID.split('-')[1];
           }
 
-          // Convert columns to object properties
+          // Prepare data for database.
           const entry = {
             modelId: modelId,
             scenarioId: scenarioId,
             featureId: parseInt(record.ID),
-            electrificationTech: parseInt(record.FinalElecCode2030),
-            investmentCost: parseFloat(record.InvestmentCost2030),
-            newCapacity: parseFloat(record.NewCapacity2030),
-            electrifiedPopulation: parseFloat(record.Pop),
+            summary: {},
             filterValues: {}
           };
 
-          // Ingest values to be filtered
-          for (const filter of filters) {
-            entry.filterValues[filter.key] = record[filter.key];
+          // Add summary.
+          for (const { key, parser } of summaryWithTimestepKeys) {
+            entry.summary[key] = parser(record[key]);
+          }
 
-            // Convert to number if filter is type of range
-            if (filter.type === 'range') {
-              entry.filterValues[filter.key] = parseFloat(
-                entry.filterValues[filter.key]
-              );
-            }
+          // Add filters.
+          for (const filter of filtersWithTimestepKeys) {
+            entry.filterValues[filter.key] = getFilterValueFromRecord(
+              record,
+              filter,
+              filter.key
+            );
           }
 
           records.push(entry);
@@ -91,10 +146,10 @@ exports.seed = async function (knex, Promise) {
   await knex('scenarios').del();
 
   // Get file names
-  let scenarioFiles = await readdir(scenariosPath);
+  let scenarioFiles = await readdir(scenariosDir);
 
   // Ignore non-csv files
-  scenarioFiles = scenarioFiles.filter(f => f.indexOf('csv') > -1);
+  scenarioFiles = scenarioFiles.filter(f => f.endsWith('.csv'));
 
   // Import files in series
   for (const file of scenarioFiles) {

@@ -1,17 +1,22 @@
+const config = require('config');
 const { readFile, readdir } = require('fs-extra');
-const path = require('path');
+const { join } = require('path');
 const yaml = require('js-yaml');
+const get = require('lodash.get');
+const set = require('lodash.set');
+const { reconcileTechLayers } = require('../app/tech-layers-config');
 
-const modelsPath = path.join(__dirname, 'fixtures', 'models');
+const sourceDataDir = process.env.SOURCE_DATA_DIR || join(__dirname, '..', config.get('sourceDataDir'));
+const modelsDir = join(sourceDataDir, 'models');
 
 exports.seed = async function (knex) {
-  const modelFilenames = await readdir(modelsPath);
+  const modelFilenames = await readdir(modelsDir);
   // Load models from samples directory
   let models = await Promise.all(
     modelFilenames
       .filter(f => f.endsWith('.yml'))
       .map(async m => {
-        const yamlModel = await readFile(path.join(modelsPath, m), 'utf-8');
+        const yamlModel = await readFile(join(modelsDir, m), 'utf-8');
         return yaml.load(yamlModel);
       })
   );
@@ -23,9 +28,12 @@ exports.seed = async function (knex) {
     // Modify the models, adding the filter data computed from scenario vals.
     for (let model of models) {
       const id = model.id;
+      const hasTimesteps = model.timesteps && model.timesteps.length;
+
       // Filters to keep.
       let filters = [];
       for (let filter of model.filters) {
+        filter.timestep = hasTimesteps ? filter.timestep === true : false;
         if (filter.type === 'range') {
           if (!filter.key) {
             // eslint-disable-next-line
@@ -38,15 +46,15 @@ exports.seed = async function (knex) {
             `
             SELECT
               MIN(CAST(
-                "filterValues" ->> :propetry AS FLOAT
+                "filterValues" ->> :property AS FLOAT
               )) as min,
               MAX(CAST (
-                "filterValues" ->> :propetry AS FLOAT
+                "filterValues" ->> :property AS FLOAT
               )) as max
             FROM scenarios
             WHERE "modelId" = :modelId
           `,
-            { propetry: filter.key, modelId: id }
+            { property: filter.key, modelId: id }
           );
 
           // Modify the filter.
@@ -82,6 +90,10 @@ exports.seed = async function (knex) {
       }
 
       model.filters = filters;
+
+      // Map tech layers
+      const techLayers = get(model, 'map.techLayersConfig', []);
+      set(model, 'map.techLayersConfig', reconcileTechLayers(techLayers));
     }
 
     // Inserts seed entries
