@@ -70,8 +70,8 @@ exports.seed = async function (knex, Promise) {
           const filtersWithTimestepKeys = filters.reduce((acc, filter) => {
             if (filter.timestep && timesteps.length) {
               return acc.concat(
-                timesteps.map(t => {
-                  const k = filter.key + t;
+                timesteps.map(year => {
+                  const k = filter.key + year;
                   if (!record[k]) {
                     errors.push(
                       `Timestep filter key [${k}] for filter [${
@@ -111,11 +111,6 @@ exports.seed = async function (knex, Promise) {
               return acc.concat(
                 timesteps.map(t => {
                   const k = summ.key + t;
-                  if (!record[k]) {
-                    errors.push(
-                      `Summary key [${k}] of model [${modelId}] not found in scenario [${scenarioId}]`
-                    );
-                  }
                   return {
                     ...summ,
                     key: k,
