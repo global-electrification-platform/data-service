@@ -74,7 +74,13 @@ exports.seed = async function (knex, Promise) {
 
     // Calc summary value based on timesteps.
     const summaryKeys = [
-      { key: 'FinalElecCode', parser: parseInt },
+      {
+        key: 'FinalElecCode',
+        parser: (v) => {
+          v = parseInt(v);
+          return v === 99 ? null : v;
+        }
+      },
       { key: 'InvestmentCost', parser: parseFloat },
       { key: 'NewCapacity', parser: parseFloat },
       { key: 'Pop', parser: parseFloat }
