@@ -3,7 +3,7 @@ name: 'Malawi Network Planner v1.0'
 updatedAt: '2018-10-14'
 version: 'v1.0'
 type: net-planner
-country: mw
+country: MW
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
