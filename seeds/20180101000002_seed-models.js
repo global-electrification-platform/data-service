@@ -2,8 +2,7 @@ const config = require('config');
 const { readFile, readdir } = require('fs-extra');
 const { join } = require('path');
 const yaml = require('js-yaml');
-const get = require('lodash.get');
-const set = require('lodash.set');
+const { get, set } = require('lodash');
 const { reconcileTechLayers } = require('../app/tech-layers-config');
 
 const sourceDataDir = process.env.SOURCE_DATA_DIR || join(__dirname, '..', config.get('sourceDataDir'));
