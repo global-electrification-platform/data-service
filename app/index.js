@@ -53,17 +53,10 @@ server.route({
   handler: async function (request, h) {
     try {
       // Get countries codes by used models
-      const countriesWithModels = await db
-        .distinct('country')
-        .from('models')
-        .map(c => c.country);
-
-      // Select only countries with models
       const countries = await db
-        .select('*')
-        .from('countries')
-        .orderBy('name')
-        .whereIn('id', countriesWithModels);
+        .distinct('countries.id', 'countries.name')
+        .from('models')
+        .join('countries', 'models.country', '=', 'countries.id');
 
       return { countries };
     } catch (error) {
