@@ -3,7 +3,7 @@ name: 'Malawi Network Planner v1.0'
 updatedAt: '2018-10-14'
 version: 'v1.0'
 type: net-planner
-country: mw
+country: MW
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
@@ -70,13 +70,44 @@ filters:
         value: 7
         label: Mini-grid - Hydro
 map:
-  layers:
-    - id: 0
-      label: HV power lines
-      url: http://www.wms.maps/hv-lines
-    - id: 1
-      label: Road Networks
-      url: http://www.wms.maps/road-networks
-    - id: 1
-      label: Substations
-      url: http://www.wms.maps/substations
+  modelVT:
+    url: mapbox://devseed.2a5bvzlz
+    id: mw
+  externalLayers:
+    - id: mapbox_satellite
+      label: Mapbox Satellite
+      description: Satellite imagery provided by Mapbox from commercial providers, NASA, and USGS.
+      type: 'raster'
+      tiles:
+        - https://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token=pk.eyJ1IjoiZGV2c2VlZCIsImEiOiJjam9vamtjc2ExaHl2M3FxYW0yeTNjeHprIn0.EGNe0UbYK1gEQSB9Bs9YYw
+    - id: wind-potential
+      label: Wind Potential (2015)
+      type: 'vector'
+      url: 'https://energydata-tiles-bk.s3.amazonaws.com/tiles/faaec345-c386-4cd7-832f-e70443fd2fa2-77d89202-a356-4dee-86c2-c9e2880fab46/data.tilejson'
+      description: This spatial vector dataset shows areas of identified high quality potential for wind development divided into large contiguous areas called 'zones'.
+      source:
+        label: energydata.info
+        url: https://energydata.info
+      vectorLayers:
+        - data_layer
+    - id: africa
+      label: Africa Electricity Grid
+      type: 'vector'
+      url: 'https://energydata-tiles-bk.s3.amazonaws.com/tiles/19f22355-d631-4b25-a3a3-7a2bfe776720-137f3be9-3cb5-49d0-8d02-5f266f4ce455/data.tilejson'
+      description: The most complete and up-to-date open map of Africa's electricity grid network. The data that comes from OpenStreetMap and World Bank project archives.
+      source:
+        label: energydata.info
+        url: https://energydata.info
+      vectorLayers:
+        - data_layer
+    - id: healthsites
+      label: Malawi Healthsites
+      type: 'vector'
+      tiles:
+        - https://data.humdata.org/gis/services/postgis/pre_c2970f98_f65f_4a11_b717_c8018dffc94f/wkb_geometry/vector-tiles/{z}/{x}/{y}.pbf
+      description: This dataset shows the list of operating health facilities.
+      source:
+        label: Global Healthsites Mapping Project
+        url: https://data.humdata.org/dataset/malawi-healthsites
+      vectorLayers:
+        - PROJ_LIB
