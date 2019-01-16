@@ -86,7 +86,11 @@ module.exports = Joi.object({
   levers: arrayOf(leverDef).required(),
   filters: arrayOf(filterDef).required(),
   map: Joi.object({
-    layers: arrayOf(mapLayerDef),
+    modelVT: Joi.object({
+      id: reqString,
+      url: reqString
+    }).required(),
+    externalLayers: arrayOf(mapLayerDef),
     techLayersConfig: arrayOf(techLayerDef)
-  })
+  }).required()
 });

@@ -91,6 +91,7 @@ describe('Model related functions', function () {
   description   "description" is required   
   levers        "levers" is required        
   filters       "filters" is required       
+  map           "map" is required           
 `
         ]);
         return;
