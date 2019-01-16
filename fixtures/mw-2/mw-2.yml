@@ -7,11 +7,15 @@ country: MW
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
+timesteps:
+  - 2023
+  - 2030
 description:
-  'Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.'
+  'Ullamco ut cupidatat reprehenderit tempor aute magna aliquip veniam sint ex sint veniam duis aute. Non labore eu mollit sunt elit consectetur non ex duis cillum occaecat elit. Aute in consectetur sunt occaecat do nulla non quis veniam sunt. Aliquip pariatur esse cupidatat ullamco enim dolor deserunt ex nulla adipisicing. Eiusmod laborum magna commodo do velit aliquip amet proident fugiat ipsum eu voluptate elit cillum. Do eiusmod aliquip labore magna laborum.'
 levers:
   - id: 0
     label: Grid Generation Cost
+    description: Ullamco laborum laborum nulla exercitation consectetur proident fugiat minim. Eiusmod est amet fugiat et ullamco aliquip ea. Lorem mollit minim ad aliquip sint culpa est. Id esse enim eiusmod Lorem deserunt occaecat ea mollit culpa. Esse ad Lorem tempor nulla veniam et. Reprehenderit duis enim exercitation cupidatat cupidatat eu amet. Lorem magna consequat ex aute aute fugiat ut dolore cupidatat anim deserunt.
     options:
       - id: 0
         value: 0.01
@@ -21,6 +25,7 @@ levers:
         value: 0.08
   - id: 1
     label: Diesel Price
+    description: Proident aliqua irure id commodo laboris sunt esse pariatur. Adipisicing minim qui occaecat amet deserunt ut nostrud. Culpa eu cillum do quis officia.
     options:
       - id: 0
         value: 0.50
@@ -30,6 +35,7 @@ levers:
         value: 1.00
   - id: 2
     label: First Year Target
+    description: Lorem quis ad elit dolor commodo amet irure est officia duis nulla. Incididunt ad incididunt Lorem enim magna adipisicing veniam duis velit voluptate duis quis nisi. In excepteur ut consequat id ullamco dolor.
     options:
       - id: 0
         value: 50%
@@ -40,9 +46,6 @@ filters:
     key: Pop
     label: Population
     type: range
-    range:
-      min: 0
-      max: 5000
   - id: 1
     key: FinalElecCode2030
     label: Electrification Techonology
