@@ -3,7 +3,7 @@ name: 'Kenya OnSSET v1.0'
 updatedAt: '2018-10-12'
 version: 'v1.0'
 type: onsset
-country: ke
+country: KE
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'

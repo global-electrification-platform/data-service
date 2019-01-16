@@ -11,15 +11,15 @@ describe('Endpoint /countries', function () {
       .expect(200, {
         countries: [
           {
-            id: 'cg',
+            id: 'CG',
             name: 'Congo'
           },
           {
-            id: 'ke',
+            id: 'KE',
             name: 'Kenya'
           },
           {
-            id: 'mw',
+            id: 'MW',
             name: 'Malawi'
           }
         ]
@@ -50,7 +50,7 @@ describe('endpoint /countries/{id}', function () {
     return supertest(server.listener)
       .get('/countries/cg')
       .expect(200, {
-        id: 'cg',
+        id: 'CG',
         name: 'Congo',
         models: [cg1ModelExpected]
       });
@@ -63,7 +63,7 @@ describe('endpoint /countries/{id}', function () {
     return supertest(server.listener)
       .get('/countries/MW')
       .expect(200, {
-        id: 'mw',
+        id: 'MW',
         name: 'Malawi',
         models: [mw1ModelExpected, mw2ModelExpected]
       });
