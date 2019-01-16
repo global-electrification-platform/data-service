@@ -78,13 +78,6 @@ filters:
         value: 7
         label: Mini-grid - Hydro
 map:
-  layers:
-    - id: 0
-      label: HV power lines
-      url: http://www.wms.maps/hv-lines
-    - id: 1
-      label: Road Networks
-      url: http://www.wms.maps/road-networks
-    - id: 1
-      label: Substations
-      url: http://www.wms.maps/substations
+  modelVT:
+    url: mapbox://devseed.2a5bvzlz
+    id: cg

@@ -5,10 +5,7 @@
   "version": "v1.0",
   "type": "onsset",
   "country": "mw",
-  "timesteps": [
-    2023,
-    2030
-  ],
+  "timesteps": [2023, 2030],
   "attribution": {
     "author": "KTH",
     "url": "http:/kth.se"
@@ -171,7 +168,11 @@
     }
   ],
   "map": {
-    "layers": [
+    "modelVT": {
+      "url": "mapbox://devseed.2a5bvzlz",
+      "id": "mw"
+    },
+    "externalLayers": [
       {
         "id": "mapbox_satellite",
         "label": "Mapbox Satellite",
@@ -191,9 +192,7 @@
           "label": "energydata.info",
           "url": "https://energydata.info"
         },
-        "vectorLayers": [
-          "data_layer"
-        ]
+        "vectorLayers": ["data_layer"]
       },
       {
         "id": "africa",
@@ -205,9 +204,7 @@
           "label": "energydata.info",
           "url": "https://energydata.info"
         },
-        "vectorLayers": [
-          "data_layer"
-        ]
+        "vectorLayers": ["data_layer"]
       },
       {
         "id": "healthsites",
@@ -221,9 +218,7 @@
           "label": "Global Healthsites Mapping Project",
           "url": "https://data.humdata.org/dataset/malawi-healthsites"
         },
-        "vectorLayers": [
-          "PROJ_LIB"
-        ]
+        "vectorLayers": ["PROJ_LIB"]
       }
     ],
     "techLayersConfig": [
