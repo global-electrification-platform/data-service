@@ -1,12 +1,11 @@
 const path = require('path');
 
 const { print, userError } = require('../utils');
+const { validateModel, getModelFromDir } = require('../models');
 const {
-  validateModel,
-  getModelFromDir,
   getModelScenariosFromDir,
   validateModelScenario
-} = require('../models');
+} = require('../scenarios');
 
 /**
  * Commander program
