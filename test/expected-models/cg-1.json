@@ -110,11 +110,9 @@
     }
   ],
   "map": {
-    "layers": {
-      "features": {
-        "url": "mapbox://devseed.2a5bvzlz",
-        "id": "cg"
-      }
+    "modelVT": {
+      "url": "mapbox://devseed.2a5bvzlz",
+      "id": "cg"
     },
     "techLayersConfig": [
       {

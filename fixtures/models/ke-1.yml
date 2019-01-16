@@ -70,7 +70,6 @@ filters:
         value: 7
         label: Mini-grid - Hydro
 map:
-  layers:
-    features:
-      url: mapbox://devseed.2a5bvzlz
-      id: ke
+  modelVT:
+    url: mapbox://devseed.2a5bvzlz
+    id: ke
