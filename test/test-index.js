@@ -18,6 +18,9 @@ describe('GEP Data Service', function () {
   require('./test-scenarios-features.js');
   require('./test-techlayers.js');
 
+  require('./cli/test-cli-models');
+  require('./cli/test-cli-scenarios');
+
   after(async function () {
     await server.stop();
   });

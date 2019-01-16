@@ -67,9 +67,18 @@ async function validateModelScenario (model, filePath) {
     csv
       .fromPath(filePath, { headers: true, delimiter: ',' })
       .on('data', record => {
+        if (!record.ID) errors.push(`Found empty value for ID at line ${line}`);
         elecCodes.forEach(c => {
           const v = record[c];
-          if (v === '' || v === 99 || v === '99' || v === undefined) {
+          if (
+            v === '' ||
+            v === ' ' ||
+            v === 99 ||
+            v === '99' ||
+            v === undefined ||
+            v === 'null' ||
+            v === null
+          ) {
             const printVal = v === '' ? 'empty' : v;
             errors.push(`Found ${printVal} value for ${c} at line ${line}`);
           }
@@ -103,9 +112,14 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
 
   const timesteps = model.timesteps || [];
 
+  const nanParser = v => {
+    v = parseFloat(v);
+    return isNaN(v) ? null : v;
+  };
+
   const getFilterValueFromRecord = (record, filter, key) => {
     if (filter.type === 'range') {
-      return parseFloat(record[key]);
+      return nanParser(record[key]);
     } else {
       return record[key];
     }
@@ -135,9 +149,9 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
         return v === 99 ? null : v;
       }
     },
-    { key: 'InvestmentCost', parser: parseFloat },
-    { key: 'NewCapacity', parser: parseFloat },
-    { key: 'Pop', parser: parseFloat }
+    { key: 'InvestmentCost', parser: nanParser },
+    { key: 'NewCapacity', parser: nanParser },
+    { key: 'Pop', parser: nanParser }
   ];
 
   const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {

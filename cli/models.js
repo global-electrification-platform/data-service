@@ -120,8 +120,8 @@ async function validateModel (modelPath) {
 /**
  * Validates whether sensitive props were changes between the models.
  *
- * @param {object} modelA Model
- * @param {object} modelB Model
+ * @param {object} modelOriginal Original model
+ * @param {object} modelNew New model
  *
  * @see getSensitiveProps()
  *
@@ -130,13 +130,13 @@ async function validateModel (modelPath) {
  *
  * @return boolean
  */
-function validateModelDiff (modelA, modelB) {
-  const modelAProps = getSensitiveProps(modelA);
-  const modelBProps = getSensitiveProps(modelB);
+function validateModelDiff (modelOriginal, modelNew) {
+  const modelOriginalProps = getSensitiveProps(modelOriginal);
+  const modelNewProps = getSensitiveProps(modelNew);
 
   // Quick diff.
-  if (JSON.stringify(modelAProps) !== JSON.stringify(modelBProps)) {
-    const diffRes = detailedDiff(modelAProps, modelBProps);
+  if (JSON.stringify(modelOriginalProps) !== JSON.stringify(modelNewProps)) {
+    const diffRes = detailedDiff(modelOriginalProps, modelNewProps);
     let report = [];
     for (const p in diffRes) {
       if (Object.keys(diffRes[p]).length) {
