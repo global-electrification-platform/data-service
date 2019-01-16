@@ -6,17 +6,20 @@ const deleteCmd = require('./programs/delete');
 const validateCmd = require('./programs/validate');
 const ingestCmd = require('./programs/ingest');
 
-// const { PG_CONNECTION_STRING } = process.env;
-
-// if (!PG_CONNECTION_STRING) {
-//   console.log('ERROR: A database connection string is needed. Use:');
-//   console.log();
-//   console.log('  export PG_CONNECTION_STRING=connection-string');
-//   console.log();
-//   process.exit(1);
-// }
+const { print } = require('./utils');
 
 const actionHandler = fn => async (...args) => {
+  const command = args[args.length - 1];
+  if (!command.parent.useConfigDb && !process.env.PG_CONNECTION_STRING) {
+    print('ERROR: A database connection string is needed. Use:');
+    print();
+    print('  export PG_CONNECTION_STRING=connection-string');
+    print();
+    print('If you want to use the config files run with --use-config-db');
+    print();
+    process.exit(1);
+  }
+
   try {
     await fn(...args);
     process.exit(0);
@@ -24,7 +27,7 @@ const actionHandler = fn => async (...args) => {
     if (error.userError) {
       error.details.forEach(row => console.log(row)); // eslint-disable-line
     } else {
-      console.log('error', error); // eslint-disable-line
+      console.log(error); // eslint-disable-line
     }
     if (!error.hideHelp) {
       program.help();
@@ -35,7 +38,8 @@ const actionHandler = fn => async (...args) => {
 
 program
   .description("Interacts with GEP's models and data")
-  .version(pkg.version);
+  .version(pkg.version)
+  .option('--use-config-db', 'Uses the config files for the db connection.')
 
 program
   .command('list')
