@@ -39,7 +39,7 @@ const actionHandler = fn => async (...args) => {
 program
   .description("Interacts with GEP's models and data")
   .version(pkg.version)
-  .option('--use-config-db', 'Uses the config files for the db connection.')
+  .option('--use-config-db', 'Uses the config files for the db connection.');
 
 program
   .command('list')

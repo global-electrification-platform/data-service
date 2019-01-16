@@ -47,13 +47,16 @@ module.exports = async (dirPath, command) => {
     model = await validateModel(modelPath);
   } catch (error) {
     if (!error.userError) throw error;
-    throw userError([
-      'Model is not valid. Run the following command to validate data beforehand',
-      `    ${validateCmdExpr}`,
-      '',
-      'Ingest failed',
-      ''
-    ], true);
+    throw userError(
+      [
+        'Model is not valid. Run the following command to validate data beforehand',
+        `    ${validateCmdExpr}`,
+        '',
+        'Ingest failed',
+        ''
+      ],
+      true
+    );
   }
 
   const dbModel = await db('models')

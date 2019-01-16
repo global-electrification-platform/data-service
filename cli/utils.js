@@ -72,8 +72,8 @@ module.exports.time = function (name) {
 
     elapsed /= 1000;
     const h = Math.floor(elapsed / 3600);
-    const m = Math.floor(elapsed % 3600 / 60);
-    const s = Math.floor(elapsed % 3600 % 60);
+    const m = Math.floor((elapsed % 3600) / 60);
+    const s = Math.floor((elapsed % 3600) % 60);
 
     delete timers[name];
 
