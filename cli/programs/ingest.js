@@ -28,6 +28,7 @@ const {
  *   -h, --help     output usage information
  */
 module.exports = async (dirPath, command) => {
+  dirPath = path.join(process.env.INIT_CWD, dirPath);
   if (command.configOnly && command.override) {
     throw userError([
       'The --config-only and --override options can not be used together.',

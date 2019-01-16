@@ -19,6 +19,7 @@ const {
  *   -h, --help  output usage information
  */
 module.exports = async dirPath => {
+  dirPath = path.join(process.env.INIT_CWD, dirPath);
   const modelPath = await getModelFromDir(dirPath);
   const model = await validateModel(modelPath);
 
