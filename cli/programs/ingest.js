@@ -53,7 +53,7 @@ module.exports = async (dirPath, command) => {
       '',
       'Ingest failed',
       ''
-    ]);
+    ], true);
   }
 
   const dbModel = await db('models')
