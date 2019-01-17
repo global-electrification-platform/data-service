@@ -2,7 +2,7 @@ const _ = require('lodash');
 const path = require('path');
 
 const db = require('../../app/db');
-const { print, time, userError } = require('../utils');
+const { print, time, userError, validateDirPath } = require('../utils');
 const {
   validateModel,
   getModelFromDir,
@@ -28,6 +28,8 @@ const {
  *   -h, --help     output usage information
  */
 module.exports = async (dirPath, command) => {
+  await validateDirPath(dirPath);
+
   dirPath = path.join(process.env.INIT_CWD, dirPath);
   if (command.configOnly && command.override) {
     throw userError([

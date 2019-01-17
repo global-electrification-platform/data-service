@@ -1,11 +1,13 @@
+const fs = require('fs-extra');
+const path = require('path');
 const { table, getBorderCharacters } = require('table');
 
 /**
  * Alias of console.log
  */
-module.exports.print = function (...params) {
+function print (...params) {
   console.log(...params); // eslint-disable-line
-};
+}
 
 /**
  * Creates a User Error object.
@@ -21,13 +23,13 @@ module.exports.print = function (...params) {
  *
  * @returns Error
  */
-module.exports.userError = function (details = [], hideHelp = false) {
+function userError (details = [], hideHelp = false) {
   const err = new Error('User error');
   err.userError = true;
   err.hideHelp = hideHelp;
   err.details = details;
   return err;
-};
+}
 
 /**
  * Displays a table with a minimalistic style.
@@ -37,7 +39,7 @@ module.exports.userError = function (details = [], hideHelp = false) {
  *
  * @returns String
  */
-module.exports.outputMiniTable = function (rows, margin = 0) {
+function outputMiniTable (rows, margin = 0) {
   return table(rows, {
     border: getBorderCharacters('void'),
     columnDefault: {
@@ -51,7 +53,7 @@ module.exports.outputMiniTable = function (rows, margin = 0) {
     },
     drawHorizontalLine: () => false
   });
-};
+}
 
 let timers = {};
 
@@ -63,7 +65,7 @@ let timers = {};
  *
  * @param {string} name Timer name
  */
-module.exports.time = function (name) {
+function time (name) {
   const t = timers[name];
   if (t) {
     let elapsed = Date.now() - t;
@@ -81,4 +83,52 @@ module.exports.time = function (name) {
   } else {
     timers[name] = Date.now();
   }
+}
+
+/**
+ * Validates that the given path is a directory, throwing user erros
+ * in other cases.
+ *
+ * @param {string} dirPath Path to validate
+ *
+ * @see userError()
+ * @throws Error if validation fails
+ */
+async function validateDirPath (dirPath) {
+  try {
+    const stats = await fs.lstat(dirPath);
+    if (!stats.isDirectory()) {
+      const args = process.argv.reduce((acc, o, idx) => {
+        // Discard the first 2 arguments.
+        if (idx < 1) return acc;
+        if (o === dirPath) return acc.concat(path.dirname(dirPath));
+        return acc.concat(o);
+      }, []);
+
+      throw userError([
+        'The given path is not a directory.',
+        'You probably pointed to a file. Try running with the folowing instead:',
+        '',
+        `  node ${args.join(' ')}`,
+        ''
+      ], true);
+    }
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      throw userError([
+        'No files or directories found at ' + dirPath,
+        ''
+      ], true);
+    }
+
+    throw error;
+  }
+}
+
+module.exports = {
+  print,
+  userError,
+  outputMiniTable,
+  time,
+  validateDirPath
 };

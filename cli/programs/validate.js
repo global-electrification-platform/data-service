@@ -1,6 +1,6 @@
 const path = require('path');
 
-const { print, userError } = require('../utils');
+const { print, userError, validateDirPath } = require('../utils');
 const { validateModel, getModelFromDir } = require('../models');
 const {
   getModelScenariosFromDir,
@@ -18,6 +18,8 @@ const {
  *   -h, --help  output usage information
  */
 module.exports = async dirPath => {
+  await validateDirPath(dirPath);
+
   dirPath = path.join(process.env.INIT_CWD, dirPath);
   const modelPath = await getModelFromDir(dirPath);
   const model = await validateModel(modelPath);
