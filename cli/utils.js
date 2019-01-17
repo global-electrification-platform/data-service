@@ -106,8 +106,8 @@ async function validateDirPath (dirPath) {
       }, []);
 
       throw userError([
-        'The given path is not a directory.',
-        'You probably pointed to a file. Try running with the folowing instead:',
+        '',
+        'Source path must be a directory. Try running with the following instead:',
         '',
         `  node ${args.join(' ')}`,
         ''

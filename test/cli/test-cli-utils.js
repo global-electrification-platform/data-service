@@ -31,8 +31,8 @@ describe('Utils related functions', function () {
         assert.ok(error.userError);
 
         assert.deepStrictEqual(msgs, [
-          'The given path is not a directory.',
-          'You probably pointed to a file. Try running with the folowing instead:',
+          '',
+          'Source path must be a directory. Try running with the following instead:',
           '',
           // Path suggestion would be here.
           ''
