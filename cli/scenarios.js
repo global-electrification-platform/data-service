@@ -57,9 +57,17 @@ async function validateModelScenario (model, filePath) {
     );
   }
 
-  const elecCodes = model.timesteps
+  // Compute the elec code properties.
+  // If the model uses timesteps, the year is appended to FinalElecCode.
+  let elecCodes = model.timesteps
     ? model.timesteps.map(t => `FinalElecCode${t}`)
     : ['FinalElecCode'];
+
+  // // The last year (if using timesteps) is always required and can't be 99.
+  const finalYearElecCode = elecCodes.pop();
+
+  const intermediateInvalid = ['', ' ', undefined, 'null', null];
+  const finalInvalid = intermediateInvalid.concat('99', 99);
 
   await new Promise((resolve, reject) => {
     let line = 2;
@@ -67,22 +75,26 @@ async function validateModelScenario (model, filePath) {
     csv
       .fromPath(filePath, { headers: true, delimiter: ',' })
       .on('data', record => {
+        // ID property always required.
         if (!record.ID) errors.push(`Found empty value for ID at line ${line}`);
+
+        // Validate intermediate FinalElecCode.
         elecCodes.forEach(c => {
           const v = record[c];
-          if (
-            v === '' ||
-            v === ' ' ||
-            v === 99 ||
-            v === '99' ||
-            v === undefined ||
-            v === 'null' ||
-            v === null
-          ) {
+          if (intermediateInvalid.indexOf(v) > -1) {
             const printVal = v === '' ? 'empty' : v;
             errors.push(`Found ${printVal} value for ${c} at line ${line}`);
           }
         });
+
+        // Validate final FinalElecCode.
+        // It can't be null or have a value of 99.
+        const v = record[finalYearElecCode];
+        if (finalInvalid.indexOf(v) > -1) {
+          const printVal = v === '' ? 'empty' : v;
+          errors.push(`Found ${printVal} value for ${finalYearElecCode} at line ${line}`);
+        }
+
         line++;
       })
       .on('end', () => {
