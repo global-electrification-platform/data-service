@@ -1,9 +1,12 @@
-id: 'mw-2'
-name: 'Malawi Network Planner v1.0'
-updatedAt: '2018-10-14'
+id: 'mw-1'
+name: 'Malawi OnSSET v1.0'
+updatedAt: '2018-10-12'
 version: 'v1.0'
-type: net-planner
+type: onsset
 country: MW
+timesteps:
+  - 2023
+  - 2030
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
@@ -12,6 +15,7 @@ description:
 levers:
   - id: 0
     label: Grid Generation Cost
+    description: Laboris velit cupidatat aliquip nisi consectetur deserunt tempor nisi magna. Reprehenderit tempor voluptate amet dolore aute anim qui aute est. Aute aliqua labore mollit culpa aliquip consequat ex. Quis laboris et minim dolore dolore aliquip. Proident mollit Lorem aliquip pariatur. Cupidatat minim pariatur fugiat officia elit.
     options:
       - id: 0
         value: 0.01
@@ -21,6 +25,7 @@ levers:
         value: 0.08
   - id: 1
     label: Diesel Price
+    description: Cupidatat non cillum Lorem officia cupidatat. Deserunt et incididunt in incididunt excepteur dolor fugiat do. Exercitation anim ullamco sit consectetur deserunt adipisicing anim fugiat cillum duis culpa ea et duis.
     options:
       - id: 0
         value: 0.50
@@ -30,6 +35,7 @@ levers:
         value: 1.00
   - id: 2
     label: First Year Target
+    description: Tempor culpa sit occaecat minim sint esse eu. Aliqua officia ullamco non consequat. Excepteur tempor pariatur incididunt mollit aliqua cupidatat ipsum ea aute dolore cillum. Eu sint proident proident enim ad voluptate reprehenderit amet cillum eu excepteur non elit.
     options:
       - id: 0
         value: 50%
@@ -38,14 +44,24 @@ levers:
 filters:
   - id: 0
     key: Pop
-    label: Population
+    label: Area Population
+    timestep: false
     type: range
-    range:
-      min: 0
-      max: 5000
+    # range:
+    #   min: 3
+    #   max: 31528
   - id: 1
-    key: FinalElecCode2030
+    key: GridCellArea
+    label: Area Size (square km)
+    timestep: false
+    type: range
+    # range:
+    #   min: 0.008
+    #   max: 7.256
+  - id: 2
+    key: FinalElecCode
     label: Electrification Techonology
+    timestep: true
     type: options
     options:
       - id: 0
@@ -69,6 +85,29 @@ filters:
       - id: 6
         value: 7
         label: Mini-grid - Hydro
+  - id: 3
+    key: SubstationDist
+    label: Distance from existing grid (km)
+    timestep: false
+    type: range
+    # range:
+    #   min: 79
+    #   max: 115
+  - id: 4
+    key: RoadDist
+    label: Distance from existing road network (km)
+    timestep: false
+    type: range
+    # range:
+    #   min: 0.01141
+    #   max: 10.1854
+  - id: 5
+    key: InfrastructureCapitaCost2030
+    label: Investiment Cost Per Capita (USD)
+    type: range
+    # range:
+    #   min: 0
+    #   max: 462
 map:
   modelVT:
     url: mapbox://devseed.2a5bvzlz
@@ -111,3 +150,7 @@ map:
         url: https://data.humdata.org/dataset/malawi-healthsites
       vectorLayers:
         - PROJ_LIB
+  techLayersConfig:
+    - id: 10
+      label: New energy
+      color: stdl-photovoltaic

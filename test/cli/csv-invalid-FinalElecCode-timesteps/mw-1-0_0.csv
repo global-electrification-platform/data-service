@@ -1,0 +1,5 @@
+ID,column,FinalElecCode2020,FinalElecCode2023,FinalElecCode2030
+1,"empty value for all. 2020 is here but not a timestep on the model",,,
+2,valid value,,5,5
+3,99 value,,99,5
+4,mixed value,," ",5

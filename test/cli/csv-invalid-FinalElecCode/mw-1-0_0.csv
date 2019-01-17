@@ -1,0 +1,5 @@
+ID,column,FinalElecCode
+1,empty value,
+2,valid value,5
+3,99 value,99
+4,null value,null

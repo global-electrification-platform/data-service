@@ -45,7 +45,9 @@ describe('endpoint /countries/{id}', function () {
   });
 
   it('GET /countries/cg returns status 200, with country models', async function () {
-    const cg1ModelExpected = await fs.readJson(path.join(__dirname, 'expected-models', 'cg-1.json'));
+    const cg1ModelExpected = await fs.readJson(
+      path.join(__dirname, 'expected-models', 'cg-1.json')
+    );
 
     return supertest(server.listener)
       .get('/countries/cg')
@@ -57,15 +59,19 @@ describe('endpoint /countries/{id}', function () {
   });
 
   it('GET /countries/MW (uppercase) returns status 200, with country models', async function () {
-    const mw1ModelExpected = await fs.readJson(path.join(__dirname, 'expected-models', 'mw-1.json'));
-    const mw2ModelExpected = await fs.readJson(path.join(__dirname, 'expected-models', 'mw-2.json'));
+    const mw1ModelExpected = await fs.readJson(
+      path.join(__dirname, 'expected-models', 'mw-1.json')
+    );
+    const mw2ModelExpected = await fs.readJson(
+      path.join(__dirname, 'expected-models', 'mw-2.json')
+    );
 
     return supertest(server.listener)
       .get('/countries/MW')
       .expect(200, {
         id: 'MW',
         name: 'Malawi',
-        models: [mw1ModelExpected, mw2ModelExpected]
+        models: [mw2ModelExpected, mw1ModelExpected] // order by updated_at descending
       });
   });
 });

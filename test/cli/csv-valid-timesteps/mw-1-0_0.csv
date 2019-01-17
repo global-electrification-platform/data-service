@@ -1,0 +1,5 @@
+ID,FinalElecCode2030,InvestmentCost2030,NewCapacity2030,Pop2030,anotherFilter,discardedProp
+1001,1,1,1,1,1,discarded
+1002,2,10,10,10,10,discarded
+1003,3,20,20,20,20,discarded
+1004,4,,,,30,discarded

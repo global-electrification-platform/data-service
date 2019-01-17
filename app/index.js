@@ -106,7 +106,8 @@ server.route({
             db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
           )
           .from('models')
-          .where('country', countryId);
+          .where('country', countryId)
+          .orderBy('updatedAt', 'DESC');
         return country;
       }
     } catch (error) {
