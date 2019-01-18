@@ -54,7 +54,7 @@ program
 
 program
   .command('delete <id...>')
-  .description('Deletes models from the db')
+  .description('Deletes models and respective data from the db')
   .action(actionHandler(deleteCmd));
 
 program

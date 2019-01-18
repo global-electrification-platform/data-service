@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 
 const db = require('../../app/db');
+const { print } = require('../utils');
 
 /**
  * Commander program.
@@ -22,4 +23,6 @@ module.exports = async ids => {
         .delete();
     });
   });
+  print('Models and data deleted:');
+  ids.forEach(i => print(i));
 };
