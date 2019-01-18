@@ -24,6 +24,12 @@ const actionHandler = fn => async (...args) => {
     await fn(...args);
     process.exit(0);
   } catch (error) {
+    if (error.code === 'ECONNREFUSED') {
+      print('ERROR: Failed to connect to the database.');
+      print('Check the connection string');
+      process.exit(1);
+    }
+
     if (error.userError) {
       error.details.forEach(row => console.log(row)); // eslint-disable-line
     } else {
