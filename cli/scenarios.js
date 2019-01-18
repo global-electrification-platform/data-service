@@ -66,7 +66,7 @@ async function validateModelScenario (model, filePath) {
   // // The last year (if using timesteps) is always required and can't be 99.
   const finalYearElecCode = elecCodes.pop();
 
-  const intermediateInvalid = ['', ' ', undefined, 'null', null];
+  const intermediateInvalid = ['', undefined, 'null', null];
   const finalInvalid = intermediateInvalid.concat('99', 99);
 
   await new Promise((resolve, reject) => {
@@ -80,7 +80,8 @@ async function validateModelScenario (model, filePath) {
 
         // Validate intermediate FinalElecCode.
         elecCodes.forEach(c => {
-          const v = record[c];
+          let v = record[c];
+          v = typeof v === 'string' ? v.trim() : v;
           if (intermediateInvalid.indexOf(v) > -1) {
             const printVal = v === '' ? 'empty' : v;
             errors.push(`Found ${printVal} value for ${c} at line ${line}`);
@@ -89,7 +90,8 @@ async function validateModelScenario (model, filePath) {
 
         // Validate final FinalElecCode.
         // It can't be null or have a value of 99.
-        const v = record[finalYearElecCode];
+        let v = record[finalYearElecCode];
+        v = typeof v === 'string' ? v.trim() : v;
         if (finalInvalid.indexOf(v) > -1) {
           const printVal = v === '' ? 'empty' : v;
           errors.push(`Found ${printVal} value for ${finalYearElecCode} at line ${line}`);

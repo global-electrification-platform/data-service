@@ -7,7 +7,7 @@ const {
   prepareScenarioRecords
 } = require('../../cli/scenarios');
 
-describe.only('Scenario related functions', function () {
+describe('Scenario related functions', function () {
   describe('getModelScenariosFromDir', function () {
     it('Throw userError when no scenarios are found', async function () {
       try {
@@ -149,7 +149,7 @@ describe.only('Scenario related functions', function () {
         assert.deepStrictEqual(msgs, [
           'Found empty value for FinalElecCode2023 at line 2',
           'Found empty value for FinalElecCode2030 at line 2',
-          'Found   value for FinalElecCode2023 at line 5'
+          'Found empty value for FinalElecCode2023 at line 5'
         ]);
         return;
       }
