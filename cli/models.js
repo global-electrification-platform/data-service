@@ -34,18 +34,15 @@ async function getModelFromDir (dirPath) {
   const models = dir.filter(f => f.endsWith('.yml'));
 
   if (!models.length) {
-    throw userError(['No .yml file was found in given directory.', ''], true);
+    throw userError(['No .yml file was found in given directory.', '']);
   }
 
   if (models.length > 1) {
-    throw userError(
-      [
-        'Multiple .yml files found.',
-        'Please ensure that there is only one model file per model directory',
-        ''
-      ],
-      true
-    );
+    throw userError([
+      'Multiple .yml files found.',
+      'Please ensure that there is only one model file per model directory',
+      ''
+    ]);
   }
 
   return path.join(dirPath, models[0]);
@@ -101,17 +98,17 @@ async function validateModel (modelPath) {
   const model = yaml.load(yamlModel);
   const fileId = getModelIdFromPath(modelPath);
   if (model.id !== fileId) {
-    throw userError(
-      ['Model errors:', '  File id and model id property do not match'],
-      true
-    );
+    throw userError([
+      'Model errors:',
+      '  File id and model id property do not match'
+    ]);
   }
 
   const { error } = Joi.validate(model, modelSchema, { abortEarly: false });
 
   if (error) {
     const rows = error.details.map(err => [err.path.join('.'), err.message]);
-    throw userError(['Model errors:', outputMiniTable(rows, 2)], true);
+    throw userError(['Model errors:', outputMiniTable(rows, 2)]);
   }
 
   return model;
@@ -148,15 +145,12 @@ function validateModelDiff (modelOriginal, modelNew) {
       }
     }
 
-    throw userError(
-      [
-        'Sensitive properties were changed. Ingest failed.',
-        'See report below. If you need to perform these changes re-import all data.',
-        '',
-        ...report
-      ],
-      true
-    );
+    throw userError([
+      'Sensitive properties were changed. Ingest failed.',
+      'See report below. If you need to perform these changes re-import all data.',
+      '',
+      ...report
+    ]);
   }
 
   return true;

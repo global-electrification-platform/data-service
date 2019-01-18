@@ -35,9 +35,6 @@ const actionHandler = fn => async (...args) => {
     } else {
       console.log(error); // eslint-disable-line
     }
-    if (!error.hideHelp) {
-      program.help();
-    }
     process.exit(1);
   }
 };

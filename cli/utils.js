@@ -19,14 +19,12 @@ function print (...params) {
  * on purpose rather than thrown by something else.
  *
  * @param {array} details The message lines
- * @param {bool} hideHelp Whether or not to hide the cli help.
  *
  * @returns Error
  */
-function userError (details = [], hideHelp = false) {
+function userError (details = []) {
   const err = new Error('User error');
   err.userError = true;
-  err.hideHelp = hideHelp;
   err.details = details;
   return err;
 }
