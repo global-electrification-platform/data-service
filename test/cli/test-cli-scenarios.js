@@ -149,14 +149,30 @@ describe('Scenario related functions', function () {
         assert.deepStrictEqual(msgs, [
           'Found empty value for FinalElecCode2023 at line 2',
           'Found empty value for FinalElecCode2030 at line 2',
-          'Found 99 value for FinalElecCode2023 at line 4',
-          'Found   value for FinalElecCode2023 at line 5'
+          'Found empty value for FinalElecCode2023 at line 5'
         ]);
         return;
       }
 
       // Failsafe.
       assert.fail('Error not thrown');
+    });
+
+    it('Return true when valid', async function () {
+      const model = {
+        id: 'mw-1',
+        timesteps: [2023, 2030],
+        levers: [{}, {}]
+      };
+      const result = await validateModelScenario(
+        model,
+        path.join(
+          __dirname,
+          'csv-valid-99-intermediate/mw-1-0_0.csv'
+        )
+      );
+
+      assert.ok(result);
     });
   });
 

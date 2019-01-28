@@ -48,10 +48,7 @@ module.exports = async dirPath => {
   }
 
   if (failed) {
-    throw userError(
-      ['', 'Model scenarios contain errors. Validation failed.'],
-      true
-    );
+    throw userError(['', 'Model scenarios contain errors. Validation failed.']);
   }
 
   print('Validation successful');

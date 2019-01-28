@@ -49,16 +49,13 @@ module.exports = async (dirPath, command) => {
     model = await validateModel(modelPath);
   } catch (error) {
     if (!error.userError) throw error;
-    throw userError(
-      [
-        'Model is not valid. Run the following command to validate data beforehand',
-        `    ${validateCmdExpr}`,
-        '',
-        'Ingest failed',
-        ''
-      ],
-      true
-    );
+    throw userError([
+      'Model is not valid. Run the following command to validate data beforehand',
+      `    ${validateCmdExpr}`,
+      '',
+      'Ingest failed',
+      ''
+    ]);
   }
 
   const dbModel = await db('models')
@@ -69,13 +66,10 @@ module.exports = async (dirPath, command) => {
   // Config only flag. Update the model.
   if (command.configOnly) {
     if (!dbModel) {
-      throw userError(
-        [
-          'No model found to update',
-          'If this is the first ingest, remove the  --config-only flag'
-        ],
-        true
-      );
+      throw userError([
+        'No model found to update',
+        'If this is the first ingest, remove the  --config-only flag'
+      ]);
     }
 
     // Throws error if something is not correct.

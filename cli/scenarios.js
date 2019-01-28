@@ -19,7 +19,7 @@ async function getModelScenariosFromDir (dirPath) {
   const csvs = dir.filter(f => f.endsWith('.csv'));
 
   if (!csvs.length) {
-    throw userError(['No scenarios for this model were found.', ''], true);
+    throw userError(['No scenarios for this model were found.', '']);
   }
 
   return csvs;
@@ -41,25 +41,30 @@ async function validateModelScenario (model, filePath) {
 
   const matchRes = name.match(/^([a-z0-9-]+)-([0-9](_[0-9]+)+)$/);
   if (!matchRes) {
-    throw userError(['Malformed file name'], true);
+    throw userError(['Malformed file name']);
   }
 
   const [, id, levers] = matchRes;
 
   if (id !== model.id) {
-    throw userError(["Model id doesn't match model"], true);
+    throw userError(["Model id doesn't match model"]);
   }
 
   if (levers.split('_').length !== model.levers.length) {
-    throw userError(
-      ['Filename levers count do not match model levers count'],
-      true
-    );
+    throw userError(['Filename levers count do not match model levers count']);
   }
 
-  const elecCodes = model.timesteps
+  // Compute the elec code properties.
+  // If the model uses timesteps, the year is appended to FinalElecCode.
+  let elecCodes = model.timesteps
     ? model.timesteps.map(t => `FinalElecCode${t}`)
     : ['FinalElecCode'];
+
+  // // The last year (if using timesteps) is always required and can't be 99.
+  const finalYearElecCode = elecCodes.pop();
+
+  const intermediateInvalid = ['', undefined, 'null', null];
+  const finalInvalid = intermediateInvalid.concat('99', 99);
 
   await new Promise((resolve, reject) => {
     let line = 2;
@@ -67,27 +72,35 @@ async function validateModelScenario (model, filePath) {
     csv
       .fromPath(filePath, { headers: true, delimiter: ',' })
       .on('data', record => {
+        // ID property always required.
         if (!record.ID) errors.push(`Found empty value for ID at line ${line}`);
+
+        // Validate intermediate FinalElecCode.
         elecCodes.forEach(c => {
-          const v = record[c];
-          if (
-            v === '' ||
-            v === ' ' ||
-            v === 99 ||
-            v === '99' ||
-            v === undefined ||
-            v === 'null' ||
-            v === null
-          ) {
+          let v = record[c];
+          v = typeof v === 'string' ? v.trim() : v;
+          if (intermediateInvalid.indexOf(v) > -1) {
             const printVal = v === '' ? 'empty' : v;
             errors.push(`Found ${printVal} value for ${c} at line ${line}`);
           }
         });
+
+        // Validate final FinalElecCode.
+        // It can't be null or have a value of 99.
+        let v = record[finalYearElecCode];
+        v = typeof v === 'string' ? v.trim() : v;
+        if (finalInvalid.indexOf(v) > -1) {
+          const printVal = v === '' ? 'empty' : v;
+          errors.push(
+            `Found ${printVal} value for ${finalYearElecCode} at line ${line}`
+          );
+        }
+
         line++;
       })
       .on('end', () => {
         if (errors.length) {
-          return reject(userError(errors, true));
+          return reject(userError(errors));
         }
         resolve();
       })
