@@ -29,8 +29,8 @@ server.route({
   handler: async function (request, h) {
     const [totCountries, totModels] = await Promise.all([
       db
-        .count()
-        .from('countries')
+        .countDistinct('country')
+        .from('models')
         .first(),
       db
         .countDistinct('type')
@@ -52,10 +52,12 @@ server.route({
   path: '/countries',
   handler: async function (request, h) {
     try {
+      // Get countries codes by used models
       const countries = await db
-        .select('*')
-        .from('countries')
-        .orderBy('name');
+        .distinct('countries.id', 'countries.name')
+        .from('models')
+        .join('countries', 'models.country', '=', 'countries.id');
+
       return { countries };
     } catch (error) {
       return boom.badImplementation(error);
@@ -75,11 +77,14 @@ server.route({
   },
   handler: async function (request, h) {
     try {
-      const id = request.params.id.toLowerCase();
+      // ISO 3166-1 alpha-2 codes are uppercased
+      const countryId = request.params.id.toUpperCase();
+
+      // Get country
       const country = await db
         .select('*')
         .from('countries')
-        .where('id', id)
+        .where('id', countryId)
         .first();
 
       if (!country) {
@@ -101,7 +106,8 @@ server.route({
             db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
           )
           .from('models')
-          .where('id', 'like', `${id}-%`);
+          .where('country', countryId)
+          .orderBy('updatedAt', 'DESC');
         return country;
       }
     } catch (error) {

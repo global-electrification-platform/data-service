@@ -3,7 +3,7 @@ name: 'Malawi OnSSET v1.0'
 updatedAt: '2018-10-12'
 version: 'v1.0'
 type: onsset
-country: mw
+country: MW
 timesteps:
   - 2023
   - 2030
@@ -109,7 +109,10 @@ filters:
     #   min: 0
     #   max: 462
 map:
-  layers:
+  modelVT:
+    url: mapbox://devseed.2a5bvzlz
+    id: mw
+  externalLayers:
     - id: mapbox_satellite
       label: Mapbox Satellite
       description: Satellite imagery provided by Mapbox from commercial providers, NASA, and USGS.
