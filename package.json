@@ -1,6 +1,6 @@
 {
   "name": "data-service",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta2",
   "description": "Data service for Global Electrification Platform",
   "main": "index.js",
   "repository": {
