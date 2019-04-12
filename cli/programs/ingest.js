@@ -30,7 +30,10 @@ const {
 module.exports = async (dirPath, command) => {
   await validateDirPath(dirPath);
 
-  dirPath = path.join(process.env.INIT_CWD, dirPath);
+  if (!path.isAbsolute(dirPath)) {
+    dirPath = path.join(process.env.INIT_CWD || '', dirPath);
+  }
+
   if (command.configOnly && command.override) {
     throw userError([
       'The --config-only and --override options can not be used together.',

@@ -20,7 +20,10 @@ const {
 module.exports = async dirPath => {
   await validateDirPath(dirPath);
 
-  dirPath = path.join(process.env.INIT_CWD, dirPath);
+  if (!path.isAbsolute(dirPath)) {
+    dirPath = path.join(process.env.INIT_CWD || '', dirPath);
+  }
+
   const modelPath = await getModelFromDir(dirPath);
   const model = await validateModel(modelPath);
 
