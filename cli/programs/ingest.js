@@ -133,8 +133,10 @@ module.exports = async (dirPath, command) => {
         .del();
 
       time('scenariosTime');
-      for (const file of csvs) {
-        print(file);
+
+      for (const idx in csvs) {
+        const file = csvs[idx];
+        print(`${idx + 1} of ${csvs.length} - ${file}`);
         time('fileTime');
         const records = await prepareScenarioRecords(
           model,
