@@ -66,6 +66,10 @@ program
     '--config-only',
     'Updates the non-data parts of the model configuration'
   )
+  .option(
+    '--no-validation',
+    'Skips the validation of the scenarios'
+  )
   .option('--override', 'Removes data from the database and imports again')
   .action(actionHandler(ingestCmd));
 

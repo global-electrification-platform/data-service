@@ -98,20 +98,27 @@ module.exports = async (dirPath, command) => {
   }
 
   const csvs = await getModelScenariosFromDir(dirPath);
-  for (const file of csvs) {
-    try {
-      // Quick validation before importing data.
-      await validateModelScenario(model, path.join(dirPath, file));
-    } catch (error) {
-      if (!error.userError) throw error;
-      throw userError([
-        'Scenarios not valid. Run the following command to validate data beforehand',
-        `    ${validateCmdExpr}`,
-        '',
-        'Ingest failed',
-        ''
-      ]);
+  // Validate scenarios. On by default.
+  if (command.validation) {
+    print('Validating scenarios');
+    time('scenarioValidation');
+    for (const file of csvs) {
+      try {
+        // Quick validation before importing data.
+        await validateModelScenario(model, path.join(dirPath, file));
+      } catch (error) {
+        if (!error.userError) throw error;
+        throw userError([
+          'Scenarios not valid. Run the following command to validate data beforehand',
+          `    ${validateCmdExpr}`,
+          '',
+          'Ingest failed',
+          ''
+        ]);
+      }
     }
+    print('  Validated in', time('scenarioValidation'));
+    print();
   }
 
   // Import data. Start transaction.
@@ -126,8 +133,10 @@ module.exports = async (dirPath, command) => {
         .del();
 
       time('scenariosTime');
-      for (const file of csvs) {
-        print(file);
+
+      for (const idx in csvs) {
+        const file = csvs[idx];
+        print(`${parseInt(idx) + 1} of ${csvs.length} - ${file}`);
         time('fileTime');
         const records = await prepareScenarioRecords(
           model,
