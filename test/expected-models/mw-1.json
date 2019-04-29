@@ -225,7 +225,7 @@
       {
         "id": "1",
         "label": "Grid extension",
-        "color": "#893831"
+        "color": "#73B2FF"
       },
       {
         "id": "2",
@@ -235,7 +235,7 @@
       {
         "id": "3",
         "label": "Stand-alone - Photovoltaic",
-        "color": "#ffc700"
+        "color": "#FFD38C"
       },
       {
         "id": "4",
@@ -245,22 +245,22 @@
       {
         "id": "5",
         "label": "Mini-grid - Photovoltaic",
-        "color": "#1ea896"
+        "color": "#E6AF00"
       },
       {
         "id": "6",
         "label": "Mini-grid - Wind",
-        "color": "#00a2ce"
+        "color": "#8F77AD"
       },
       {
         "id": "7",
         "label": "Mini-grid - Hydro",
-        "color": "#19647e"
+        "color": "#00518E"
       },
       {
         "id": "10",
         "label": "New energy",
-        "color": "#ffc700"
+        "color": "#FFD38C"
       }
     ]
   }
