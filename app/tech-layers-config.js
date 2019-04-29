@@ -4,13 +4,13 @@
 // The user will be able to override this in the model.
 
 const namedColors = {
-  'grid-ext': '#893831',
+  'grid-ext': '#73B2FF',
   'stdl-diesel': '#fe5931',
-  'stdl-photovoltaic': '#ffc700',
+  'stdl-photovoltaic': '#FFD38C',
   'mini-diesel': '#8fb722',
-  'mini-photovoltaic': '#1ea896',
-  'mini-wind': '#00a2ce',
-  'mini-hydro': '#19647e'
+  'mini-photovoltaic': '#E6AF00',
+  'mini-wind': '#8F77AD',
+  'mini-hydro': '#00518E'
 };
 
 const defaultTechLayerConfig = [

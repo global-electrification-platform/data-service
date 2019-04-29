@@ -5,13 +5,13 @@ describe('Tech-layers functions', function () {
   describe('colors', function () {
     it('should resolve the named colors correctly', function () {
       // Existing colors.
-      assert.strictEqual(resolveColor('grid-ext'), '#893831');
+      assert.strictEqual(resolveColor('grid-ext'), '#73B2FF');
       assert.strictEqual(resolveColor('stdl-diesel'), '#fe5931');
-      assert.strictEqual(resolveColor('stdl-photovoltaic'), '#ffc700');
+      assert.strictEqual(resolveColor('stdl-photovoltaic'), '#FFD38C');
       assert.strictEqual(resolveColor('mini-diesel'), '#8fb722');
-      assert.strictEqual(resolveColor('mini-photovoltaic'), '#1ea896');
-      assert.strictEqual(resolveColor('mini-wind'), '#00a2ce');
-      assert.strictEqual(resolveColor('mini-hydro'), '#19647e');
+      assert.strictEqual(resolveColor('mini-photovoltaic'), '#E6AF00');
+      assert.strictEqual(resolveColor('mini-wind'), '#8F77AD');
+      assert.strictEqual(resolveColor('mini-hydro'), '#00518E');
     });
 
     it('should throw error for non existent named colors', function () {
@@ -54,7 +54,7 @@ describe('Tech-layers functions', function () {
         {
           id: '1',
           label: 'Grid extension',
-          color: '#893831'
+          color: '#73B2FF'
         },
         {
           id: '2',
@@ -64,27 +64,27 @@ describe('Tech-layers functions', function () {
         {
           id: '3',
           label: 'New label for 3',
-          color: '#ffc700'
+          color: '#FFD38C'
         },
         {
           id: '4',
           label: 'New label for 4',
-          color: '#893831'
+          color: '#73B2FF'
         },
         {
           id: '5',
           label: 'Mini-grid - Photovoltaic',
-          color: '#1ea896'
+          color: '#E6AF00'
         },
         {
           id: '6',
           label: 'Mini-grid - Wind',
-          color: '#00a2ce'
+          color: '#8F77AD'
         },
         {
           id: '7',
           label: 'Mini-grid - Hydro',
-          color: '#19647e'
+          color: '#00518E'
         },
         {
           id: '10',
@@ -94,7 +94,7 @@ describe('Tech-layers functions', function () {
         {
           id: '11',
           label: 'A new layer with named color',
-          color: '#893831'
+          color: '#73B2FF'
         }
       ];
 
