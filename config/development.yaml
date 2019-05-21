@@ -6,3 +6,6 @@ knex:
     user: "gep-data-service-dev"
     password: null
     port: 15432
+redis:
+  host: 127.0.0.1
+  port: 6379
