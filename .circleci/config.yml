@@ -4,6 +4,9 @@ jobs:
     docker:
       - image: developmentseed/circleci:node8.4-python2.7
 
+    # Redis
+      - image: redis:5.0
+
     # Database for the tests
       - image: circleci/postgres:9.6.2-alpine
         environment:
