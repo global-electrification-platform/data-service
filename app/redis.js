@@ -8,10 +8,10 @@ const redisConf = config.get('redis');
 const redisClient = redis.createClient(redisConf);
 
 redisClient.on('error', err => {
-  console.log('Redis error:', err);
+  console.log('Redis error:', err); // eslint-disable-line
 });
 redisClient.on('connect', () => {
-  console.log('Redis connected');
+  console.log('Redis connected'); // eslint-disable-line
 });
 
 const set = util.promisify(redisClient.set).bind(redisClient);
