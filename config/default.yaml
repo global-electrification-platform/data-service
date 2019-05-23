@@ -1,1 +1,3 @@
 sourceDataDir: './fixtures' # relative to project root
+redis:
+  cacheTtl: 604800 # cache time to live, a week by default
