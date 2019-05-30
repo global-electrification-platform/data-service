@@ -1,9 +1,15 @@
+const config = require('config');
 const _ = require('lodash');
 const qs = require('qs');
 const boom = require('boom');
 const Hapi = require('hapi');
-const db = require('./db');
 const Joi = require('joi');
+
+const db = require('./db');
+const { set: rset, get: rget, expire: rexpire } = require('./redis');
+
+// Get Redis cache "time to live"
+const redisCacheTtl = config.get('redis.cacheTtl');
 
 const server = Hapi.server({
   port: process.env.PORT || 3000,
@@ -236,6 +242,16 @@ server.route({
       // Parse query string if available
       let { query } = request;
       let year = null;
+
+      // Check for redis data with this query.
+      const cacheKey = JSON.stringify(query);
+      const cachedData = await rget(cacheKey);
+      if (cachedData) {
+        // Once the data is requested, store for a week
+        await rexpire(cacheKey, redisCacheTtl);
+        return JSON.parse(cachedData);
+      }
+
       if (query) {
         query = qs.parse(query);
         year = parseInt(query.year) || null;
@@ -410,7 +426,10 @@ server.route({
 
       featureTypes = featureTypes.toString();
 
-      return { id, featureTypes, summary, summaryByType };
+      const response = { id, featureTypes, summary, summaryByType };
+      // Store on redis.
+      await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      return response;
     } catch (error) {
       if (error instanceof SyntaxError) {
         return boom.badRequest(error);
