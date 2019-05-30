@@ -1,5 +1,8 @@
 {
+  "knex": "PG_CONNECTION_STRING",
   "redis": {
+    "host": "REDIS_HOST",
+    "port": "REDIS_PORT",
     "cacheTtl": "REDIS_CACHE_TTL"
   }
 }
