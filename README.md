@@ -53,14 +53,14 @@ Stop database container:
 
 ## Environment variables
 
-Use these to setup a custom enviroment:
+Use these to setup a custom environment:
 
 Name|Description|Default
 --|--|--
 `PG_CONNECTION_STRING`|PostgreSQL connection string|none
 `REDIS_HOST`|Redis host|127.0.0.1
 `REDIS_HOST`|Redis port|6379
-`REDIS_TTL`|Redis "Time-to-live"|1 week
+`REDIS_TTL`|Redis "time-to-live" or cache duration|1 week
 
 ## Documentation
 
