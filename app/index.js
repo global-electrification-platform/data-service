@@ -237,6 +237,7 @@ server.route({
   handler: async function (request) {
     try {
       const id = request.params.id.toLowerCase();
+      const modelId = id.substring(0, id.lastIndexOf('-'));
       let filters;
 
       // Parse query string if available
@@ -244,7 +245,7 @@ server.route({
       let year = null;
 
       // Check for redis data with this query.
-      const cacheKey = JSON.stringify(query);
+      const cacheKey = JSON.stringify({ id, query });
       const cachedData = await rget(cacheKey);
       if (cachedData) {
         // Once the data is requested, store for a week
@@ -285,7 +286,6 @@ server.route({
       }
 
       // Get information about the model
-      const modelId = id.substring(0, id.lastIndexOf('-'));
       const model = await db('models')
         .select('filters', 'timesteps')
         .where('id', modelId)
