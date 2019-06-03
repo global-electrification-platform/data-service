@@ -168,69 +168,98 @@ async function prepareModelRecord (db, model) {
   const id = model.id;
   const hasTimesteps = model.timesteps && model.timesteps.length;
 
-  // Filters to keep.
   let filters = [];
-  for (let filter of model.filters) {
-    filter.timestep = hasTimesteps ? filter.timestep === true : false;
-    if (filter.type === 'range') {
-      let filterCastStrings = [];
+
+  // If filters are defined, perform validation
+  if (Array.isArray(model.filters) && model.filters.length > 0) {
+    // Range filters need min/max values, which are calculated from
+    // scenarios output. The block below generate a query to fetch these values.
+    const rangeFilters = model.filters.filter(f => f.type === 'range');
+    if (rangeFilters.length > 0) {
+      let filterMinMaxSelectStrings = [];
       let filterKeys = {};
 
-      if (filter.timestep) {
-        // When range filter is time-stepped, min/max values should be
-        // calculated using all timesteps.
-        for (const timestep of model.timesteps) {
-          const key = filter.key + timestep;
-          filterCastStrings.push(`CAST("filterValues" ->> :${key} AS FLOAT)`);
-          filterKeys[key] = key;
+      for (let filter of rangeFilters) {
+        // Filter is time-stepped?
+        filter.timestep = hasTimesteps ? filter.timestep === true : false;
+
+        let filterCastStrings = [];
+        if (filter.timestep) {
+          // When range filter is time-stepped, min/max values should be
+          // calculated using all timesteps available.
+          for (const timestep of model.timesteps) {
+            const key = filter.key + timestep;
+            filterCastStrings.push(`CAST("filterValues" ->> :${key} AS FLOAT)`);
+            filterKeys[key] = key;
+          }
+        } else {
+          // When not time-stepped, use a filter key unmodified
+          filterCastStrings.push(
+            `CAST("filterValues" ->> :${filter.key} AS FLOAT)`
+          );
+          filterKeys[filter.key] = filter.key;
         }
-      } else {
-        // When not time-stepped, use a default key name on select.
-        filterCastStrings.push(`CAST("filterValues" ->> :key AS FLOAT)`);
-        filterKeys.key = filter.key;
+
+        // Keep filter list
+        filterMinMaxSelectStrings.push(`
+          MIN(LEAST(${filterCastStrings.join(',')})) as "${filter.key}min",
+          MAX(GREATEST(${filterCastStrings.join(',')})) as "${filter.key}max"
+        `);
       }
 
-      // Query min/max values
-      const res = await db.raw(
-        `
+      // Build min/max query. Ranged filters are queried at the same time to
+      // avoid reading all scenario records each time.
+      const minMaxQuery = `
         SELECT
-          MIN(LEAST(${filterCastStrings.join(',')})) as min,
-          MAX(GREATEST(${filterCastStrings.join(',')})) as max
+          ${filterMinMaxSelectStrings.join(',')}
         FROM scenarios
         WHERE "modelId" = :modelId
-      `,
-        { modelId: id, ...filterKeys }
-      );
+      `;
 
-      // Modify the filter.
-      const { min, max } = res.rows[0];
+      // Get results
+      const res = (await db.raw(minMaxQuery, { modelId: id, ...filterKeys }))
+        .rows[0];
 
-      if (min === null || max === null) {
+      // Validate results. Will not include filters with invalid ranges.
+      for (let filter of rangeFilters) {
+        const min = res[filter.key + 'min'];
+        const max = res[filter.key + 'max'];
+
+        if (min === null || max === null) {
+          print(
+            `Invalid (min) and/or (max) for filter [${
+              filter.key
+            }] of model [${id}]... skipping`
+          );
+          continue;
+        }
+
+        filters = filters.concat({
+          ...filter,
+          range: {
+            min: parseFloat(Math.floor(min)),
+            max: parseFloat(Math.ceil(max))
+          }
+        });
+      }
+    }
+
+    // Parse non-range filters
+    for (const filter of model.filters) {
+      if (filter.type === 'options') {
+        filters = filters.concat({ ...filter });
+      } else if (filter.type !== 'range') {
+        // Show error message if filter type is not "options" or "range"
         print(
-          `Invalid (min) and/or (max) for filter [${
+          `Invalid type [${filter.type}] for filter [${
             filter.key
           }] of model [${id}]... skipping`
         );
-        continue;
       }
-
-      filters = filters.concat({
-        ...filter,
-        range: {
-          min: parseFloat(Math.floor(min)),
-          max: parseFloat(Math.ceil(max))
-        }
-      });
-    } else if (filter.type === 'options') {
-      filters = filters.concat({ ...filter });
-    } else {
-      print(
-        `Invalid type [${filter.type}] for filter [${
-          filter.key
-        }] of model [${id}]... skipping`
-      );
     }
   }
+
+  filters = _.sortBy(filters, 'id');
 
   model.filters = filters;
 
