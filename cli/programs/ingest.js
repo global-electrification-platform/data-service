@@ -76,7 +76,6 @@ module.exports = async (dirPath, command) => {
     }
 
     await db.transaction(async trx => {
-
       // Throws error if something is not correct.
       validateModelDiff(dbModel, model);
 
