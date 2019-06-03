@@ -173,19 +173,33 @@ async function prepareModelRecord (db, model) {
   for (let filter of model.filters) {
     filter.timestep = hasTimesteps ? filter.timestep === true : false;
     if (filter.type === 'range') {
+      let filterCastStrings = [];
+      let filterKeys = {};
+
+      if (filter.timestep) {
+        // When range filter is time-stepped, min/max values should be
+        // calculated using all timesteps.
+        for (const timestep of model.timesteps) {
+          const key = filter.key + timestep;
+          filterCastStrings.push(`CAST("filterValues" ->> :${key} AS FLOAT)`);
+          filterKeys[key] = key;
+        }
+      } else {
+        // When not time-stepped, use a default key name on select.
+        filterCastStrings.push(`CAST("filterValues" ->> :key AS FLOAT)`);
+        filterKeys.key = filter.key;
+      }
+
+      // Query min/max values
       const res = await db.raw(
         `
         SELECT
-          MIN(CAST(
-            "filterValues" ->> :property AS FLOAT
-          )) as min,
-          MAX(CAST (
-            "filterValues" ->> :property AS FLOAT
-          )) as max
+          MIN(LEAST(${filterCastStrings.join(',')})) as min,
+          MAX(GREATEST(${filterCastStrings.join(',')})) as max
         FROM scenarios
         WHERE "modelId" = :modelId
       `,
-        { property: filter.key, modelId: id }
+        { modelId: id, ...filterKeys }
       );
 
       // Modify the filter.
