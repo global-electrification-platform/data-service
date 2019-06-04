@@ -246,6 +246,9 @@ async function prepareModelRecord (db, model) {
 
     // Parse non-range filters
     for (const filter of model.filters) {
+      // Filter is time-stepped?
+      filter.timestep = hasTimesteps ? filter.timestep === true : false;
+
       if (filter.type === 'options') {
         filters = filters.concat({ ...filter });
       } else if (filter.type !== 'range') {
