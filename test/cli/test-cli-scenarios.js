@@ -177,7 +177,7 @@ describe('Scenario related functions', function () {
   });
 
   describe('prepareScenarioRecords', function () {
-    it('Prepare scenario records - no timesteps', async function () {
+    it.only('Prepare scenario records - no timesteps', async function () {
       const model = {
         id: 'mw-1',
         timesteps: [],
@@ -211,6 +211,7 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1001,
           summary: {
+            ElecStatusIn: 1,
             FinalElecCode: 1,
             InvestmentCost: 1,
             NewCapacity: 1,
@@ -229,6 +230,7 @@ describe('Scenario related functions', function () {
           featureId: 1002,
           summary: {
             FinalElecCode: 2,
+            ElecStatusIn: 0,
             InvestmentCost: 10,
             NewCapacity: 10,
             Pop: 10
@@ -246,6 +248,7 @@ describe('Scenario related functions', function () {
           featureId: 1003,
           summary: {
             FinalElecCode: 3,
+            ElecStatusIn: 0,
             InvestmentCost: 20,
             NewCapacity: 20,
             Pop: 20
@@ -263,6 +266,7 @@ describe('Scenario related functions', function () {
           featureId: 1004,
           summary: {
             FinalElecCode: 4,
+            ElecStatusIn: 0,
             InvestmentCost: null,
             NewCapacity: null,
             Pop: null
@@ -310,6 +314,7 @@ describe('Scenario related functions', function () {
           featureId: 1001,
           summary: {
             FinalElecCode2030: 1,
+            ElecStatusIn2030: 0,
             InvestmentCost2030: 1,
             NewCapacity2030: 1,
             Pop2030: 1
@@ -322,6 +327,7 @@ describe('Scenario related functions', function () {
           featureId: 1002,
           summary: {
             FinalElecCode2030: 2,
+            ElecStatusIn2030: 1,
             InvestmentCost2030: 10,
             NewCapacity2030: 10,
             Pop2030: 10
@@ -334,6 +340,7 @@ describe('Scenario related functions', function () {
           featureId: 1003,
           summary: {
             FinalElecCode2030: 3,
+            ElecStatusIn2030: 1,
             InvestmentCost2030: 20,
             NewCapacity2030: 20,
             Pop2030: 20
@@ -346,6 +353,7 @@ describe('Scenario related functions', function () {
           featureId: 1004,
           summary: {
             FinalElecCode2030: 4,
+            ElecStatusIn2030: 0,
             InvestmentCost2030: null,
             NewCapacity2030: null,
             Pop2030: null

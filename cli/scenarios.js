@@ -164,7 +164,8 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
     },
     { key: 'InvestmentCost', parser: nanParser },
     { key: 'NewCapacity', parser: nanParser },
-    { key: 'Pop', parser: nanParser }
+    { key: 'Pop', parser: nanParser },
+    { key: 'ElecStatusIn', parser: nanParser }
   ];
 
   const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
