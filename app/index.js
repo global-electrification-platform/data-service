@@ -207,7 +207,7 @@ server.route({
         .select(
           db.raw(`summary->>'${'InvestmentCost' + year}' as "investmentCost"`),
           db.raw(`summary->>'${'NewCapacity' + year}' as "newCapacity"`),
-          db.raw(`summary->>'${'Pop' + year}' as "electrifiedPopulation"`)
+          db.raw(`summary->>'${'Pop' + year}' as "population"`)
         )
         .from('scenarios')
         .where('scenarioId', sid)
@@ -311,7 +311,7 @@ server.route({
         electrificationTech: 'FinalElecCode' + year,
         investmentCost: 'InvestmentCost' + year,
         newCapacity: 'NewCapacity' + year,
-        electrifiedPopulation: 'Pop' + year
+        population: 'Pop' + year
       };
 
       const whereBuilder = builder => {
@@ -361,14 +361,14 @@ server.route({
         .select(
           db.raw(`
             SUM(
-              (summary->>'${summaryKeys.investmentCost}')::numeric 
+              (summary->>'${summaryKeys.investmentCost}')::numeric
             ) as "investmentCost",
             SUM(
-              (summary->>'${summaryKeys.newCapacity}')::numeric 
+              (summary->>'${summaryKeys.newCapacity}')::numeric
             ) as "newCapacity",
             SUM(
-              (summary->>'${summaryKeys.electrifiedPopulation}')::numeric 
-            ) as "electrifiedPopulation"
+              (summary->>'${summaryKeys.population}')::numeric
+            ) as "population"
           `)
         )
         .first()
@@ -377,7 +377,7 @@ server.route({
 
       summary.investmentCost = _.round(summary.investmentCost, 2);
       summary.newCapacity = _.round(summary.newCapacity, 2);
-      summary.electrifiedPopulation = _.round(summary.electrifiedPopulation, 2);
+      summary.population = _.round(summary.population, 2);
 
       // Get features
       const features = await db
@@ -394,8 +394,8 @@ server.route({
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
           db.raw(
             `summary->>'${
-              summaryKeys.electrifiedPopulation
-            }' as "electrifiedPopulation"`
+              summaryKeys.population
+            }' as "population"`
           )
         )
         .where(whereBuilder)
@@ -403,7 +403,7 @@ server.route({
         .from('scenarios');
 
       const summaryByType = {
-        electrifiedPopulation: {},
+        population: {},
         investmentCost: {},
         newCapacity: {}
       };
@@ -413,9 +413,9 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
-        summaryByType.electrifiedPopulation[f.electrificationTech] =
-          (summaryByType.electrifiedPopulation[f.electrificationTech] || 0) +
-          parseFloat(f.electrifiedPopulation);
+        summaryByType.population[f.electrificationTech] =
+          (summaryByType.population[f.electrificationTech] || 0) +
+          parseFloat(f.population);
         summaryByType.investmentCost[f.electrificationTech] =
           (summaryByType.investmentCost[f.electrificationTech] || 0) +
           parseFloat(f.investmentCost);

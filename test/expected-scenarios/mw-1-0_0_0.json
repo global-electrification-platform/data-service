@@ -4,10 +4,10 @@
   "summary": {
     "investmentCost": 7159142.55,
     "newCapacity": 1094.3,
-    "electrifiedPopulation": 81471.55
+    "population": 81471.55
   },
   "summaryByType": {
-    "electrifiedPopulation": {
+    "population": {
       "1": 66409.53410484397,
       "5": 15062.019021499998
     },

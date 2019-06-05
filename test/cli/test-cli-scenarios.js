@@ -177,7 +177,7 @@ describe('Scenario related functions', function () {
   });
 
   describe('prepareScenarioRecords', function () {
-    it.only('Prepare scenario records - no timesteps', async function () {
+    it('Prepare scenario records - no timesteps', async function () {
       const model = {
         id: 'mw-1',
         timesteps: [],
