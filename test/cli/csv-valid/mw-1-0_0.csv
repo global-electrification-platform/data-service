@@ -1,5 +1,5 @@
-ID,FinalElecCode,InvestmentCost,NewCapacity,Pop,anotherFilter,discardedProp
-1001,1,1,1,1,1,discarded
-1002,2,10,10,10,10,discarded
-1003,3,20,20,20,20,discarded
-1004,4,,,,30,discarded
+ID,FinalElecCode,InvestmentCost,NewCapacity,Pop,ElecStatusIn,anotherFilter,discardedProp
+1001,1,1,1,1,1,1,discarded
+1002,2,10,10,10,0,10,discarded
+1003,3,20,20,20,0,20,discarded
+1004,4,,,,0,30,discarded
