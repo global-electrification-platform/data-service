@@ -314,7 +314,8 @@ server.route({
         electrificationTech: 'FinalElecCode' + year,
         investmentCost: 'InvestmentCost' + year,
         newCapacity: 'NewCapacity' + year,
-        population: 'Pop' + year
+        population: 'Pop' + year,
+        electrificationStatus: 'ElecStatusIn' + year
       };
 
       const whereBuilder = builder => {
@@ -359,8 +360,8 @@ server.route({
         }
       };
 
-      // Get summary
-      const summary = await db
+      // Get summary for filtered clusters
+      const summaryQuery = db
         .select(
           db.raw(`
             SUM(
@@ -370,17 +371,36 @@ server.route({
               (summary->>'${summaryKeys.newCapacity}')::numeric
             ) as "newCapacity",
             SUM(
-              (summary->>'${summaryKeys.population}')::numeric
-            ) as "population"
+              (summary->>'${summaryKeys.population}')::numeric *
+              (summary->>'${summaryKeys.electrificationStatus}')::numeric
+            ) as "peopleConnected"
           `)
         )
         .first()
         .where(whereBuilder)
         .from('scenarios');
 
+      const totalPopulationQuery = db
+        .select(
+          db.raw(`
+            SUM((summary->>'${
+  summaryKeys.population
+}')::numeric) as "totalPopulation"
+          `)
+        )
+        .where('scenarioId', id)
+        .from('scenarios')
+        .first();
+
+      const [summary, { totalPopulation }] = await Promise.all([
+        summaryQuery,
+        totalPopulationQuery
+      ]);
+
       summary.investmentCost = _.round(summary.investmentCost, 2);
       summary.newCapacity = _.round(summary.newCapacity, 2);
-      summary.population = _.round(summary.population, 2);
+      summary.peopleConnected = _.round(summary.peopleConnected, 2);
+      summary.totalPopulation = _.round(totalPopulation, 2);
 
       // Get features
       const features = await db
@@ -395,10 +415,11 @@ server.route({
             `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
           ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
+          db.raw(`summary->>'${summaryKeys.population}' as "population"`),
           db.raw(
             `summary->>'${
-              summaryKeys.population
-            }' as "population"`
+              summaryKeys.electrificationStatus
+            }' as "electrificationStatus"`
           )
         )
         .where(whereBuilder)
@@ -406,7 +427,7 @@ server.route({
         .from('scenarios');
 
       const summaryByType = {
-        population: {},
+        peopleConnected: {},
         investmentCost: {},
         newCapacity: {}
       };
@@ -416,9 +437,9 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
-        summaryByType.population[f.electrificationTech] =
-          (summaryByType.population[f.electrificationTech] || 0) +
-          parseFloat(f.population);
+        summaryByType.peopleConnected[f.electrificationTech] =
+          (summaryByType.peopleConnected[f.electrificationTech] || 0) +
+          parseFloat(f.population) * parseFloat(f.electrificationStatus);
         summaryByType.investmentCost[f.electrificationTech] =
           (summaryByType.investmentCost[f.electrificationTech] || 0) +
           parseFloat(f.investmentCost);

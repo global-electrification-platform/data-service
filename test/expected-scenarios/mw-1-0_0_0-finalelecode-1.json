@@ -4,10 +4,12 @@
   "summary": {
     "investmentCost": 1233350.62,
     "newCapacity": 312.1,
-    "population": 83548.21
+    "peopleConnected": 83548.21,
+    "totalPopulation": 100797.65
+
   },
   "summaryByType": {
-    "population": {
+    "peopleConnected": {
       "1": 83548.205155
     },
     "investmentCost": {
