@@ -245,12 +245,14 @@ server.route({
       let year = null;
 
       // Check for redis data with this query.
-      const cacheKey = JSON.stringify({ id, query });
-      const cachedData = await rget(cacheKey);
-      if (cachedData) {
-        // Once the data is requested, store for a week
-        await rexpire(cacheKey, redisCacheTtl);
-        return JSON.parse(cachedData);
+      if (process.env.NODE_ENV !== 'test') {
+        const cacheKey = JSON.stringify({ id, query });
+        const cachedData = await rget(cacheKey);
+        if (cachedData) {
+          // Once the data is requested, store for a week
+          await rexpire(cacheKey, redisCacheTtl);
+          return JSON.parse(cachedData);
+        }
       }
 
       if (query) {
@@ -427,8 +429,11 @@ server.route({
       featureTypes = featureTypes.toString();
 
       const response = { id, featureTypes, summary, summaryByType };
+
       // Store on redis.
-      await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      if (process.env.NODE_ENV !== 'test') {
+        await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      }
       return response;
     } catch (error) {
       if (error instanceof SyntaxError) {
