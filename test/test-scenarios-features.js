@@ -28,7 +28,7 @@ describe('Endpoint: /scenarios/{sid}/features/{fid}', function () {
     const result = {
       investmentCost: '8932.993563',
       newCapacity: '2.470467501',
-      population: '99.6808255'
+      peopleConnected: '99.6808255'
     };
 
     return supertest(server.listener)
@@ -43,7 +43,7 @@ describe('Endpoint: /scenarios/{sid}/features/{fid}', function () {
     const result = {
       investmentCost: '8932.993563',
       newCapacity: '2.470467501',
-      population: '99.6808255'
+      peopleConnected: '99.6808255'
     };
 
     return supertest(server.listener)

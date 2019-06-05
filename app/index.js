@@ -207,7 +207,11 @@ server.route({
         .select(
           db.raw(`summary->>'${'InvestmentCost' + year}' as "investmentCost"`),
           db.raw(`summary->>'${'NewCapacity' + year}' as "newCapacity"`),
-          db.raw(`summary->>'${'Pop' + year}' as "population"`)
+          db.raw(`
+            (summary->>'${'Pop' + year}')::numeric *
+            (summary->>'${'ElecStatusIn' + year}')::numeric
+            as "peopleConnected"
+          `)
         )
         .from('scenarios')
         .where('scenarioId', sid)
