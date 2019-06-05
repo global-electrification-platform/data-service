@@ -249,9 +249,8 @@ server.route({
       let year = null;
 
       // Check for redis data with this query.
-      let cacheKey;
+      const cacheKey = JSON.stringify({ id, query });
       if (process.env.NODE_ENV !== 'test') {
-        cacheKey = JSON.stringify({ id, query });
         const cachedData = await rget(cacheKey);
         if (cachedData) {
           // Once the data is requested, store for a week
@@ -387,9 +386,9 @@ server.route({
       const totalPopulationQuery = db
         .select(
           db.raw(`
-            SUM((summary->>'${
-  summaryKeys.population
-}')::numeric) as "totalPopulation"
+            SUM(
+              (summary->>'${summaryKeys.population}')::numeric
+            ) as "totalPopulation"
           `)
         )
         .where('scenarioId', id)
