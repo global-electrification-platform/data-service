@@ -245,8 +245,9 @@ server.route({
       let year = null;
 
       // Check for redis data with this query.
+      let cacheKey;
       if (process.env.NODE_ENV !== 'test') {
-        const cacheKey = JSON.stringify({ id, query });
+        cacheKey = JSON.stringify({ id, query });
         const cachedData = await rget(cacheKey);
         if (cachedData) {
           // Once the data is requested, store for a week
