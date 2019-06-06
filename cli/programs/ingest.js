@@ -75,15 +75,21 @@ module.exports = async (dirPath, command) => {
       ]);
     }
 
-    // Throws error if something is not correct.
-    validateModelDiff(dbModel, model);
+    await db.transaction(async trx => {
+      // Throws error if something is not correct.
+      validateModelDiff(dbModel, model);
 
-    // All good. Update model.
-    const newModel = _.defaultsDeep({}, model, dbModel);
+      // Merge model
+      const newModel = _.defaultsDeep({}, model, dbModel);
 
-    await db('models')
-      .update(newModel)
-      .where('id', model.id);
+      // Recalculate filters
+      const record = await prepareModelRecord(trx, newModel);
+
+      // Perform update
+      await trx('models')
+        .update(record)
+        .where('id', model.id);
+    });
 
     print('Model updated');
     return;
