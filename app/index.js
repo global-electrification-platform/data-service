@@ -207,7 +207,11 @@ server.route({
         .select(
           db.raw(`summary->>'${'InvestmentCost' + year}' as "investmentCost"`),
           db.raw(`summary->>'${'NewCapacity' + year}' as "newCapacity"`),
-          db.raw(`summary->>'${'Pop' + year}' as "electrifiedPopulation"`)
+          db.raw(`
+            (summary->>'${'Pop' + year}')::numeric *
+            (summary->>'${'ElecStatusIn' + year}')::numeric
+            as "peopleConnected"
+          `)
         )
         .from('scenarios')
         .where('scenarioId', sid)
@@ -246,11 +250,13 @@ server.route({
 
       // Check for redis data with this query.
       const cacheKey = JSON.stringify({ id, query });
-      const cachedData = await rget(cacheKey);
-      if (cachedData) {
-        // Once the data is requested, store for a week
-        await rexpire(cacheKey, redisCacheTtl);
-        return JSON.parse(cachedData);
+      if (process.env.NODE_ENV !== 'test') {
+        const cachedData = await rget(cacheKey);
+        if (cachedData) {
+          // Once the data is requested, store for a week
+          await rexpire(cacheKey, redisCacheTtl);
+          return JSON.parse(cachedData);
+        }
       }
 
       if (query) {
@@ -311,7 +317,8 @@ server.route({
         electrificationTech: 'FinalElecCode' + year,
         investmentCost: 'InvestmentCost' + year,
         newCapacity: 'NewCapacity' + year,
-        electrifiedPopulation: 'Pop' + year
+        population: 'Pop' + year,
+        electrificationStatus: 'ElecStatusIn' + year
       };
 
       const whereBuilder = builder => {
@@ -356,28 +363,47 @@ server.route({
         }
       };
 
-      // Get summary
-      const summary = await db
+      // Get summary for filtered clusters
+      const summaryQuery = db
         .select(
           db.raw(`
             SUM(
-              (summary->>'${summaryKeys.investmentCost}')::numeric 
+              (summary->>'${summaryKeys.investmentCost}')::numeric
             ) as "investmentCost",
             SUM(
-              (summary->>'${summaryKeys.newCapacity}')::numeric 
+              (summary->>'${summaryKeys.newCapacity}')::numeric
             ) as "newCapacity",
             SUM(
-              (summary->>'${summaryKeys.electrifiedPopulation}')::numeric 
-            ) as "electrifiedPopulation"
+              (summary->>'${summaryKeys.population}')::numeric *
+              (summary->>'${summaryKeys.electrificationStatus}')::numeric
+            ) as "peopleConnected"
           `)
         )
         .first()
         .where(whereBuilder)
         .from('scenarios');
 
+      const totalPopulationQuery = db
+        .select(
+          db.raw(`
+            SUM(
+              (summary->>'${summaryKeys.population}')::numeric
+            ) as "totalPopulation"
+          `)
+        )
+        .where('scenarioId', id)
+        .from('scenarios')
+        .first();
+
+      const [summary, { totalPopulation }] = await Promise.all([
+        summaryQuery,
+        totalPopulationQuery
+      ]);
+
       summary.investmentCost = _.round(summary.investmentCost, 2);
       summary.newCapacity = _.round(summary.newCapacity, 2);
-      summary.electrifiedPopulation = _.round(summary.electrifiedPopulation, 2);
+      summary.peopleConnected = _.round(summary.peopleConnected, 2);
+      summary.totalPopulation = _.round(totalPopulation, 2);
 
       // Get features
       const features = await db
@@ -392,10 +418,11 @@ server.route({
             `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
           ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
+          db.raw(`summary->>'${summaryKeys.population}' as "population"`),
           db.raw(
             `summary->>'${
-              summaryKeys.electrifiedPopulation
-            }' as "electrifiedPopulation"`
+              summaryKeys.electrificationStatus
+            }' as "electrificationStatus"`
           )
         )
         .where(whereBuilder)
@@ -403,7 +430,7 @@ server.route({
         .from('scenarios');
 
       const summaryByType = {
-        electrifiedPopulation: {},
+        peopleConnected: {},
         investmentCost: {},
         newCapacity: {}
       };
@@ -413,9 +440,9 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
-        summaryByType.electrifiedPopulation[f.electrificationTech] =
-          (summaryByType.electrifiedPopulation[f.electrificationTech] || 0) +
-          parseFloat(f.electrifiedPopulation);
+        summaryByType.peopleConnected[f.electrificationTech] =
+          (summaryByType.peopleConnected[f.electrificationTech] || 0) +
+          parseFloat(f.population) * parseFloat(f.electrificationStatus);
         summaryByType.investmentCost[f.electrificationTech] =
           (summaryByType.investmentCost[f.electrificationTech] || 0) +
           parseFloat(f.investmentCost);
@@ -427,8 +454,11 @@ server.route({
       featureTypes = featureTypes.toString();
 
       const response = { id, featureTypes, summary, summaryByType };
+
       // Store on redis.
-      await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      if (process.env.NODE_ENV !== 'test') {
+        await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      }
       return response;
     } catch (error) {
       if (error instanceof SyntaxError) {

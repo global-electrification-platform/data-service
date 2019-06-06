@@ -73,7 +73,7 @@ async function validateModelScenario (model, filePath) {
       .fromPath(filePath, { headers: true, delimiter: ',' })
       .on('data', record => {
         // ID property always required.
-        if (!record.ID) errors.push(`Found empty value for ID at line ${line}`);
+        if (!record.ID && !record.id) { errors.push(`Found empty value for ID at line ${line}`); }
 
         // Validate intermediate FinalElecCode.
         elecCodes.forEach(c => {
@@ -164,7 +164,8 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
     },
     { key: 'InvestmentCost', parser: nanParser },
     { key: 'NewCapacity', parser: nanParser },
-    { key: 'Pop', parser: nanParser }
+    { key: 'Pop', parser: nanParser },
+    { key: 'ElecStatusIn', parser: nanParser }
   ];
 
   const summaryWithTimestepKeys = summaryKeys.reduce((acc, summ) => {
@@ -187,15 +188,16 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
     csv
       .fromPath(scenarioFilePath, { headers: true, delimiter: ',' })
       .on('data', record => {
-        if (record.ID.indexOf('-') > -1) {
-          record.ID = record.ID.split('-')[1];
+        let recordId = record.ID || record.id;
+        if (recordId.indexOf('-') > -1) {
+          recordId = recordId.split('-')[1];
         }
 
         // Prepare data for database.
         const entry = {
           modelId: modelId,
           scenarioId: scenarioId,
-          featureId: parseInt(record.ID),
+          featureId: parseInt(recordId),
           summary: {},
           filterValues: {}
         };
