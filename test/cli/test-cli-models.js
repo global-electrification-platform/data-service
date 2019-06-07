@@ -173,6 +173,18 @@ describe('Model related functions', function () {
 
       assert.ok(await validateModelDiff(originalModel, copy));
     });
+
+    it('Should allow changing lever option value (label)', async function () {
+      const p = path.join(__dirname, 'yml-model-valid', 'mw-1.yml');
+      const originalModel = yaml.load(await fs.readFile(p, 'utf-8'));
+
+      const copy = _.cloneDeep(originalModel);
+
+      copy.levers[1].options[1].value = 'a new option value';
+      copy.levers[0].options[1].value = 'another value';
+
+      assert.ok(await validateModelDiff(originalModel, copy));
+    });
   });
 
   describe.skip('prepareModelRecord', function () {
