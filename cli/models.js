@@ -64,8 +64,7 @@ function getSensitiveProps (doc) {
     levers: doc.levers.map(l => ({
       id: l.id,
       options: l.options.map(o => ({
-        id: o.id,
-        value: o.value
+        id: o.id
       }))
     })),
     filters: doc.filters.map(f => ({
@@ -75,8 +74,7 @@ function getSensitiveProps (doc) {
       timestep: f.timestep === true,
       options: f.options
         ? f.options.map(o => ({
-          id: o.id,
-          value: o.value
+          id: o.id
         }))
         : null
     }))
