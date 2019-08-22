@@ -73,7 +73,9 @@ async function validateModelScenario (model, filePath) {
       .fromPath(filePath, { headers: true, delimiter: ',' })
       .on('data', record => {
         // ID property always required.
-        if (!record.ID && !record.id) { errors.push(`Found empty value for ID at line ${line}`); }
+        if (!record.ID && !record.id) {
+          errors.push(`Found empty value for ID at line ${line}`);
+        }
 
         // Validate intermediate FinalElecCode.
         elecCodes.forEach(c => {
@@ -123,11 +125,18 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
 
   const modelId = model.id;
 
+  const { baseYear } = model;
+
   const timesteps = model.timesteps || [];
 
   const nanParser = v => {
     v = parseFloat(v);
     return isNaN(v) ? null : v;
+  };
+
+  const elecCodeParser = v => {
+    v = parseInt(v);
+    return v === 99 ? null : v;
   };
 
   const getFilterValueFromRecord = (record, filter, key) => {
@@ -157,10 +166,7 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
   const summaryKeys = [
     {
       key: 'FinalElecCode',
-      parser: v => {
-        v = parseInt(v);
-        return v === 99 ? null : v;
-      }
+      parser: elecCodeParser
     },
     { key: 'InvestmentCost', parser: nanParser },
     { key: 'NewCapacity', parser: nanParser },
@@ -202,7 +208,16 @@ async function prepareScenarioRecords (model, scenarioFilePath) {
           filterValues: {}
         };
 
-        // Add summary.
+        // Add summary for base year
+        entry.summary[`Pop${baseYear}`] = nanParser(record[`Pop${baseYear}`]);
+        entry.summary[`PopConnected${baseYear}`] = nanParser(
+          record[`ElecPopCalib`]
+        );
+        entry.summary[`ElecCode${baseYear}`] = elecCodeParser(
+          record[`FinalElecCode${baseYear}`]
+        );
+
+        // Add summary for timestep years
         for (const { key, parser } of summaryWithTimestepKeys) {
           entry.summary[key] = parser(record[key]);
         }
