@@ -75,6 +75,7 @@ module.exports = Joi.object({
   country: Joi.string()
     .length(2)
     .required(),
+  baseYear: Joi.number(),
   timesteps: arrayOf(Joi.number()),
   attribution: Joi.object({
     author: reqString,
