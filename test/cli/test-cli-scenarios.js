@@ -166,10 +166,7 @@ describe('Scenario related functions', function () {
       };
       const result = await validateModelScenario(
         model,
-        path.join(
-          __dirname,
-          'csv-valid-99-intermediate/mw-1-0_0.csv'
-        )
+        path.join(__dirname, 'csv-valid-99-intermediate/mw-1-0_0.csv')
       );
 
       assert.ok(result);
@@ -180,6 +177,7 @@ describe('Scenario related functions', function () {
     it('Prepare scenario records - no timesteps', async function () {
       const model = {
         id: 'mw-1',
+        baseYear: 2018,
         timesteps: [],
         levers: [{}, {}],
         filters: [
@@ -211,11 +209,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1001,
           summary: {
+            ElecCode2018: 1,
             ElecStatusIn: 1,
             FinalElecCode: 1,
             InvestmentCost: 1,
             NewCapacity: 1,
-            Pop: 1
+            Pop: 1,
+            Pop2018: 65,
+            PopConnected2018: 20
           },
           filterValues: {
             FinalElecCode: '1',
@@ -229,11 +230,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1002,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode: 2,
             ElecStatusIn: 0,
             InvestmentCost: 10,
             NewCapacity: 10,
-            Pop: 10
+            Pop: 10,
+            Pop2018: 66,
+            PopConnected2018: 21
           },
           filterValues: {
             FinalElecCode: '2',
@@ -247,11 +251,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1003,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode: 3,
             ElecStatusIn: 0,
             InvestmentCost: 20,
             NewCapacity: 20,
-            Pop: 20
+            Pop: 20,
+            Pop2018: 52,
+            PopConnected2018: 22
           },
           filterValues: {
             FinalElecCode: '3',
@@ -265,11 +272,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1004,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode: 4,
             ElecStatusIn: 0,
             InvestmentCost: null,
             NewCapacity: null,
-            Pop: null
+            Pop: null,
+            Pop2018: 40,
+            PopConnected2018: 23
           },
           filterValues: {
             FinalElecCode: '4',
@@ -285,6 +295,7 @@ describe('Scenario related functions', function () {
     it('Prepare scenario records - with timesteps', async function () {
       const model = {
         id: 'mw-1',
+        baseYear: 2018,
         timesteps: [2030],
         levers: [{}, {}],
         filters: [
@@ -313,11 +324,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1001,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode2030: 1,
             ElecStatusIn2030: 0,
             InvestmentCost2030: 1,
             NewCapacity2030: 1,
-            Pop2030: 1
+            Pop2018: 65,
+            Pop2030: 1,
+            PopConnected2018: 20
           },
           filterValues: { FinalElecCode2030: '1', anotherFilter: '1' }
         },
@@ -326,11 +340,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1002,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode2030: 2,
             ElecStatusIn2030: 1,
             InvestmentCost2030: 10,
             NewCapacity2030: 10,
-            Pop2030: 10
+            Pop2018: 66,
+            Pop2030: 10,
+            PopConnected2018: 21
           },
           filterValues: { FinalElecCode2030: '2', anotherFilter: '10' }
         },
@@ -339,11 +356,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1003,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode2030: 3,
             ElecStatusIn2030: 1,
             InvestmentCost2030: 20,
             NewCapacity2030: 20,
-            Pop2030: 20
+            Pop2018: 52,
+            Pop2030: 20,
+            PopConnected2018: 22
           },
           filterValues: { FinalElecCode2030: '3', anotherFilter: '20' }
         },
@@ -352,11 +372,14 @@ describe('Scenario related functions', function () {
           scenarioId: 'mw-1-0_0',
           featureId: 1004,
           summary: {
+            ElecCode2018: 1,
             FinalElecCode2030: 4,
             ElecStatusIn2030: 0,
             InvestmentCost2030: null,
             NewCapacity2030: null,
-            Pop2030: null
+            Pop2018: 40,
+            Pop2030: null,
+            PopConnected2018: 23
           },
           filterValues: { FinalElecCode2030: '4', anotherFilter: '30' }
         }
