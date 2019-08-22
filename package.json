@@ -34,7 +34,7 @@
     "migrate-test-db": "NODE_ENV=test npm run _migrate",
     "seed-test-db": "NODE_ENV=test npm run _seed",
     "stop-test-db": "docker-compose --project-name gep-test -f docker-compose-test.yml down",
-    "test": "NODE_ENV=test mocha test/test-index.js",
+    "test": "NODE_ENV=test mocha test/test--index.js",
     "lint": "node_modules/.bin/eslint app/ cli/ migrations/ seeds/ test/ --ext .js"
   },
   "dependencies": {
