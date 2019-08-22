@@ -123,9 +123,7 @@ async function validateModelScenario (model, filePath) {
 async function prepareScenarioRecords (model, scenarioFilePath) {
   const { name: scenarioId } = path.parse(scenarioFilePath);
 
-  const modelId = model.id;
-
-  const { baseYear } = model;
+  const { baseYear, id: modelId } = model;
 
   const timesteps = model.timesteps || [];
 
