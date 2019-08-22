@@ -7,6 +7,7 @@ country: MW
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
+baseYear: 2018
 timesteps:
   - 2023
   - 2030

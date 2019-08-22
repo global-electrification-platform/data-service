@@ -4,6 +4,7 @@ updatedAt: '2018-10-12'
 version: 'v1.0'
 type: onsset
 country: MW
+baseYear: 2018
 timesteps:
   - 2023
   - 2030
