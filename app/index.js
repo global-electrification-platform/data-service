@@ -293,9 +293,11 @@ server.route({
 
       // Get information about the model
       const model = await db('models')
-        .select('filters', 'timesteps')
+        .select('filters', 'timesteps', 'baseYear')
         .where('id', modelId)
         .first();
+
+      const { baseYear } = model;
 
       // Validate timestep model
       if (model.timesteps) {
@@ -318,7 +320,10 @@ server.route({
         investmentCost: 'InvestmentCost' + year,
         newCapacity: 'NewCapacity' + year,
         population: 'Pop' + year,
-        electrificationStatus: 'ElecStatusIn' + year
+        electrificationStatus: 'ElecStatusIn' + year,
+        popBaseYear: 'Pop' + baseYear,
+        popConnectedBaseYear: 'PopConnected' + baseYear,
+        elecTypeBaseYear: 'ElecCode' + baseYear
       };
 
       const whereBuilder = builder => {
@@ -368,6 +373,12 @@ server.route({
         .select(
           db.raw(`
             SUM(
+              (summary->>'${summaryKeys.popBaseYear}')::numeric
+            ) as "popBaseYear",
+            SUM(
+              (summary->>'${summaryKeys.popConnectedBaseYear}')::numeric
+            ) as "popConnectedBaseYear",
+            SUM(
               (summary->>'${summaryKeys.investmentCost}')::numeric
             ) as "investmentCost",
             SUM(
@@ -400,6 +411,8 @@ server.route({
         totalPopulationQuery
       ]);
 
+      summary.popBaseYear = _.round(summary.popBaseYear, 2);
+      summary.popConnectedBaseYear = _.round(summary.popConnectedBaseYear, 2);
       summary.investmentCost = _.round(summary.investmentCost, 2);
       summary.newCapacity = _.round(summary.newCapacity, 2);
       summary.peopleConnected = _.round(summary.peopleConnected, 2);
@@ -409,6 +422,16 @@ server.route({
       const features = await db
         .select(
           'featureId as id',
+          db.raw(
+            `summary->>'${
+              summaryKeys.popConnectedBaseYear
+            }' as "popConnectedBaseYear"`
+          ),
+          db.raw(
+            `summary->>'${
+              summaryKeys.elecTypeBaseYear
+            }' as "elecTypeBaseYear"`
+          ),
           db.raw(
             `summary->>'${
               summaryKeys.electrificationTech
@@ -430,6 +453,7 @@ server.route({
         .from('scenarios');
 
       const summaryByType = {
+        popConnectedBaseYear: {},
         peopleConnected: {},
         investmentCost: {},
         newCapacity: {}
@@ -440,6 +464,9 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
+        summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] =
+          (summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] || 0) +
+          parseFloat(f.popConnectedBaseYear);
         summaryByType.peopleConnected[f.electrificationTech] =
           (summaryByType.peopleConnected[f.electrificationTech] || 0) +
           parseFloat(f.population) * parseFloat(f.electrificationStatus);
