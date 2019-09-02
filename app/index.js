@@ -102,6 +102,7 @@ server.route({
             'country',
             'description',
             'filters',
+            'baseYear',
             'timesteps',
             'id',
             'levers',
@@ -133,6 +134,7 @@ server.route({
           'attribution',
           'country',
           'description',
+          'baseYear',
           'timesteps',
           'filters',
           'id',
@@ -246,7 +248,7 @@ server.route({
 
       // Parse query string if available
       let { query } = request;
-      let year = null;
+      let targetYear = null;
 
       // Check for redis data with this query.
       const cacheKey = JSON.stringify({ id, query });
@@ -261,7 +263,7 @@ server.route({
 
       if (query) {
         query = qs.parse(query);
-        year = parseInt(query.year) || null;
+        targetYear = parseInt(query.year) || null;
 
         // Validate and parse filters
         filters = query.filters;
@@ -298,31 +300,35 @@ server.route({
         .first();
 
       const { baseYear } = model;
+      let [intermediateYear, finalYear] = model.timesteps;
 
       // Validate timestep model
       if (model.timesteps) {
         // Set the year to the 1st value if null
-        year = year || model.timesteps[0];
-        if (model.timesteps.indexOf(year) === -1) {
+        targetYear = targetYear || model.timesteps[0];
+        if (model.timesteps.indexOf(targetYear) === -1) {
           throw new SyntaxError(
-            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(
+            `The "year" parameter [${targetYear}] is invalid for this scenario. Must be one of [${model.timesteps.join(
               ', '
             )}]`
           );
         }
       } else {
         // Disregard year
-        year = '';
+        targetYear = '';
       }
 
       const summaryKeys = {
-        electrificationTech: 'FinalElecCode' + year,
-        investmentCost: 'InvestmentCost' + year,
-        newCapacity: 'NewCapacity' + year,
-        population: 'Pop' + year,
-        electrificationStatus: 'ElecStatusIn' + year,
         popBaseYear: 'Pop' + baseYear,
+        popIntermediateYear: 'Pop' + intermediateYear,
+        popFinalYear: 'Pop' + finalYear,
         popConnectedBaseYear: 'PopConnected' + baseYear,
+        elecStatusIntermediateYear: 'ElecStatusIn' + intermediateYear,
+        elecStatusFinalYear: 'ElecStatusIn' + finalYear,
+        electrificationTech: 'FinalElecCode' + targetYear,
+        investmentCost: 'InvestmentCost' + targetYear,
+        newCapacity: 'NewCapacity' + targetYear,
+        electrificationStatus: 'ElecStatusIn' + targetYear,
         elecTypeBaseYear: 'ElecCode' + baseYear
       };
 
@@ -340,7 +346,7 @@ server.route({
 
             const filterDef = model.filters.find(f => f.key === key);
             // Update key if is a timestep filter
-            key = filterDef.timestep ? key + year : key;
+            key = filterDef.timestep ? key + targetYear : key;
 
             if (typeof min !== 'undefined') {
               builder.whereRaw(`("filterValues"->>?)::numeric >= ?`, [
@@ -369,73 +375,53 @@ server.route({
       };
 
       // Get summary for filtered clusters
-      const summaryQuery = db
+      const summary = await db
         .select(
           db.raw(`
             SUM(
               (summary->>'${summaryKeys.popBaseYear}')::numeric
             ) as "popBaseYear",
             SUM(
-              (summary->>'${summaryKeys.popConnectedBaseYear}')::numeric
-            ) as "popConnectedBaseYear",
+              (summary->>'${summaryKeys.popIntermediateYear}')::numeric
+            ) as "popIntermediateYear",
+            SUM(
+              (summary->>'${summaryKeys.popFinalYear}')::numeric
+              ) as "popFinalYear",
             SUM(
               (summary->>'${summaryKeys.investmentCost}')::numeric
             ) as "investmentCost",
             SUM(
               (summary->>'${summaryKeys.newCapacity}')::numeric
-            ) as "newCapacity",
-            SUM(
-              (summary->>'${summaryKeys.population}')::numeric *
-              (summary->>'${summaryKeys.electrificationStatus}')::numeric
-            ) as "peopleConnected"
+            ) as "newCapacity"
           `)
         )
         .first()
         .where(whereBuilder)
         .from('scenarios');
 
-      const totalPopulationQuery = db
-        .select(
-          db.raw(`
-            SUM(
-              (summary->>'${summaryKeys.population}')::numeric
-            ) as "totalPopulation"
-          `)
-        )
-        .where('scenarioId', id)
-        .from('scenarios')
-        .first();
-
-      const [summary, { totalPopulation }] = await Promise.all([
-        summaryQuery,
-        totalPopulationQuery
-      ]);
-
-      summary.popBaseYear = _.round(summary.popBaseYear, 2);
-      summary.popConnectedBaseYear = _.round(summary.popConnectedBaseYear, 2);
-      summary.investmentCost = _.round(summary.investmentCost, 2);
-      summary.newCapacity = _.round(summary.newCapacity, 2);
-      summary.peopleConnected = _.round(summary.peopleConnected, 2);
-      summary.totalPopulation = _.round(totalPopulation, 2);
+      // Parse query results into a 2 decimals number
+      Object.keys(summary).forEach(key => {
+        summary[key] = _.round(summary[key], 2);
+      });
 
       // Get features
       const features = await db
         .select(
           'featureId as id',
           db.raw(
-            `summary->>'${
-              summaryKeys.popConnectedBaseYear
-            }' as "popConnectedBaseYear"`
+            `summary->>'${summaryKeys.popConnectedBaseYear}' as "popConnectedBaseYear"`
           ),
           db.raw(
-            `summary->>'${
-              summaryKeys.elecTypeBaseYear
-            }' as "elecTypeBaseYear"`
+            `(summary->>'${summaryKeys.popIntermediateYear}')::numeric * (summary->>'${summaryKeys.elecStatusIntermediateYear}')::numeric as "popConnectedIntermediateYear"`
           ),
           db.raw(
-            `summary->>'${
-              summaryKeys.electrificationTech
-            }' as "electrificationTech"`
+            `(summary->>'${summaryKeys.popFinalYear}')::numeric * (summary->>'${summaryKeys.elecStatusFinalYear}')::numeric as "popConnectedFinalYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.elecTypeBaseYear}' as "elecTypeBaseYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`
           ),
           db.raw(
             `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
@@ -443,9 +429,7 @@ server.route({
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
           db.raw(`summary->>'${summaryKeys.population}' as "population"`),
           db.raw(
-            `summary->>'${
-              summaryKeys.electrificationStatus
-            }' as "electrificationStatus"`
+            `summary->>'${summaryKeys.electrificationStatus}' as "electrificationStatus"`
           )
         )
         .where(whereBuilder)
@@ -454,7 +438,8 @@ server.route({
 
       const summaryByType = {
         popConnectedBaseYear: {},
-        peopleConnected: {},
+        popConnectedIntermediateYear: {},
+        popConnectedFinalYear: {},
         investmentCost: {},
         newCapacity: {}
       };
@@ -464,15 +449,27 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
+        // Base year
         summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] =
           (summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] || 0) +
           parseFloat(f.popConnectedBaseYear);
-        summaryByType.peopleConnected[f.electrificationTech] =
-          (summaryByType.peopleConnected[f.electrificationTech] || 0) +
-          parseFloat(f.population) * parseFloat(f.electrificationStatus);
+
+        // Intermediate year
+        summaryByType.popConnectedIntermediateYear[f.electrificationTech] =
+          (summaryByType.popConnectedIntermediateYear[f.electrificationTech] ||
+            0) + parseFloat(f.popConnectedIntermediateYear);
+
+        // Final year
+        summaryByType.popConnectedFinalYear[f.electrificationTech] =
+          (summaryByType.popConnectedFinalYear[f.electrificationTech] || 0) +
+          parseFloat(f.popConnectedFinalYear);
+
+        // Investment for the target year
         summaryByType.investmentCost[f.electrificationTech] =
           (summaryByType.investmentCost[f.electrificationTech] || 0) +
           parseFloat(f.investmentCost);
+
+        // Capacity for the target year
         summaryByType.newCapacity[f.electrificationTech] =
           (summaryByType.newCapacity[f.electrificationTech] || 0) +
           parseFloat(f.newCapacity);

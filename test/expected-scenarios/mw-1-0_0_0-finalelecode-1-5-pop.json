@@ -4,16 +4,19 @@
   "summary": {
     "investmentCost": 352856.15,
     "newCapacity": 99.11,
-    "peopleConnected": 4239.64,
-    "totalPopulation": 100797.65,
     "popBaseYear": 2943.43,
-    "popConnectedBaseYear": 175.54
+    "popIntermediateYear": 3426.77,
+    "popFinalYear": 4239.64
   },
   "summaryByType": {
     "popConnectedBaseYear": {
       "1": 175.53994718
     },
-    "peopleConnected": {
+    "popConnectedIntermediateYear": {
+      "1": 195.2391778,
+      "5": 0
+    },
+    "popConnectedFinalYear": {
       "1": 241.5524105,
       "5": 3998.08966615
     },
