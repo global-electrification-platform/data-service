@@ -63,7 +63,8 @@ server.route({
       const countries = await db
         .distinct('countries.id', 'countries.name')
         .from('models')
-        .join('countries', 'models.country', '=', 'countries.id');
+        .join('countries', 'models.country', '=', 'countries.id')
+        .orderBy('countries.name', 'ASC');
 
       return { countries };
     } catch (error) {
