@@ -5,6 +5,7 @@
   "version": "v1.0",
   "type": "onsset",
   "country": "CG",
+  "baseYear": 2018,
   "timesteps": null,
   "attribution": {
     "author": "KTH",
