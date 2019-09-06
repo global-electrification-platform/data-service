@@ -1,0 +1,1322 @@
+[
+  {
+    "iso": "AF",
+    "name": "Afghanistan",
+    "data": {
+      "electricityAccess": 39.63,
+      "energyEfficiency": 8.92,
+      "renewableEnergy": 24.86,
+      "overall": 24.47
+    }
+  },
+  {
+    "iso": "DZ",
+    "name": "Algeria",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 55.38,
+      "renewableEnergy": 45.29,
+      "overall": 66.89
+    }
+  },
+  {
+    "iso": "AO",
+    "name": "Angola",
+    "data": {
+      "electricityAccess": 51.13,
+      "energyEfficiency": 10.62,
+      "renewableEnergy": 30,
+      "overall": 30.58
+    }
+  },
+  {
+    "iso": "AR",
+    "name": "Argentina",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 34.08,
+      "renewableEnergy": 59,
+      "overall": 64.36
+    }
+  },
+  {
+    "iso": "AM",
+    "name": "Armenia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 44.31,
+      "renewableEnergy": 65.71,
+      "overall": 70.01
+    }
+  },
+  {
+    "iso": "AU",
+    "name": "Australia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 84.31,
+      "renewableEnergy": 76.86,
+      "overall": 87.05
+    }
+  },
+  {
+    "iso": "AT",
+    "name": "Austria",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 73,
+      "renewableEnergy": 65.57,
+      "overall": 79.52
+    }
+  },
+  {
+    "iso": "AZ",
+    "name": "Azerbaijan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 27.54,
+      "renewableEnergy": 31.29,
+      "overall": 52.94
+    }
+  },
+  {
+    "iso": "BH",
+    "name": "Bahrain",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 28.31,
+      "renewableEnergy": 27.29,
+      "overall": 51.86
+    }
+  },
+  {
+    "iso": "BD",
+    "name": "Bangladesh",
+    "data": {
+      "electricityAccess": 81,
+      "energyEfficiency": 28.92,
+      "renewableEnergy": 42.29,
+      "overall": 50.74
+    }
+  },
+  {
+    "iso": "BY",
+    "name": "Belarus",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 73.69,
+      "renewableEnergy": 46.86,
+      "overall": 73.52
+    }
+  },
+  {
+    "iso": "BE",
+    "name": "Belgium",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 72.77,
+      "renewableEnergy": 68.71,
+      "overall": 80.49
+    }
+  },
+  {
+    "iso": "BJ",
+    "name": "Benin",
+    "data": {
+      "electricityAccess": 63.38,
+      "energyEfficiency": 29.85,
+      "renewableEnergy": 38.57,
+      "overall": 43.93
+    }
+  },
+  {
+    "iso": "BO",
+    "name": "Bolivia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 31.92,
+      "renewableEnergy": 50.57,
+      "overall": 60.83
+    }
+  },
+  {
+    "iso": "BR",
+    "name": "Brazil",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 51.77,
+      "renewableEnergy": 70.86,
+      "overall": 74.21
+    }
+  },
+  {
+    "iso": "BG",
+    "name": "Bulgaria",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 71.69,
+      "renewableEnergy": 82.57,
+      "overall": 84.75
+    }
+  },
+  {
+    "iso": "BF",
+    "name": "Burkina Faso",
+    "data": {
+      "electricityAccess": 61.88,
+      "energyEfficiency": 26.92,
+      "renewableEnergy": 37.29,
+      "overall": 42.03
+    }
+  },
+  {
+    "iso": "BI",
+    "name": "Burundi",
+    "data": {
+      "electricityAccess": 38.13,
+      "energyEfficiency": 9.31,
+      "renewableEnergy": 29.29,
+      "overall": 25.57
+    }
+  },
+  {
+    "iso": "KH",
+    "name": "Cambodia",
+    "data": {
+      "electricityAccess": 80.25,
+      "energyEfficiency": 44.92,
+      "renewableEnergy": 41.29,
+      "overall": 55.49
+    }
+  },
+  {
+    "iso": "CM",
+    "name": "Cameroon",
+    "data": {
+      "electricityAccess": 69.13,
+      "energyEfficiency": 43.38,
+      "renewableEnergy": 46.86,
+      "overall": 53.12
+    }
+  },
+  {
+    "iso": "CA",
+    "name": "Canada",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 87.69,
+      "renewableEnergy": 82.29,
+      "overall": 89.99
+    }
+  },
+  {
+    "iso": "CF",
+    "name": "Central African Republic",
+    "data": {
+      "electricityAccess": 16.13,
+      "energyEfficiency": 16.85,
+      "renewableEnergy": 23.43,
+      "overall": 18.8
+    }
+  },
+  {
+    "iso": "TD",
+    "name": "Chad",
+    "data": {
+      "electricityAccess": 12.75,
+      "energyEfficiency": 9.46,
+      "renewableEnergy": 15.86,
+      "overall": 12.69
+    }
+  },
+  {
+    "iso": "CL",
+    "name": "Chile",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 59.38,
+      "renewableEnergy": 72.71,
+      "overall": 77.37
+    }
+  },
+  {
+    "iso": "CN",
+    "name": "China",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 73.54,
+      "renewableEnergy": 66.43,
+      "overall": 79.99
+    }
+  },
+  {
+    "iso": "CO",
+    "name": "Colombia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 37.46,
+      "renewableEnergy": 43.57,
+      "overall": 60.34
+    }
+  },
+  {
+    "iso": "CD",
+    "name": "Congo, Dem. Rep.",
+    "data": {
+      "electricityAccess": 34.75,
+      "energyEfficiency": 19.69,
+      "renewableEnergy": 36.43,
+      "overall": 30.29
+    }
+  },
+  {
+    "iso": "CG",
+    "name": "Congo, Rep.",
+    "data": {
+      "electricityAccess": 24.88,
+      "energyEfficiency": 8.23,
+      "renewableEnergy": 29,
+      "overall": 20.7
+    }
+  },
+  {
+    "iso": "CR",
+    "name": "Costa Rica",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 32,
+      "renewableEnergy": 51.71,
+      "overall": 61.24
+    }
+  },
+  {
+    "iso": "CI",
+    "name": "Côte d'Ivoire",
+    "data": {
+      "electricityAccess": 66.75,
+      "energyEfficiency": 43.23,
+      "renewableEnergy": 54.29,
+      "overall": 54.76
+    }
+  },
+  {
+    "iso": "HR",
+    "name": "Croatia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 64.46,
+      "renewableEnergy": 56,
+      "overall": 73.49
+    }
+  },
+  {
+    "iso": "CZ",
+    "name": "Czech Republic",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 74.85,
+      "renewableEnergy": 71.14,
+      "overall": 82
+    }
+  },
+  {
+    "iso": "DK",
+    "name": "Denmark",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 78.23,
+      "renewableEnergy": 79.29,
+      "overall": 85.84
+    }
+  },
+  {
+    "iso": "DO",
+    "name": "Dominican Republic",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 26.38,
+      "renewableEnergy": 59.14,
+      "overall": 61.84
+    }
+  },
+  {
+    "iso": "EC",
+    "name": "Ecuador",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 47.92,
+      "renewableEnergy": 35.57,
+      "overall": 61.16
+    }
+  },
+  {
+    "iso": "EG",
+    "name": "Egypt, Arab Rep.",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 61,
+      "renewableEnergy": 68.29,
+      "overall": 76.43
+    }
+  },
+  {
+    "iso": "SV",
+    "name": "El Salvador",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 18.38,
+      "renewableEnergy": 50.43,
+      "overall": 56.27
+    }
+  },
+  {
+    "iso": "ER",
+    "name": "Eritrea",
+    "data": {
+      "electricityAccess": 26.13,
+      "energyEfficiency": 14.77,
+      "renewableEnergy": 31.14,
+      "overall": 24.01
+    }
+  },
+  {
+    "iso": "ET",
+    "name": "Ethiopia",
+    "data": {
+      "electricityAccess": 78.13,
+      "energyEfficiency": 26.69,
+      "renewableEnergy": 40.57,
+      "overall": 48.46
+    }
+  },
+  {
+    "iso": "FI",
+    "name": "Finland",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 73.15,
+      "renewableEnergy": 70.57,
+      "overall": 81.24
+    }
+  },
+  {
+    "iso": "FR",
+    "name": "France",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 72.38,
+      "renewableEnergy": 86.29,
+      "overall": 86.22
+    }
+  },
+  {
+    "iso": "DE",
+    "name": "Germany",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 84.54,
+      "renewableEnergy": 96.57,
+      "overall": 93.7
+    }
+  },
+  {
+    "iso": "GH",
+    "name": "Ghana",
+    "data": {
+      "electricityAccess": 67.5,
+      "energyEfficiency": 45.31,
+      "renewableEnergy": 78.86,
+      "overall": 63.89
+    }
+  },
+  {
+    "iso": "GR",
+    "name": "Greece",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 60.69,
+      "renewableEnergy": 81.71,
+      "overall": 80.8
+    }
+  },
+  {
+    "iso": "GT",
+    "name": "Guatemala",
+    "data": {
+      "electricityAccess": 66.75,
+      "energyEfficiency": 28.85,
+      "renewableEnergy": 49.29,
+      "overall": 48.29
+    }
+  },
+  {
+    "iso": "GN",
+    "name": "Guinea",
+    "data": {
+      "electricityAccess": 52.25,
+      "energyEfficiency": 31,
+      "renewableEnergy": 22.43,
+      "overall": 35.23
+    }
+  },
+  {
+    "iso": "HT",
+    "name": "Haiti",
+    "data": {
+      "electricityAccess": 34.75,
+      "energyEfficiency": 13.85,
+      "renewableEnergy": 13.86,
+      "overall": 20.82
+    }
+  },
+  {
+    "iso": "HN",
+    "name": "Honduras",
+    "data": {
+      "electricityAccess": 52.13,
+      "energyEfficiency": 12.31,
+      "renewableEnergy": 39.29,
+      "overall": 34.57
+    }
+  },
+  {
+    "iso": "HU",
+    "name": "Hungary",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 81.85,
+      "renewableEnergy": 79.86,
+      "overall": 87.23
+    }
+  },
+  {
+    "iso": "IN",
+    "name": "India",
+    "data": {
+      "electricityAccess": 70.5,
+      "energyEfficiency": 66.38,
+      "renewableEnergy": 87.29,
+      "overall": 74.72
+    }
+  },
+  {
+    "iso": "ID",
+    "name": "Indonesia",
+    "data": {
+      "electricityAccess": 67.5,
+      "energyEfficiency": 25.69,
+      "renewableEnergy": 53.71,
+      "overall": 48.97
+    }
+  },
+  {
+    "iso": "IR",
+    "name": "Iran, Islamic Rep.",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 75.69,
+      "renewableEnergy": 59,
+      "overall": 78.23
+    }
+  },
+  {
+    "iso": "IE",
+    "name": "Ireland",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 85.31,
+      "renewableEnergy": 81.43,
+      "overall": 88.91
+    }
+  },
+  {
+    "iso": "IL",
+    "name": "Israel",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 50.23,
+      "renewableEnergy": 68.29,
+      "overall": 72.84
+    }
+  },
+  {
+    "iso": "IT",
+    "name": "Italy",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 89.15,
+      "renewableEnergy": 84.14,
+      "overall": 91.1
+    }
+  },
+  {
+    "iso": "JM",
+    "name": "Jamaica",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 47.23,
+      "renewableEnergy": 54.29,
+      "overall": 67.17
+    }
+  },
+  {
+    "iso": "JP",
+    "name": "Japan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 68.46,
+      "renewableEnergy": 77.43,
+      "overall": 81.96
+    }
+  },
+  {
+    "iso": "JO",
+    "name": "Jordan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 56.77,
+      "renewableEnergy": 63,
+      "overall": 73.26
+    }
+  },
+  {
+    "iso": "KZ",
+    "name": "Kazakhstan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 48.85,
+      "renewableEnergy": 60,
+      "overall": 69.62
+    }
+  },
+  {
+    "iso": "KE",
+    "name": "Kenya",
+    "data": {
+      "electricityAccess": 75.63,
+      "energyEfficiency": 50.46,
+      "renewableEnergy": 56,
+      "overall": 60.7
+    }
+  },
+  {
+    "iso": "KR",
+    "name": "Korea, Rep.",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 87.23,
+      "renewableEnergy": 83.14,
+      "overall": 90.12
+    }
+  },
+  {
+    "iso": "KW",
+    "name": "Kuwait",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 28.38,
+      "renewableEnergy": 13.14,
+      "overall": 47.18
+    }
+  },
+  {
+    "iso": "KG",
+    "name": "Kyrgyz Republic",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 31.62,
+      "renewableEnergy": 32.14,
+      "overall": 54.59
+    }
+  },
+  {
+    "iso": "LA",
+    "name": "Lao PDR",
+    "data": {
+      "electricityAccess": 45.5,
+      "energyEfficiency": 11.38,
+      "renewableEnergy": 30.57,
+      "overall": 29.15
+    }
+  },
+  {
+    "iso": "LB",
+    "name": "Lebanon",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 51.46,
+      "renewableEnergy": 56,
+      "overall": 69.15
+    }
+  },
+  {
+    "iso": "LR",
+    "name": "Liberia",
+    "data": {
+      "electricityAccess": 19,
+      "energyEfficiency": 6.77,
+      "renewableEnergy": 28.14,
+      "overall": 17.97
+    }
+  },
+  {
+    "iso": "MG",
+    "name": "Madagascar",
+    "data": {
+      "electricityAccess": 24.5,
+      "energyEfficiency": 17.38,
+      "renewableEnergy": 20.71,
+      "overall": 20.87
+    }
+  },
+  {
+    "iso": "MW",
+    "name": "Malawi",
+    "data": {
+      "electricityAccess": 45.25,
+      "energyEfficiency": 14.38,
+      "renewableEnergy": 55.71,
+      "overall": 38.45
+    }
+  },
+  {
+    "iso": "MY",
+    "name": "Malaysia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 57.77,
+      "renewableEnergy": 57.71,
+      "overall": 71.83
+    }
+  },
+  {
+    "iso": "MV",
+    "name": "Maldives",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 7.69,
+      "renewableEnergy": 24,
+      "overall": 43.9
+    }
+  },
+  {
+    "iso": "ML",
+    "name": "Mali",
+    "data": {
+      "electricityAccess": 34.13,
+      "energyEfficiency": 12.38,
+      "renewableEnergy": 17,
+      "overall": 21.17
+    }
+  },
+  {
+    "iso": "MR",
+    "name": "Mauritania",
+    "data": {
+      "electricityAccess": 24.13,
+      "energyEfficiency": 10.69,
+      "renewableEnergy": 17.71,
+      "overall": 17.51
+    }
+  },
+  {
+    "iso": "MX",
+    "name": "Mexico",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 68.62,
+      "renewableEnergy": 68.71,
+      "overall": 79.11
+    }
+  },
+  {
+    "iso": "MN",
+    "name": "Mongolia",
+    "data": {
+      "electricityAccess": 25,
+      "energyEfficiency": 32.54,
+      "renewableEnergy": 28.71,
+      "overall": 28.75
+    }
+  },
+  {
+    "iso": "MA",
+    "name": "Morocco",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 55.54,
+      "renewableEnergy": 66.57,
+      "overall": 74.04
+    }
+  },
+  {
+    "iso": "MZ",
+    "name": "Mozambique",
+    "data": {
+      "electricityAccess": 24.25,
+      "energyEfficiency": 5.77,
+      "renewableEnergy": 24.71,
+      "overall": 18.24
+    }
+  },
+  {
+    "iso": "MM",
+    "name": "Myanmar",
+    "data": {
+      "electricityAccess": 59.25,
+      "energyEfficiency": 15.38,
+      "renewableEnergy": 27.86,
+      "overall": 34.16
+    }
+  },
+  {
+    "iso": "NP",
+    "name": "Nepal",
+    "data": {
+      "electricityAccess": 49.75,
+      "energyEfficiency": 26,
+      "renewableEnergy": 39.71,
+      "overall": 38.49
+    }
+  },
+  {
+    "iso": "NL",
+    "name": "Netherlands",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 83.46,
+      "renewableEnergy": 82.29,
+      "overall": 88.58
+    }
+  },
+  {
+    "iso": "NZ",
+    "name": "New Zealand",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 46.85,
+      "renewableEnergy": 53.57,
+      "overall": 66.81
+    }
+  },
+  {
+    "iso": "NI",
+    "name": "Nicaragua",
+    "data": {
+      "electricityAccess": 66.75,
+      "energyEfficiency": 31.46,
+      "renewableEnergy": 48.57,
+      "overall": 48.93
+    }
+  },
+  {
+    "iso": "NE",
+    "name": "Niger",
+    "data": {
+      "electricityAccess": 55.5,
+      "energyEfficiency": 16.08,
+      "renewableEnergy": 35.86,
+      "overall": 35.81
+    }
+  },
+  {
+    "iso": "NG",
+    "name": "Nigeria",
+    "data": {
+      "electricityAccess": 40,
+      "energyEfficiency": 18.54,
+      "renewableEnergy": 30.43,
+      "overall": 29.66
+    }
+  },
+  {
+    "iso": "NO",
+    "name": "Norway",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 75.62,
+      "renewableEnergy": 74,
+      "overall": 83.21
+    }
+  },
+  {
+    "iso": "OM",
+    "name": "Oman",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 34.62,
+      "renewableEnergy": 13.86,
+      "overall": 49.49
+    }
+  },
+  {
+    "iso": "PK",
+    "name": "Pakistan",
+    "data": {
+      "electricityAccess": 61,
+      "energyEfficiency": 34.62,
+      "renewableEnergy": 55,
+      "overall": 50.21
+    }
+  },
+  {
+    "iso": "PA",
+    "name": "Panama",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 52.15,
+      "renewableEnergy": 55,
+      "overall": 69.05
+    }
+  },
+  {
+    "iso": "PG",
+    "name": "Papua New Guinea",
+    "data": {
+      "electricityAccess": 30.63,
+      "energyEfficiency": 15,
+      "renewableEnergy": 36.57,
+      "overall": 27.4
+    }
+  },
+  {
+    "iso": "PY",
+    "name": "Paraguay",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 25.69,
+      "renewableEnergy": 38.43,
+      "overall": 54.71
+    }
+  },
+  {
+    "iso": "PE",
+    "name": "Peru",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 32.15,
+      "renewableEnergy": 51.86,
+      "overall": 61.34
+    }
+  },
+  {
+    "iso": "PH",
+    "name": "Philippines",
+    "data": {
+      "electricityAccess": 77.25,
+      "energyEfficiency": 61.38,
+      "renewableEnergy": 62.43,
+      "overall": 67.02
+    }
+  },
+  {
+    "iso": "PL",
+    "name": "Poland",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 49.69,
+      "renewableEnergy": 44.86,
+      "overall": 64.85
+    }
+  },
+  {
+    "iso": "PT",
+    "name": "Portugal",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 83.46,
+      "renewableEnergy": 78.43,
+      "overall": 87.3
+    }
+  },
+  {
+    "iso": "QA",
+    "name": "Qatar",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 39.92,
+      "renewableEnergy": 27.86,
+      "overall": 55.93
+    }
+  },
+  {
+    "iso": "RO",
+    "name": "Romania",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 85.38,
+      "renewableEnergy": 68.29,
+      "overall": 84.56
+    }
+  },
+  {
+    "iso": "RU",
+    "name": "Russian Federation",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 59.15,
+      "renewableEnergy": 59.86,
+      "overall": 73
+    }
+  },
+  {
+    "iso": "RW",
+    "name": "Rwanda",
+    "data": {
+      "electricityAccess": 72.63,
+      "energyEfficiency": 27.62,
+      "renewableEnergy": 50.14,
+      "overall": 50.13
+    }
+  },
+  {
+    "iso": "SA",
+    "name": "Saudi Arabia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 58.85,
+      "renewableEnergy": 31,
+      "overall": 63.28
+    }
+  },
+  {
+    "iso": "SN",
+    "name": "Senegal",
+    "data": {
+      "electricityAccess": 47.38,
+      "energyEfficiency": 23.23,
+      "renewableEnergy": 46.14,
+      "overall": 38.92
+    }
+  },
+  {
+    "iso": "RS",
+    "name": "Serbia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 66.08,
+      "renewableEnergy": 52.86,
+      "overall": 72.98
+    }
+  },
+  {
+    "iso": "SL",
+    "name": "Sierra Leone",
+    "data": {
+      "electricityAccess": 36.38,
+      "energyEfficiency": 17.46,
+      "renewableEnergy": 38.29,
+      "overall": 30.71
+    }
+  },
+  {
+    "iso": "SG",
+    "name": "Singapore",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 74.62,
+      "renewableEnergy": 53.86,
+      "overall": 76.16
+    }
+  },
+  {
+    "iso": "SK",
+    "name": "Slovak Republic",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 82.92,
+      "renewableEnergy": 82.57,
+      "overall": 88.5
+    }
+  },
+  {
+    "iso": "SB",
+    "name": "Solomon Islands",
+    "data": {
+      "electricityAccess": 35.63,
+      "energyEfficiency": 16.31,
+      "renewableEnergy": 30.14,
+      "overall": 27.36
+    }
+  },
+  {
+    "iso": "SO",
+    "name": "Somalia",
+    "data": {
+      "electricityAccess": 4,
+      "energyEfficiency": 5.08,
+      "renewableEnergy": 2.29,
+      "overall": 3.79
+    }
+  },
+  {
+    "iso": "ZA",
+    "name": "South Africa",
+    "data": {
+      "electricityAccess": 75.13,
+      "energyEfficiency": 76.15,
+      "renewableEnergy": 76.14,
+      "overall": 75.81
+    }
+  },
+  {
+    "iso": "SS",
+    "name": "South Sudan",
+    "data": {
+      "electricityAccess": 11.88,
+      "energyEfficiency": 21.77,
+      "renewableEnergy": 7,
+      "overall": 13.55
+    }
+  },
+  {
+    "iso": "ES",
+    "name": "Spain",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 70.62,
+      "renewableEnergy": 66.14,
+      "overall": 78.92
+    }
+  },
+  {
+    "iso": "LK",
+    "name": "Sri Lanka",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 47.46,
+      "renewableEnergy": 55.14,
+      "overall": 67.53
+    }
+  },
+  {
+    "iso": "SD",
+    "name": "Sudan",
+    "data": {
+      "electricityAccess": 53.25,
+      "energyEfficiency": 23.85,
+      "renewableEnergy": 19,
+      "overall": 32.03
+    }
+  },
+  {
+    "iso": "SE",
+    "name": "Sweden",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 67.62,
+      "renewableEnergy": 80.43,
+      "overall": 82.68
+    }
+  },
+  {
+    "iso": "CH",
+    "name": "Switzerland",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 68.77,
+      "renewableEnergy": 86.71,
+      "overall": 85.16
+    }
+  },
+  {
+    "iso": "TJ",
+    "name": "Tajikistan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 44.77,
+      "renewableEnergy": 36,
+      "overall": 60.26
+    }
+  },
+  {
+    "iso": "TZ",
+    "name": "Tanzania",
+    "data": {
+      "electricityAccess": 76.38,
+      "energyEfficiency": 13.92,
+      "renewableEnergy": 41.86,
+      "overall": 44.05
+    }
+  },
+  {
+    "iso": "TH",
+    "name": "Thailand",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 59.54,
+      "renewableEnergy": 47,
+      "overall": 68.85
+    }
+  },
+  {
+    "iso": "TG",
+    "name": "Togo",
+    "data": {
+      "electricityAccess": 65.88,
+      "energyEfficiency": 24.92,
+      "renewableEnergy": 33.14,
+      "overall": 41.31
+    }
+  },
+  {
+    "iso": "TN",
+    "name": "Tunisia",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 74.08,
+      "renewableEnergy": 76.14,
+      "overall": 83.41
+    }
+  },
+  {
+    "iso": "TR",
+    "name": "Turkey",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 62.46,
+      "renewableEnergy": 74.71,
+      "overall": 79.06
+    }
+  },
+  {
+    "iso": "TM",
+    "name": "Turkmenistan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 24.54,
+      "renewableEnergy": 7.86,
+      "overall": 44.13
+    }
+  },
+  {
+    "iso": "UG",
+    "name": "Uganda",
+    "data": {
+      "electricityAccess": 74.5,
+      "energyEfficiency": 29.46,
+      "renewableEnergy": 55.86,
+      "overall": 53.27
+    }
+  },
+  {
+    "iso": "UA",
+    "name": "Ukraine",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 50.69,
+      "renewableEnergy": 62.71,
+      "overall": 71.14
+    }
+  },
+  {
+    "iso": "AE",
+    "name": "United Arab Emirates",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 65.23,
+      "renewableEnergy": 72.29,
+      "overall": 79.17
+    }
+  },
+  {
+    "iso": "GB",
+    "name": "United Kingdom",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 84.15,
+      "renewableEnergy": 90.57,
+      "overall": 91.58
+    }
+  },
+  {
+    "iso": "US",
+    "name": "United States",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 82,
+      "renewableEnergy": 58.43,
+      "overall": 80.14
+    }
+  },
+  {
+    "iso": "UY",
+    "name": "Uruguay",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 62.69,
+      "renewableEnergy": 56,
+      "overall": 72.9
+    }
+  },
+  {
+    "iso": "UZ",
+    "name": "Uzbekistan",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 60.15,
+      "renewableEnergy": 38.43,
+      "overall": 66.19
+    }
+  },
+  {
+    "iso": "VU",
+    "name": "Vanuatu",
+    "data": {
+      "electricityAccess": 48.63,
+      "energyEfficiency": 14.85,
+      "renewableEnergy": 4.29,
+      "overall": 22.59
+    }
+  },
+  {
+    "iso": "VE",
+    "name": "Venezuela, RB",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 26.31,
+      "renewableEnergy": 19.14,
+      "overall": 48.48
+    }
+  },
+  {
+    "iso": "VN",
+    "name": "Vietnam",
+    "data": {
+      "electricityAccess": 100,
+      "energyEfficiency": 72,
+      "renewableEnergy": 66.71,
+      "overall": 79.57
+    }
+  },
+  {
+    "iso": "YE",
+    "name": "Yemen, Rep.",
+    "data": {
+      "electricityAccess": 14.38,
+      "energyEfficiency": 10.46,
+      "renewableEnergy": 20,
+      "overall": 14.95
+    }
+  },
+  {
+    "iso": "ZM",
+    "name": "Zambia",
+    "data": {
+      "electricityAccess": 61.38,
+      "energyEfficiency": 16.08,
+      "renewableEnergy": 51.43,
+      "overall": 42.96
+    }
+  },
+  {
+    "iso": "ZW",
+    "name": "Zimbabwe",
+    "data": {
+      "electricityAccess": 60.88,
+      "energyEfficiency": 22.69,
+      "renewableEnergy": 44,
+      "overall": 42.52
+    }
+  }
+]
