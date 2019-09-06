@@ -449,10 +449,12 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
-        // Base year
-        summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] =
-          (summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] || 0) +
-          parseFloat(f.popConnectedBaseYear);
+        // Base year, discard null electrification type
+        if (f.elecTypeBaseYear) {
+          summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] =
+            (summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] || 0) +
+            parseFloat(f.popConnectedBaseYear);
+        }
 
         // Intermediate year
         summaryByType.popConnectedIntermediateYear[f.electrificationTech] =
