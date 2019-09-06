@@ -54,6 +54,12 @@ describe('endpoint /countries/{id}', function () {
       .expect(200, {
         id: 'CG',
         name: 'Congo',
+        riseScores: {
+          electricityAccess: 24.88,
+          energyEfficiency: 8.23,
+          renewableEnergy: 29,
+          overall: 20.7
+        },
         models: [cg1ModelExpected]
       });
   });
@@ -71,6 +77,12 @@ describe('endpoint /countries/{id}', function () {
       .expect(200, {
         id: 'MW',
         name: 'Malawi',
+        riseScores: {
+          electricityAccess: 45.25,
+          energyEfficiency: 14.38,
+          renewableEnergy: 55.71,
+          overall: 38.45
+        },
         models: [mw2ModelExpected, mw1ModelExpected] // order by updated_at descending
       });
   });

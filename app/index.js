@@ -7,6 +7,7 @@ const Joi = require('joi');
 
 const db = require('./db');
 const { set: rset, get: rget, expire: rexpire } = require('./redis');
+const riseIndicatorsData = require('./rise-indicators.json');
 
 // Get Redis cache "time to live"
 const redisCacheTtl = config.get('redis.cacheTtl');
@@ -62,7 +63,8 @@ server.route({
       const countries = await db
         .distinct('countries.id', 'countries.name')
         .from('models')
-        .join('countries', 'models.country', '=', 'countries.id');
+        .join('countries', 'models.country', '=', 'countries.id')
+        .orderBy('countries.name', 'ASC');
 
       return { countries };
     } catch (error) {
@@ -95,28 +97,33 @@ server.route({
 
       if (!country) {
         return boom.notFound('Country code not found.');
-      } else {
-        country.models = await db
-          .select(
-            'attribution',
-            'country',
-            'description',
-            'filters',
-            'baseYear',
-            'timesteps',
-            'id',
-            'levers',
-            'map',
-            'name',
-            'version',
-            'type',
-            db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
-          )
-          .from('models')
-          .where('country', countryId)
-          .orderBy('updatedAt', 'DESC');
-        return country;
       }
+
+      country.models = await db
+        .select(
+          'attribution',
+          'country',
+          'description',
+          'filters',
+          'baseYear',
+          'timesteps',
+          'id',
+          'levers',
+          'map',
+          'name',
+          'version',
+          'type',
+          db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
+        )
+        .from('models')
+        .where('country', countryId)
+        .orderBy('updatedAt', 'DESC');
+
+      // Search for a riseIndicator
+      const riseScores = riseIndicatorsData.find(o => o.iso === countryId);
+      country.riseScores = riseScores ? riseScores.data : null;
+
+      return country;
     } catch (error) {
       return boom.badImplementation(error);
     }
