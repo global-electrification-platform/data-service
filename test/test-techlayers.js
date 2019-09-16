@@ -53,7 +53,7 @@ describe('Tech-layers functions', function () {
       const expected = [
         {
           id: '1',
-          label: 'Grid extension',
+          label: 'Grid',
           color: '#73B2FF'
         },
         {
