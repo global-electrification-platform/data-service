@@ -330,21 +330,23 @@ server.route({
         popIntermediateYear: 'Pop' + intermediateYear,
         popFinalYear: 'Pop' + finalYear,
         popConnectedBaseYear: 'PopConnected' + baseYear,
+
         elecStatusIntermediateYear: 'ElecStatusIn' + intermediateYear,
         elecStatusFinalYear: 'ElecStatusIn' + finalYear,
+
+        elecTypeBaseYear: 'ElecCode' + baseYear,
+        elecTypeIntermediateYear: 'FinalElecCode' + intermediateYear,
+        elecTypeFinalYear: 'FinalElecCode' + finalYear,
+
         electrificationTech: 'FinalElecCode' + targetYear,
         investmentCost: 'InvestmentCost' + targetYear,
         newCapacity: 'NewCapacity' + targetYear,
-        electrificationStatus: 'ElecStatusIn' + targetYear,
-        elecTypeBaseYear: 'ElecCode' + baseYear
+        electrificationStatus: 'ElecStatusIn' + targetYear
       };
 
       const whereBuilder = builder => {
         builder
-          .where('scenarioId', id)
-          .whereRaw(
-            `summary->>'${summaryKeys.electrificationTech}' is not null`
-          );
+          .where('scenarioId', id);
 
         if (filters) {
           filters.forEach(filter => {
@@ -428,13 +430,18 @@ server.route({
             `summary->>'${summaryKeys.elecTypeBaseYear}' as "elecTypeBaseYear"`
           ),
           db.raw(
+            `summary->>'${summaryKeys.elecTypeIntermediateYear}' as "elecTypeIntermediateYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.elecTypeFinalYear}' as "elecTypeFinalYear"`
+          ),
+          db.raw(
             `summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`
           ),
           db.raw(
             `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
           ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
-          db.raw(`summary->>'${summaryKeys.population}' as "population"`),
           db.raw(
             `summary->>'${summaryKeys.electrificationStatus}' as "electrificationStatus"`
           )
@@ -464,24 +471,30 @@ server.route({
         }
 
         // Intermediate year
-        summaryByType.popConnectedIntermediateYear[f.electrificationTech] =
-          (summaryByType.popConnectedIntermediateYear[f.electrificationTech] ||
-            0) + parseFloat(f.popConnectedIntermediateYear);
+        if (f.elecTypeIntermediateYear) {
+          summaryByType.popConnectedIntermediateYear[f.elecTypeIntermediateYear] =
+            (summaryByType.popConnectedIntermediateYear[f.elecTypeIntermediateYear] ||
+              0) + parseFloat(f.popConnectedIntermediateYear);
+        }
 
         // Final year
-        summaryByType.popConnectedFinalYear[f.electrificationTech] =
-          (summaryByType.popConnectedFinalYear[f.electrificationTech] || 0) +
-          parseFloat(f.popConnectedFinalYear);
+        if (f.elecTypeFinalYear) {
+          summaryByType.popConnectedFinalYear[f.elecTypeFinalYear] =
+            (summaryByType.popConnectedFinalYear[f.elecTypeFinalYear] || 0) +
+            parseFloat(f.popConnectedFinalYear);
+        }
 
-        // Investment for the target year
-        summaryByType.investmentCost[f.electrificationTech] =
-          (summaryByType.investmentCost[f.electrificationTech] || 0) +
-          parseFloat(f.investmentCost);
+        if (f.electrificationTech) {
+          // Investment for the target year
+          summaryByType.investmentCost[f.electrificationTech] =
+            (summaryByType.investmentCost[f.electrificationTech] || 0) +
+            parseFloat(f.investmentCost);
 
-        // Capacity for the target year
-        summaryByType.newCapacity[f.electrificationTech] =
-          (summaryByType.newCapacity[f.electrificationTech] || 0) +
-          parseFloat(f.newCapacity);
+          // Capacity for the target year
+          summaryByType.newCapacity[f.electrificationTech] =
+            (summaryByType.newCapacity[f.electrificationTech] || 0) +
+            parseFloat(f.newCapacity);
+        }
       }
 
       featureTypes = featureTypes.toString();
