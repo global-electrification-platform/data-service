@@ -67,7 +67,7 @@ filters:
     options:
       - id: 0
         value: 1
-        label: Grid extension
+        label: Grid
       - id: 1
         value: 2
         label: Stand-alone - Diesel
