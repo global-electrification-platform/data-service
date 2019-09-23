@@ -16,7 +16,9 @@ describe('endpoint /models/{id}', function () {
   });
 
   it('GET /models/mw-1 returns status 200, with country models', async function () {
-    const mw1ModelExpected = await fs.readJson(path.join(__dirname, 'expected-models', 'mw-1.json'));
+    const mw1ModelExpected = await fs.readJson(
+      path.join(__dirname, 'expected-models', 'mw-1.json')
+    );
 
     return supertest(server.listener)
       .get('/models/mw-1')

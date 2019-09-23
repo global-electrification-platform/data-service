@@ -57,7 +57,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: node node_modules/mocha/bin/mocha test/test-index.js
+          command: node node_modules/mocha/bin/mocha test/test--index.js
 
       - run:
           name: Deploy to aws

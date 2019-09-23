@@ -9,6 +9,7 @@
     "author": "KTH",
     "url": "http:/kth.se"
   },
+  "baseYear": 2018,
   "timesteps": [2023, 2030],
   "description": "Ullamco ut cupidatat reprehenderit tempor aute magna aliquip veniam sint ex sint veniam duis aute. Non labore eu mollit sunt elit consectetur non ex duis cillum occaecat elit. Aute in consectetur sunt occaecat do nulla non quis veniam sunt. Aliquip pariatur esse cupidatat ullamco enim dolor deserunt ex nulla adipisicing. Eiusmod laborum magna commodo do velit aliquip amet proident fugiat ipsum eu voluptate elit cillum. Do eiusmod aliquip labore magna laborum.",
   "levers": [
@@ -88,7 +89,7 @@
         {
           "id": 0,
           "value": 1,
-          "label": "Grid extension"
+          "label": "Grid"
         },
         {
           "id": 1,
@@ -180,7 +181,7 @@
     "techLayersConfig": [
       {
         "id": "1",
-        "label": "Grid extension",
+        "label": "Grid",
         "color": "#73B2FF"
       },
       {

@@ -6,10 +6,18 @@ const Hapi = require('hapi');
 const Joi = require('joi');
 
 const db = require('./db');
-const { set: rset, get: rget, expire: rexpire } = require('./redis');
+const riseIndicatorsData = require('./rise-indicators.json');
 
-// Get Redis cache "time to live"
-const redisCacheTtl = config.get('redis.cacheTtl');
+// Get Redis config
+const redisEnabled = config.get('redisEnabled');
+
+// If Redis is enabled, load client and connect
+let redis;
+let redisCacheTtl;
+if (redisEnabled) {
+  redis = require('./redis');
+  redisCacheTtl = config.get('redisConnection').cacheTtl;
+}
 
 const server = Hapi.server({
   port: process.env.PORT || 3000,
@@ -62,7 +70,8 @@ server.route({
       const countries = await db
         .distinct('countries.id', 'countries.name')
         .from('models')
-        .join('countries', 'models.country', '=', 'countries.id');
+        .join('countries', 'models.country', '=', 'countries.id')
+        .orderBy('countries.name', 'ASC');
 
       return { countries };
     } catch (error) {
@@ -95,27 +104,33 @@ server.route({
 
       if (!country) {
         return boom.notFound('Country code not found.');
-      } else {
-        country.models = await db
-          .select(
-            'attribution',
-            'country',
-            'description',
-            'filters',
-            'timesteps',
-            'id',
-            'levers',
-            'map',
-            'name',
-            'version',
-            'type',
-            db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
-          )
-          .from('models')
-          .where('country', countryId)
-          .orderBy('updatedAt', 'DESC');
-        return country;
       }
+
+      country.models = await db
+        .select(
+          'attribution',
+          'country',
+          'description',
+          'filters',
+          'baseYear',
+          'timesteps',
+          'id',
+          'levers',
+          'map',
+          'name',
+          'version',
+          'type',
+          db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
+        )
+        .from('models')
+        .where('country', countryId)
+        .orderBy('updatedAt', 'DESC');
+
+      // Search for a riseIndicator
+      const riseScores = riseIndicatorsData.find(o => o.iso === countryId);
+      country.riseScores = riseScores ? riseScores.data : null;
+
+      return country;
     } catch (error) {
       return boom.badImplementation(error);
     }
@@ -133,6 +148,7 @@ server.route({
           'attribution',
           'country',
           'description',
+          'baseYear',
           'timesteps',
           'filters',
           'id',
@@ -246,22 +262,22 @@ server.route({
 
       // Parse query string if available
       let { query } = request;
-      let year = null;
+      let targetYear = null;
 
       // Check for redis data with this query.
       const cacheKey = JSON.stringify({ id, query });
-      if (process.env.NODE_ENV !== 'test') {
-        const cachedData = await rget(cacheKey);
+      if (redisEnabled) {
+        const cachedData = await redis.get(cacheKey);
         if (cachedData) {
           // Once the data is requested, store for a week
-          await rexpire(cacheKey, redisCacheTtl);
+          await redis.expire(cacheKey, redisCacheTtl);
           return JSON.parse(cachedData);
         }
       }
 
       if (query) {
         query = qs.parse(query);
-        year = parseInt(query.year) || null;
+        targetYear = parseInt(query.year) || null;
 
         // Validate and parse filters
         filters = query.filters;
@@ -293,40 +309,51 @@ server.route({
 
       // Get information about the model
       const model = await db('models')
-        .select('filters', 'timesteps')
+        .select('filters', 'timesteps', 'baseYear')
         .where('id', modelId)
         .first();
+
+      const { baseYear } = model;
+      let [intermediateYear, finalYear] = model.timesteps;
 
       // Validate timestep model
       if (model.timesteps) {
         // Set the year to the 1st value if null
-        year = year || model.timesteps[0];
-        if (model.timesteps.indexOf(year) === -1) {
+        targetYear = targetYear || model.timesteps[0];
+        if (model.timesteps.indexOf(targetYear) === -1) {
           throw new SyntaxError(
-            `The "year" parameter [${year}] is invalid for this scenario. Must be one of [${model.timesteps.join(
+            `The "year" parameter [${targetYear}] is invalid for this scenario. Must be one of [${model.timesteps.join(
               ', '
             )}]`
           );
         }
       } else {
         // Disregard year
-        year = '';
+        targetYear = '';
       }
 
       const summaryKeys = {
-        electrificationTech: 'FinalElecCode' + year,
-        investmentCost: 'InvestmentCost' + year,
-        newCapacity: 'NewCapacity' + year,
-        population: 'Pop' + year,
-        electrificationStatus: 'ElecStatusIn' + year
+        popBaseYear: 'Pop' + baseYear,
+        popIntermediateYear: 'Pop' + intermediateYear,
+        popFinalYear: 'Pop' + finalYear,
+        popConnectedBaseYear: 'PopConnected' + baseYear,
+
+        elecStatusIntermediateYear: 'ElecStatusIn' + intermediateYear,
+        elecStatusFinalYear: 'ElecStatusIn' + finalYear,
+
+        elecTypeBaseYear: 'ElecCode' + baseYear,
+        elecTypeIntermediateYear: 'FinalElecCode' + intermediateYear,
+        elecTypeFinalYear: 'FinalElecCode' + finalYear,
+
+        electrificationTech: 'FinalElecCode' + targetYear,
+        investmentCost: 'InvestmentCost' + targetYear,
+        newCapacity: 'NewCapacity' + targetYear,
+        electrificationStatus: 'ElecStatusIn' + targetYear
       };
 
       const whereBuilder = builder => {
         builder
-          .where('scenarioId', id)
-          .whereRaw(
-            `summary->>'${summaryKeys.electrificationTech}' is not null`
-          );
+          .where('scenarioId', id);
 
         if (filters) {
           filters.forEach(filter => {
@@ -335,7 +362,7 @@ server.route({
 
             const filterDef = model.filters.find(f => f.key === key);
             // Update key if is a timestep filter
-            key = filterDef.timestep ? key + year : key;
+            key = filterDef.timestep ? key + targetYear : key;
 
             if (typeof min !== 'undefined') {
               builder.whereRaw(`("filterValues"->>?)::numeric >= ?`, [
@@ -364,65 +391,66 @@ server.route({
       };
 
       // Get summary for filtered clusters
-      const summaryQuery = db
+      const summary = await db
         .select(
           db.raw(`
+            SUM(
+              (summary->>'${summaryKeys.popBaseYear}')::numeric
+            ) as "popBaseYear",
+            SUM(
+              (summary->>'${summaryKeys.popIntermediateYear}')::numeric
+            ) as "popIntermediateYear",
+            SUM(
+              (summary->>'${summaryKeys.popFinalYear}')::numeric
+              ) as "popFinalYear",
             SUM(
               (summary->>'${summaryKeys.investmentCost}')::numeric
             ) as "investmentCost",
             SUM(
               (summary->>'${summaryKeys.newCapacity}')::numeric
-            ) as "newCapacity",
-            SUM(
-              (summary->>'${summaryKeys.population}')::numeric *
-              (summary->>'${summaryKeys.electrificationStatus}')::numeric
-            ) as "peopleConnected"
+            ) as "newCapacity"
           `)
         )
         .first()
         .where(whereBuilder)
         .from('scenarios');
 
-      const totalPopulationQuery = db
-        .select(
-          db.raw(`
-            SUM(
-              (summary->>'${summaryKeys.population}')::numeric
-            ) as "totalPopulation"
-          `)
-        )
-        .where('scenarioId', id)
-        .from('scenarios')
-        .first();
-
-      const [summary, { totalPopulation }] = await Promise.all([
-        summaryQuery,
-        totalPopulationQuery
-      ]);
-
-      summary.investmentCost = _.round(summary.investmentCost, 2);
-      summary.newCapacity = _.round(summary.newCapacity, 2);
-      summary.peopleConnected = _.round(summary.peopleConnected, 2);
-      summary.totalPopulation = _.round(totalPopulation, 2);
+      // Parse query results into a 2 decimals number
+      Object.keys(summary).forEach(key => {
+        summary[key] = _.round(summary[key], 2);
+      });
 
       // Get features
       const features = await db
         .select(
           'featureId as id',
           db.raw(
-            `summary->>'${
-              summaryKeys.electrificationTech
-            }' as "electrificationTech"`
+            `summary->>'${summaryKeys.popConnectedBaseYear}' as "popConnectedBaseYear"`
+          ),
+          db.raw(
+            `(summary->>'${summaryKeys.popIntermediateYear}')::numeric * (summary->>'${summaryKeys.elecStatusIntermediateYear}')::numeric as "popConnectedIntermediateYear"`
+          ),
+          db.raw(
+            `(summary->>'${summaryKeys.popFinalYear}')::numeric * (summary->>'${summaryKeys.elecStatusFinalYear}')::numeric as "popConnectedFinalYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.elecTypeBaseYear}' as "elecTypeBaseYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.elecTypeIntermediateYear}' as "elecTypeIntermediateYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.elecTypeFinalYear}' as "elecTypeFinalYear"`
+          ),
+          db.raw(
+            `summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`
           ),
           db.raw(
             `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
           ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
-          db.raw(`summary->>'${summaryKeys.population}' as "population"`),
           db.raw(
-            `summary->>'${
-              summaryKeys.electrificationStatus
-            }' as "electrificationStatus"`
+            `summary->>'${summaryKeys.electrificationStatus}' as "electrificationStatus"`
           )
         )
         .where(whereBuilder)
@@ -430,7 +458,9 @@ server.route({
         .from('scenarios');
 
       const summaryByType = {
-        peopleConnected: {},
+        popConnectedBaseYear: {},
+        popConnectedIntermediateYear: {},
+        popConnectedFinalYear: {},
         investmentCost: {},
         newCapacity: {}
       };
@@ -440,15 +470,38 @@ server.route({
       for (const f of features) {
         featureTypes[f.id] = f.electrificationTech;
 
-        summaryByType.peopleConnected[f.electrificationTech] =
-          (summaryByType.peopleConnected[f.electrificationTech] || 0) +
-          parseFloat(f.population) * parseFloat(f.electrificationStatus);
-        summaryByType.investmentCost[f.electrificationTech] =
-          (summaryByType.investmentCost[f.electrificationTech] || 0) +
-          parseFloat(f.investmentCost);
-        summaryByType.newCapacity[f.electrificationTech] =
-          (summaryByType.newCapacity[f.electrificationTech] || 0) +
-          parseFloat(f.newCapacity);
+        // Base year, discard null electrification type
+        if (f.elecTypeBaseYear) {
+          summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] =
+            (summaryByType.popConnectedBaseYear[f.elecTypeBaseYear] || 0) +
+            parseFloat(f.popConnectedBaseYear);
+        }
+
+        // Intermediate year
+        if (f.elecTypeIntermediateYear) {
+          summaryByType.popConnectedIntermediateYear[f.elecTypeIntermediateYear] =
+            (summaryByType.popConnectedIntermediateYear[f.elecTypeIntermediateYear] ||
+              0) + parseFloat(f.popConnectedIntermediateYear);
+        }
+
+        // Final year
+        if (f.elecTypeFinalYear) {
+          summaryByType.popConnectedFinalYear[f.elecTypeFinalYear] =
+            (summaryByType.popConnectedFinalYear[f.elecTypeFinalYear] || 0) +
+            parseFloat(f.popConnectedFinalYear);
+        }
+
+        if (f.electrificationTech) {
+          // Investment for the target year
+          summaryByType.investmentCost[f.electrificationTech] =
+            (summaryByType.investmentCost[f.electrificationTech] || 0) +
+            parseFloat(f.investmentCost);
+
+          // Capacity for the target year
+          summaryByType.newCapacity[f.electrificationTech] =
+            (summaryByType.newCapacity[f.electrificationTech] || 0) +
+            parseFloat(f.newCapacity);
+        }
       }
 
       featureTypes = featureTypes.toString();
@@ -456,8 +509,8 @@ server.route({
       const response = { id, featureTypes, summary, summaryByType };
 
       // Store on redis.
-      if (process.env.NODE_ENV !== 'test') {
-        await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      if (redisEnabled) {
+        await redis.set(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
       }
       return response;
     } catch (error) {

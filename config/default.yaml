@@ -1,5 +1,6 @@
 sourceDataDir: './fixtures' # relative to project root
-redis:
+redisEnabled: true
+redisConnection:
   host: 127.0.0.1
   port: 6379
   cacheTtl: 604800 # cache time to live, a week by default

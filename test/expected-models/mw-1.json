@@ -5,6 +5,7 @@
   "version": "v1.0",
   "type": "onsset",
   "country": "MW",
+  "baseYear": 2018,
   "timesteps": [2023, 2030],
   "attribution": {
     "author": "KTH",
@@ -99,7 +100,7 @@
         {
           "id": 0,
           "value": 1,
-          "label": "Grid extension"
+          "label": "Grid"
         },
         {
           "id": 1,
@@ -224,7 +225,7 @@
     "techLayersConfig": [
       {
         "id": "1",
-        "label": "Grid extension",
+        "label": "Grid",
         "color": "#73B2FF"
       },
       {

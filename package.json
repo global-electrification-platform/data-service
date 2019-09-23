@@ -1,6 +1,6 @@
 {
   "name": "data-service",
-  "version": "1.0.0-beta6",
+  "version": "1.0.0-rc1",
   "description": "Data service for Global Electrification Platform",
   "main": "index.js",
   "repository": {
@@ -34,7 +34,7 @@
     "migrate-test-db": "NODE_ENV=test npm run _migrate",
     "seed-test-db": "NODE_ENV=test npm run _seed",
     "stop-test-db": "docker-compose --project-name gep-test -f docker-compose-test.yml down",
-    "test": "NODE_ENV=test mocha test/test-index.js",
+    "test": "NODE_ENV=test mocha test/test--index.js",
     "lint": "node_modules/.bin/eslint app/ cli/ migrations/ seeds/ test/ --ext .js"
   },
   "dependencies": {
@@ -48,7 +48,7 @@
     "hapi": "^17.6.0",
     "joi": "^14.1.0",
     "js-yaml": "^3.13.1",
-    "knex": "^0.15.2",
+    "knex": "^0.19.2",
     "lodash": "^4.17.11",
     "npm-run-all": "^4.1.3",
     "pg": "^7.6.0",

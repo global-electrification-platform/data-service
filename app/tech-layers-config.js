@@ -16,7 +16,7 @@ const namedColors = {
 const defaultTechLayerConfig = [
   {
     id: '1',
-    label: 'Grid extension',
+    label: 'Grid',
     color: namedColors['grid-ext']
   },
   {

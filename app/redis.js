@@ -3,9 +3,8 @@ const redis = require('redis');
 const config = require('config');
 const util = require('util');
 
-const redisConf = config.get('redis');
-
-const redisClient = redis.createClient(redisConf);
+const redisConnection = config.get('redisConnection');
+const redisClient = redis.createClient(redisConnection);
 
 redisClient.on('error', err => {
   console.log('Redis error:', err); // eslint-disable-line

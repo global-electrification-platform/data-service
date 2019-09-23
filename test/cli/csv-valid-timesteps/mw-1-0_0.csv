@@ -1,5 +1,5 @@
-ID,FinalElecCode2030,InvestmentCost2030,NewCapacity2030,Pop2030,ElecStatusIn2030,anotherFilter,discardedProp
-1001,1,1,1,1,0,1,discarded
-1002,2,10,10,10,1,10,discarded
-1003,3,20,20,20,1,20,discarded
-1004,4,,,,0,30,discarded
+ID,FinalElecCode2030,InvestmentCost2030,NewCapacity2030,Pop2030,ElecStatusIn2030,anotherFilter,discardedProp,Pop2018,ElecPopCalib,FinalElecCode2018
+1001,1,1,1,1,0,1,discarded,65,20,1
+1002,2,10,10,10,1,10,discarded,66,21,1
+1003,3,20,20,20,1,20,discarded,52,22,1
+1004,4,,,,0,30,discarded,40,23,1
