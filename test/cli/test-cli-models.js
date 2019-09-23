@@ -87,7 +87,8 @@ describe('Model related functions', function () {
         assert.ok(error.userError);
         assert.deepStrictEqual(msgs, [
           'Model errors:',
-          `  attribution   "attribution" is required   
+          `  sourceData    "sourceData" is required    
+  attribution   "attribution" is required   
   description   "description" is required   
   levers        "levers" is required        
   filters       "filters" is required       

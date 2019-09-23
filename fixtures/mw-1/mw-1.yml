@@ -8,6 +8,9 @@ baseYear: 2018
 timesteps:
   - 2023
   - 2030
+sourceData:
+  clusters: 'http://example.com/clusters'
+  scenarios: null
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
