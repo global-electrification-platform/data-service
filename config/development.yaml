@@ -6,3 +6,4 @@ knex:
     user: "gep-data-service-dev"
     password: null
     port: 15432
+redisEnabled: false

@@ -6,11 +6,18 @@ const Hapi = require('hapi');
 const Joi = require('joi');
 
 const db = require('./db');
-const { set: rset, get: rget, expire: rexpire } = require('./redis');
 const riseIndicatorsData = require('./rise-indicators.json');
 
-// Get Redis cache "time to live"
-const redisCacheTtl = config.get('redis.cacheTtl');
+// Get Redis config
+const redisEnabled = config.get('redisEnabled');
+
+// If Redis is enabled, load client and connect
+let redis;
+let redisCacheTtl;
+if (redisEnabled) {
+  redis = require('./redis');
+  redisCacheTtl = config.get('redisConnection').cacheTtl;
+}
 
 const server = Hapi.server({
   port: process.env.PORT || 3000,
@@ -259,11 +266,11 @@ server.route({
 
       // Check for redis data with this query.
       const cacheKey = JSON.stringify({ id, query });
-      if (process.env.NODE_ENV !== 'test') {
-        const cachedData = await rget(cacheKey);
+      if (redisEnabled) {
+        const cachedData = await redis.get(cacheKey);
         if (cachedData) {
           // Once the data is requested, store for a week
-          await rexpire(cacheKey, redisCacheTtl);
+          await redis.expire(cacheKey, redisCacheTtl);
           return JSON.parse(cachedData);
         }
       }
@@ -502,8 +509,8 @@ server.route({
       const response = { id, featureTypes, summary, summaryByType };
 
       // Store on redis.
-      if (process.env.NODE_ENV !== 'test') {
-        await rset(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+      if (redisEnabled) {
+        await redis.set(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
       }
       return response;
     } catch (error) {
