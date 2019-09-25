@@ -24,11 +24,10 @@
     "dev": "NODE_ENV=development node_modules/.bin/nodemon index.js",
     "_migrate": "sleep 1; until node_modules/.bin/knex migrate:latest; do echo \"Database is not ready, will retry in 10 seconds...\"; sleep 10; done",
     "_seed": "node_modules/.bin/knex seed:run",
-    "init-dev-db": "node_modules/.bin/run-s start-dev-db migrate-dev-db seed-dev-db",
-    "start-dev-db": "docker-compose --project-name gep-dev -f docker-compose-dev.yml up -d",
+    "start-dev-db": "docker-compose --project-name gep-dev -f docker-compose-dev.yml up",
     "migrate-dev-db": "NODE_ENV=development npm run _migrate",
     "seed-dev-db": "NODE_ENV=development npm run _seed",
-    "stop-dev-db": "docker-compose --project-name gep-dev -f docker-compose-dev.yml down",
+    "prepare-dev-db": "node_modules/.bin/run-s migrate-dev-db seed-dev-db",
     "start-test-db": "docker-compose --project-name gep-test -f docker-compose-test.yml up",
     "test": "NODE_ENV=test mocha test/test--index.js",
     "lint": "node_modules/.bin/eslint app/ cli/ migrations/ seeds/ test/ --ext .js"
