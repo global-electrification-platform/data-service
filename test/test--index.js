@@ -1,5 +1,6 @@
 const path = require('path');
 const server = require('../app');
+const db = require('../app/db');
 
 // Export globals
 global.server = server;
@@ -7,7 +8,15 @@ global.fixturesPath = path.join(__dirname, '..', 'seeds', 'fixtures');
 
 describe('GEP Data Service', function () {
   before(async function () {
+    /* eslint-disable no-console */
+    console.log('Migrating...');
+    await db.migrate.latest();
+    console.log('Seeding...');
+    await db.seed.run();
+    console.log('Starting server...');
     await server.start();
+    console.log('Runing tests...');
+    /* eslint-enable no-console */
   });
 
   require('./test-root.js');

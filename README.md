@@ -41,15 +41,13 @@ Stop development database:
 
 Start test database:
 
-    npm run init-test-db
+    npm run start-test-db
 
-Run tests:
+Open a new terminal and run tests:
 
     npm run test
 
-Stop database container:
-
-    npm run stop-test-db
+After testing, stop the database container by pressing Control-C.
 
 ## Environment variables
 
