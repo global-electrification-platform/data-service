@@ -120,6 +120,7 @@ server.route({
           'name',
           'version',
           'type',
+          'sourceData',
           db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
         )
         .from('models')
@@ -157,6 +158,7 @@ server.route({
           'name',
           'type',
           'version',
+          'sourceData',
           db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
         )
         .from('models')

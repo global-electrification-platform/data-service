@@ -77,6 +77,10 @@ module.exports = Joi.object({
     .required(),
   baseYear: Joi.number(),
   timesteps: arrayOf(Joi.number()),
+  sourceData: Joi.object({
+    clusters: Joi.string().uri().allow(null).required(),
+    scenarios: Joi.string().uri().allow(null).required()
+  }).required(),
   attribution: Joi.object({
     author: reqString,
     url: Joi.string()
