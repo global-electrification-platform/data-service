@@ -24,8 +24,6 @@ jobs:
 
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
 
       - run: pip install awsebcli==3.14.11 --upgrade --user
 
