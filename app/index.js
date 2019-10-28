@@ -2,7 +2,7 @@ const config = require('config');
 const _ = require('lodash');
 const qs = require('qs');
 const boom = require('boom');
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const Joi = require('joi');
 
 const db = require('./db');
