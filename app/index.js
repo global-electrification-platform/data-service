@@ -4,6 +4,7 @@ const qs = require('qs');
 const boom = require('boom');
 const Hapi = require('@hapi/hapi');
 const Joi = require('joi');
+const pako = require('pako');
 
 const db = require('./db');
 const riseIndicatorsData = require('./rise-indicators.json');
@@ -273,7 +274,12 @@ server.route({
         if (cachedData) {
           // Once the data is requested, store for a week
           await redis.expire(cacheKey, redisCacheTtl);
-          return JSON.parse(cachedData);
+
+          // Inflate stored JSON string
+          const decompressed = pako.inflate(cachedData, { to: 'string' });
+
+          // Parse string into JSON
+          return JSON.parse(decompressed);
         }
       }
 
@@ -520,9 +526,17 @@ server.route({
 
       const response = { id, featureTypes, summary, summaryByType };
 
-      // Store on redis.
       if (redisEnabled) {
-        await redis.set(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+        // Parse scenario results into JSON string
+        const jsonString = JSON.stringify(response);
+
+        // Compress into binary string
+        const compressed = pako.deflate(jsonString, {
+          to: 'string'
+        });
+
+        // Store on redis.
+        await redis.set(cacheKey, compressed, 'EX', redisCacheTtl);
       }
       return response;
     } catch (error) {
