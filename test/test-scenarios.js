@@ -2,6 +2,7 @@ const { stringify } = require('qs');
 const fs = require('fs-extra');
 const path = require('path');
 const supertest = require('supertest');
+const { expect } = require('chai');
 
 /* global server */
 
@@ -14,7 +15,15 @@ describe('Endpoint: /scenarios', function () {
 
     return supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
-      .expect(200, results);
+      .expect(200)
+      .then(({ body }) => {
+        const { id, summary, summaryByType, featureTypes } = body;
+        expect(Object.keys(body)).to.deep.eq(Object.keys(results));
+        expect(id).to.deep.eq(results.id);
+        expect(summary).to.deep.eq(results.summary);
+        expect(summaryByType).to.deep.eq(results.summaryByType);
+        expect(featureTypes).to.deep.eq(results.featureTypes);
+      });
   });
 
   it('GET /scenarios/mw-1-0_0_0 returns feature types and summary for given year', async function () {
@@ -26,7 +35,15 @@ describe('Endpoint: /scenarios', function () {
     return supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query(stringify({ year: 2030 }))
-      .expect(200, results);
+      .expect(200)
+      .then(({ body }) => {
+        const { id, summary, summaryByType, featureTypes } = body;
+        expect(Object.keys(body)).to.deep.eq(Object.keys(results));
+        expect(id).to.deep.eq(results.id);
+        expect(summary).to.deep.eq(results.summary);
+        expect(summaryByType).to.deep.eq(results.summaryByType);
+        expect(featureTypes).to.deep.eq(results.featureTypes);
+      });
   });
 
   it('GET /scenarios/mw-1-0_0_0 with malformed year return default', async function () {
@@ -102,7 +119,15 @@ describe('Endpoint: /scenarios', function () {
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query(stringify({ filters, year: 2030 }))
-      .expect(200, results);
+      .expect(200)
+      .then(({ body }) => {
+        const { id, summary, summaryByType, featureTypes } = body;
+        expect(Object.keys(body)).to.deep.eq(Object.keys(results));
+        expect(id).to.deep.eq(results.id);
+        expect(summary).to.deep.eq(results.summary);
+        expect(summaryByType).to.deep.eq(results.summaryByType);
+        expect(featureTypes).to.deep.eq(results.featureTypes);
+      });
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by one option', async function () {
@@ -119,7 +144,15 @@ describe('Endpoint: /scenarios', function () {
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query(stringify({ filters, year: 2030 }))
-      .expect(200, results);
+      .expect(200)
+      .then(({ body }) => {
+        const { id, summary, summaryByType, featureTypes } = body;
+        expect(Object.keys(body)).to.deep.eq(Object.keys(results));
+        expect(id).to.deep.eq(results.id);
+        expect(summary).to.deep.eq(results.summary);
+        expect(summaryByType).to.deep.eq(results.summaryByType);
+        expect(featureTypes).to.deep.eq(results.featureTypes);
+      });
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by two options', async function () {
@@ -136,7 +169,15 @@ describe('Endpoint: /scenarios', function () {
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query(stringify({ filters, year: 2030 }))
-      .expect(200, results);
+      .expect(200)
+      .then(({ body }) => {
+        const { id, summary, summaryByType, featureTypes } = body;
+        expect(Object.keys(body)).to.deep.eq(Object.keys(results));
+        expect(id).to.deep.eq(results.id);
+        expect(summary).to.deep.eq(results.summary);
+        expect(summaryByType).to.deep.eq(results.summaryByType);
+        expect(featureTypes).to.deep.eq(results.featureTypes);
+      });
   });
 
   it('GET /scenarios/mw-1-0_0_0, filtering by options AND range', async function () {
@@ -156,6 +197,14 @@ describe('Endpoint: /scenarios', function () {
     await supertest(server.listener)
       .get(`/scenarios/${scenarioId}`)
       .query(stringify({ filters, year: 2030 }))
-      .expect(200, results);
+      .expect(200)
+      .then(({ body }) => {
+        const { id, summary, summaryByType, featureTypes } = body;
+        expect(Object.keys(body)).to.deep.eq(Object.keys(results));
+        expect(id).to.deep.eq(results.id);
+        expect(summary).to.deep.eq(results.summary);
+        expect(summaryByType).to.deep.eq(results.summaryByType);
+        expect(featureTypes).to.deep.eq(results.featureTypes);
+      });
   });
 });
