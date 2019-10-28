@@ -334,6 +334,16 @@ server.route({
         targetYear = '';
       }
 
+      // Get steps before the target year. This is used to calculate accumulated
+      // investment costs
+      const includedSteps = model.timesteps.filter(y => y <= targetYear);
+      const investmentCostSelector = includedSteps
+        .map(year => {
+          return `(summary->>'InvestmentCost${year}')::numeric`;
+        })
+        .join(' + ');
+
+      // Assemble summary keys based on year numbers
       const summaryKeys = {
         popBaseYear: 'Pop' + baseYear,
         popIntermediateYear: 'Pop' + intermediateYear,
@@ -348,14 +358,12 @@ server.route({
         elecTypeFinalYear: 'FinalElecCode' + finalYear,
 
         electrificationTech: 'FinalElecCode' + targetYear,
-        investmentCost: 'InvestmentCost' + targetYear,
         newCapacity: 'NewCapacity' + targetYear,
         electrificationStatus: 'ElecStatusIn' + targetYear
       };
 
       const whereBuilder = builder => {
-        builder
-          .where('scenarioId', id);
+        builder.where('scenarioId', id);
 
         if (filters) {
           filters.forEach(filter => {
@@ -404,10 +412,12 @@ server.route({
             ) as "popIntermediateYear",
             SUM(
               (summary->>'${summaryKeys.popFinalYear}')::numeric
-              ) as "popFinalYear",
-            SUM(
-              (summary->>'${summaryKeys.investmentCost}')::numeric
-            ) as "investmentCost",
+              ) as "popFinalYear"
+          `),
+          db.raw(`
+            SUM(${investmentCostSelector}) as "investmentCost"
+          `),
+          db.raw(`
             SUM(
               (summary->>'${summaryKeys.newCapacity}')::numeric
             ) as "newCapacity"
@@ -448,7 +458,7 @@ server.route({
             `summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`
           ),
           db.raw(
-            `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
+            `(${investmentCostSelector}) as "investmentCost"`
           ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
           db.raw(
