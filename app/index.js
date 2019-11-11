@@ -4,22 +4,22 @@ const qs = require('qs');
 const boom = require('boom');
 const Hapi = require('@hapi/hapi');
 const Joi = require('joi');
-const pako = require('pako');
+const { delay } = require('./utils');
 
 const db = require('./db');
 const riseIndicatorsData = require('./rise-indicators.json');
 
 // Get Redis config
-const redisEnabled = config.get('redisEnabled');
+const cache = config.get('cache');
+const { cacheTtl } = config.get('redisConnection');
 
-// If Redis is enabled, load client and connect
-let redis;
-let redisCacheTtl;
-if (redisEnabled) {
-  redis = require('./redis');
-  redisCacheTtl = config.get('redisConnection').cacheTtl;
+// Create cache client only if Redis is available
+let redisClient;
+if (cache.enabled) {
+  redisClient = require('./redis-client');
 }
 
+// Start server
 const server = Hapi.server({
   port: process.env.PORT || 3000,
   host: 'localhost',
@@ -267,20 +267,46 @@ server.route({
       let { query } = request;
       let targetYear = null;
 
-      // Check for redis data with this query.
+      // Generate cache key from query params
       const cacheKey = JSON.stringify({ id, query });
-      if (redisEnabled) {
-        const cachedData = await redis.get(cacheKey);
-        if (cachedData) {
-          // Once the data is requested, store for a week
-          await redis.expire(cacheKey, redisCacheTtl);
+      if (cache.enabled) {
+        // Load cache entry
+        let cachedData = await redisClient.getObject(cacheKey);
 
-          // Inflate stored JSON string
-          const decompressed = pako.inflate(cachedData, { to: 'string' });
+        // If cache entry exists
+        if (cachedData) {
+          // Check every second if query is running. As database queries can
+          // take a while, this avoids starting the same query in parallel.
+          let duration = 0;
+          let step = 1000;
+          while (cachedData.runningDbQuery) {
+            // If query is running for too long, abort cache load and throw
+            // error.
+            if (duration > cache.loadTimeout) {
+              throw Error(
+                'Database query is taking too long, abort loading cache.'
+              );
+            }
+
+            // Wait
+            await delay(step);
+
+            // Update query duration time
+            duration = duration + step;
+
+            // Get cached data
+            cachedData = await redisClient.getObject(cacheKey);
+          }
+
+          // Renew cache expiration time
+          await redisClient.expire(cacheKey, cacheTtl);
 
           // Parse string into JSON
-          return JSON.parse(decompressed);
+          return cachedData;
         }
+
+        // No cache data is available, flag runningDbQuery as true
+        await redisClient.setObject(cacheKey, { runningDbQuery: true });
       }
 
       if (query) {
@@ -526,20 +552,14 @@ server.route({
 
       const response = { id, featureTypes, summary, summaryByType };
 
-      if (redisEnabled) {
-        // Parse scenario results into JSON string
-        const jsonString = JSON.stringify(response);
-
-        // Compress into binary string
-        const compressed = pako.deflate(jsonString, {
-          to: 'string'
-        });
-
-        // Store on redis.
-        await redis.set(cacheKey, compressed, 'EX', redisCacheTtl);
+      if (cache.enabled) {
+        // Store results in Redis
+        redisClient.setObject(cacheKey, response);
       }
+
       return response;
     } catch (error) {
+      // Malformed queries
       if (error instanceof SyntaxError) {
         return boom.badRequest(error);
       }

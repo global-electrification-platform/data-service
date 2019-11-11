@@ -6,4 +6,5 @@ knex:
     user: "gep-data-service-test"
     password: "gep-data-service-test"
     port: 15433
-redisEnabled: false
+cache:
+  enabled: false
