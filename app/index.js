@@ -306,7 +306,11 @@ server.route({
         }
 
         // No cache data is available, flag runningDbQuery as true
-        await redisClient.setObject(cacheKey, { runningDbQuery: true });
+        await redisClient.setObject(
+          cacheKey,
+          { runningDbQuery: true },
+          cache.loadTimeout
+        );
       }
 
       if (query) {

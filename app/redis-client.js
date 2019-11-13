@@ -51,16 +51,17 @@ async function getObject (key) {
  *
  * @param {string} key Redis entry key.
  * @param {object} object JSON Object to be stored.
+ * @param {integer} customTtl Custom TTL, optional.
  */
 const get = util.promisify(redisClient.get).bind(redisClient);
-async function setObject (key, object) {
+async function setObject (key, object, customTtl) {
   const jsonString = JSON.stringify(object);
 
   // Compress into binary string
   const cacheData = pako.deflate(jsonString, { to: 'string' });
 
   // Store and set TTL
-  await set(key, cacheData, 'EX', cacheTtl);
+  await set(key, cacheData, 'EX', customTtl || cacheTtl);
 }
 
 module.exports = {
