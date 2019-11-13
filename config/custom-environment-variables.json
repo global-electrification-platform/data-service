@@ -1,7 +1,7 @@
 {
   "knex": "PG_CONNECTION_STRING",
   "cache": {
-    "enabled": "CACHE_ENABLED",
+    "enabled": "REDIS_ENABLED",
     "loadTimeout": "CACHE_LOAD_TIMEOUT"
   },
   "redisConnection": {
