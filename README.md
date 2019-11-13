@@ -23,9 +23,13 @@ npm install
 
 ### Development
 
-Init development database:
+Start development database:
 
-    npm run init-dev-db
+    npm run start-dev-db
+
+Open a new terminal and seed the database:
+
+    npm run prepare-dev-db
 
 Start development server with changes monitoring:
 
@@ -33,23 +37,19 @@ Start development server with changes monitoring:
 
 Access the service at [localhost:3000](http://localhost:3000)
 
-Stop development database:
-
-    npm run stop-dev-db
+After developing, stop Docker database container by pressing Control-C.
 
 ### Testing
 
 Start test database:
 
-    npm run init-test-db
+    npm run start-test-db
 
-Run tests:
+Open a new terminal and run tests:
 
     npm run test
 
-Stop database container:
-
-    npm run stop-test-db
+After testing, stop Docker database container by pressing Control-C.
 
 ## Environment variables
 

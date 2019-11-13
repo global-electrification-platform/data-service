@@ -50,7 +50,7 @@ async function getModelFromDir (dirPath) {
 
 /**
  * Returns the properties of the model that are sensitive to change.
- * This is uses to check whether or not the database model can be updated.
+ * This is used to check whether or not the database model can be updated.
  *
  * @param {object} doc The model
  *

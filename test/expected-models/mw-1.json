@@ -11,6 +11,10 @@
     "author": "KTH",
     "url": "http:/kth.se"
   },
+  "sourceData": {
+    "clusters": "http://example.com/clusters",
+    "scenarios": null
+  },
   "description": "Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.",
   "levers": [
     {

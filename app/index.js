@@ -2,8 +2,9 @@ const config = require('config');
 const _ = require('lodash');
 const qs = require('qs');
 const boom = require('boom');
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const Joi = require('joi');
+const pako = require('pako');
 
 const db = require('./db');
 const riseIndicatorsData = require('./rise-indicators.json');
@@ -120,6 +121,7 @@ server.route({
           'name',
           'version',
           'type',
+          'sourceData',
           db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
         )
         .from('models')
@@ -157,6 +159,7 @@ server.route({
           'name',
           'type',
           'version',
+          'sourceData',
           db.raw('to_char("updatedAt", \'YYYY-MM-DD\') as "updatedAt"')
         )
         .from('models')
@@ -271,7 +274,12 @@ server.route({
         if (cachedData) {
           // Once the data is requested, store for a week
           await redis.expire(cacheKey, redisCacheTtl);
-          return JSON.parse(cachedData);
+
+          // Inflate stored JSON string
+          const decompressed = pako.inflate(cachedData, { to: 'string' });
+
+          // Parse string into JSON
+          return JSON.parse(decompressed);
         }
       }
 
@@ -332,6 +340,16 @@ server.route({
         targetYear = '';
       }
 
+      // Get steps before the target year. This is used to calculate accumulated
+      // investment costs
+      const includedSteps = model.timesteps.filter(y => y <= targetYear);
+      const investmentCostSelector = includedSteps
+        .map(year => {
+          return `(summary->>'InvestmentCost${year}')::numeric`;
+        })
+        .join(' + ');
+
+      // Assemble summary keys based on year numbers
       const summaryKeys = {
         popBaseYear: 'Pop' + baseYear,
         popIntermediateYear: 'Pop' + intermediateYear,
@@ -346,14 +364,12 @@ server.route({
         elecTypeFinalYear: 'FinalElecCode' + finalYear,
 
         electrificationTech: 'FinalElecCode' + targetYear,
-        investmentCost: 'InvestmentCost' + targetYear,
         newCapacity: 'NewCapacity' + targetYear,
         electrificationStatus: 'ElecStatusIn' + targetYear
       };
 
       const whereBuilder = builder => {
-        builder
-          .where('scenarioId', id);
+        builder.where('scenarioId', id);
 
         if (filters) {
           filters.forEach(filter => {
@@ -402,10 +418,12 @@ server.route({
             ) as "popIntermediateYear",
             SUM(
               (summary->>'${summaryKeys.popFinalYear}')::numeric
-              ) as "popFinalYear",
-            SUM(
-              (summary->>'${summaryKeys.investmentCost}')::numeric
-            ) as "investmentCost",
+              ) as "popFinalYear"
+          `),
+          db.raw(`
+            SUM(${investmentCostSelector}) as "investmentCost"
+          `),
+          db.raw(`
             SUM(
               (summary->>'${summaryKeys.newCapacity}')::numeric
             ) as "newCapacity"
@@ -446,7 +464,7 @@ server.route({
             `summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`
           ),
           db.raw(
-            `summary->>'${summaryKeys.investmentCost}' as "investmentCost"`
+            `(${investmentCostSelector}) as "investmentCost"`
           ),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
           db.raw(
@@ -508,9 +526,17 @@ server.route({
 
       const response = { id, featureTypes, summary, summaryByType };
 
-      // Store on redis.
       if (redisEnabled) {
-        await redis.set(cacheKey, JSON.stringify(response), 'EX', redisCacheTtl);
+        // Parse scenario results into JSON string
+        const jsonString = JSON.stringify(response);
+
+        // Compress into binary string
+        const compressed = pako.deflate(jsonString, {
+          to: 'string'
+        });
+
+        // Store on redis.
+        await redis.set(cacheKey, compressed, 'EX', redisCacheTtl);
       }
       return response;
     } catch (error) {

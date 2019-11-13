@@ -8,6 +8,9 @@ baseYear: 2018
 attribution:
   author: 'KTH'
   url: 'http:/kth.se'
+sourceData:
+  clusters: null
+  scenarios: null
 description:
   'Deserunt magna ad sit duis commodo irure dolor sint qui tempor. Deserunt et sint nostrud duis voluptate irure pariatur amet anim nostrud fugiat cupidatat. Tempor ipsum nulla sunt tempor cupidatat ipsum quis ut aliqua do ut anim ullamco. Cupidatat elit quis mollit cupidatat amet labore consequat est consectetur elit sint labore exercitation. Officia fugiat commodo do ullamco et est.'
 levers:
