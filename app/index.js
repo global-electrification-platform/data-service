@@ -283,9 +283,7 @@ server.route({
             // If query is running for too long, abort cache load and throw
             // error.
             if (duration > cache.loadTimeout) {
-              throw Error(
-                'Database query is taking too long, abort loading cache.'
-              );
+              return boom.gatewayTimeout();
             }
 
             // Wait
