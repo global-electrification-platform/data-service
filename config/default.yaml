@@ -1,7 +1,7 @@
 sourceDataDir: './fixtures' # relative to project root
 cache:
   enabled: true
-  loadTimeout: 60000 # maximum time to load data from cache, in milliseconds
+  loadTimeout: 25000 # maximum time to load data from cache, in milliseconds
 redisConnection:
   host: 127.0.0.1
   port: 6379
