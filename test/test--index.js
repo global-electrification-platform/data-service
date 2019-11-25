@@ -9,12 +9,14 @@ global.fixturesPath = path.join(__dirname, '..', 'seeds', 'fixtures');
 
 describe('GEP Data Service', function () {
   before(async function () {
+    console.log('Clearing database...');
+    await db.schema.dropTableIfExists('knex_migrations');
+    await db.schema.dropTableIfExists('countries');
+    await db.schema.dropTableIfExists('models');
+    await db.schema.dropTableIfExists('scenarios');
+
     console.log('Migrating...');
     await db.migrate.latest();
-
-    console.log('Cleaning test tables...');
-    await db('models').delete();
-    await db('scenarios').delete();
 
     console.log('Seeding...');
     await db.seed.run();
