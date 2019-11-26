@@ -64,8 +64,16 @@ async function setObject (key, object, customTtl) {
   await set(key, cacheData, 'EX', customTtl || cacheTtl);
 }
 
+/**
+ * Delete a key. Promisified version of redis.del.
+ *
+ * @param {string} key Redis entry key.
+ */
+const del = util.promisify(redisClient.del).bind(redisClient);
+
 module.exports = {
   setObject,
   getObject,
-  expire
+  expire,
+  del
 };

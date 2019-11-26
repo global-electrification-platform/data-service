@@ -261,21 +261,27 @@ server.route({
       const id = request.params.id.toLowerCase();
       const { query } = request;
 
+      // Validate and parse query
+      const queryOptions = await getScenario.prepareQuery(id, query);
+
       // If cache is not enabled, run query synchronously and return results
       if (!cache.enabled) {
-        return await getScenario(id, query);
+        return await getScenario.runQuery(queryOptions);
       }
 
       // Generate cache key from query params
-      const cacheKey = JSON.stringify({ id, query });
+      const cacheKey = getScenario.cacheKeyFromQuery(id, query);
 
       // Load cache entry
       let cachedData = await redisClient.getObject(cacheKey);
 
       // If no cache entry exists, start query in "background"
       if (!cachedData) {
-        getScenario(id, query);
+        await getScenario.lockQuery(id, query);
+        getScenario.runQuery(queryOptions);
       }
+
+      cachedData = await redisClient.getObject(cacheKey);
 
       // If there is no query lock, return cached results
       if (cachedData && !cachedData.runningDbQuery) {
