@@ -16,6 +16,8 @@ attribution:
   url: 'http:/kth.se'
 description:
   'Magna et commodo minim id pariatur non voluptate mollit sit sit culpa eu ut cupidatat. Officia aliquip nisi dolor velit. Quis tempor in nulla officia cillum sit culpa ea id. Ea esse irure cillum non esse ullamco ipsum esse. Enim nulla magna ullamco aliqua esse dolore do incididunt nulla sint amet tempor.'
+disclaimer:
+  'Deserunt magna ad sit duis commodo irure dolor sint qui tempor. Deserunt et sint nostrud duis voluptate irure pariatur amet anim nostrud fugiat cupidatat. Tempor ipsum nulla sunt tempor cupidatat ipsum quis ut aliqua do ut anim ullamco. Cupidatat elit quis mollit cupidatat amet labore consequat est consectetur elit sint labore exercitation. Officia fugiat commodo do ullamco et est.'
 levers:
   - id: 0
     label: Grid Generation Cost
