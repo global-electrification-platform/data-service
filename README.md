@@ -58,6 +58,8 @@ Use these to setup a custom environment:
 Name|Description|Default
 --|--|--
 `PG_CONNECTION_STRING`|PostgreSQL connection string|none
+`CACHE_LOAD_TIMEOUT`|Load from cache timeout (ms)|60000
+`REDIS_ENABLED`|Enable/disable cache|true
 `REDIS_HOST`|Redis host|127.0.0.1
 `REDIS_HOST`|Redis port|6379
 `REDIS_TTL`|Redis "time-to-live" or cache duration|1 week
