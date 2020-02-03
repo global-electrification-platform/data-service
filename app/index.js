@@ -347,7 +347,7 @@ server.route({
       const includedSteps = model.timesteps.filter(y => y <= targetYear);
       const investmentCostSelector = includedSteps
         .map(year => {
-          return `(summary->>'InvestmentCost${year}')::numeric`;
+          return `(summary->>'InvestmentCost${year}')::numeric * (summary->>'ElecStatusIn${year}')::numeric`;
         })
         .join(' + ');
 
@@ -465,9 +465,7 @@ server.route({
           db.raw(
             `summary->>'${summaryKeys.electrificationTech}' as "electrificationTech"`
           ),
-          db.raw(
-            `(${investmentCostSelector}) as "investmentCost"`
-          ),
+          db.raw(`(${investmentCostSelector}) as "investmentCost"`),
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
           db.raw(
             `summary->>'${summaryKeys.electrificationStatus}' as "electrificationStatus"`
