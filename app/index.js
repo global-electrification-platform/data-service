@@ -440,6 +440,20 @@ server.route({
         summary[key] = _.round(summary[key], 2);
       });
 
+      // accumulate Investment Cost per year of before target year
+      const investmentCostSelectorPerYear = includedSteps
+        .map(year => {
+          return `(summary->>'InvestmentCost${year}')::numeric * (summary->>'ElecStatusIn${year}')::numeric as "InvestmentCost${year}"`
+        })
+        .join(',');
+
+      // Get final elec code per year
+      const finalElecCodePerYear = includedSteps
+        .map(year => {
+          return `(summary->>'FinalElecCode${year}')::numeric as "FinalElecCode${year}"`
+        })
+        .join(',');
+
       // Get features
       const features = await db
         .select(
@@ -469,7 +483,10 @@ server.route({
           db.raw(`summary->>'${summaryKeys.newCapacity}' as "newCapacity"`),
           db.raw(
             `summary->>'${summaryKeys.electrificationStatus}' as "electrificationStatus"`
-          )
+
+          ),
+          db.raw(investmentCostSelectorPerYear),
+          db.raw(finalElecCodePerYear),
         )
         .where(whereBuilder)
         .orderBy('featureId')
@@ -509,12 +526,19 @@ server.route({
             parseFloat(f.popConnectedFinalYear);
         }
 
-        if (f.electrificationTech) {
-          // Investment for the target year
-          summaryByType.investmentCost[f.electrificationTech] =
-            (summaryByType.investmentCost[f.electrificationTech] || 0) +
-            parseFloat(f.investmentCost);
+        // investment cost per year
+        includedSteps
+          .map(year => {
+            if (f[`FinalElecCode${year}`] && f[`InvestmentCost${year}`]) {
+              summaryByType.investmentCost[f[`FinalElecCode${year}`]] =
+                (summaryByType.investmentCost[f[`FinalElecCode${year}`]] || 0) +
+                parseFloat(f[`InvestmentCost${year}`]);
 
+            }
+          })
+
+
+        if (f.electrificationTech) {
           // Capacity for the target year
           summaryByType.newCapacity[f.electrificationTech] =
             (summaryByType.newCapacity[f.electrificationTech] || 0) +
